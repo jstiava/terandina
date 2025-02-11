@@ -5,7 +5,9 @@ import TerandinaNoText from '@/public/Terandina_no_text.png'
 import Image from "next/image";
 
 
-export default function Footer() {
+export default function Footer({color} : {
+    color: string
+}) {
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
@@ -16,8 +18,8 @@ export default function Footer() {
             width: "100%",
             minHeight: "25vh",
             height: "fit-content",
-            backgroundColor: '#efe6d6',
-            color: theme.palette.getContrastText('#efe6d6'),
+            backgroundColor: color,
+            color: theme.palette.getContrastText(color),
             padding: "3rem 5rem"
         }}>
             <div className={isSm ? "column relaxed center" : "flex between"}

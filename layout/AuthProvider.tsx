@@ -6,6 +6,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import useCart from "@/checkout/useCart";
 import CartSidebar from "./CartSidebar";
+import { useState } from "react";
 
 declare module '@mui/material/Button' {
     interface ButtonPropsVariantOverrides {
@@ -23,19 +24,21 @@ export default function AuthProvider({
 
     const Cart = useCart();
 
+    const [color, setColor] = useState("#f4f4f4")
+
 
     return (
         <ThemeProvider theme={theme}>
             <NextNProgress color={theme.palette.primary.main} />
-            <Header Cart={Cart} />
+            <Header Cart={Cart} color={color} setColor={setColor} />
             <CartSidebar Cart={Cart} />
             <div id="content" className="column snug" style={{
                 minHeight: "100vh",
-                backgroundColor: '#efe6d6'
+                backgroundColor: color
             }}>
             <Component {...pageProps} Cart={Cart} />
             </div>
-            <Footer />
+            <Footer color={color}/>
         </ThemeProvider>
     )
 }

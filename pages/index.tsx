@@ -69,20 +69,20 @@ export default function Home(props: StripeAppProps) {
         style={{
           width: "100%",
           padding: "0",
-          marginTop: "5rem"
+          marginTop: "4rem"
         }}>
         <div className="flex" style={{
           padding: "1rem",
         }}>
           <CoverImage
           delay={0.5}
-          url="/BSP_191_Cotopaxi+sunset.jpg"
+          url="/no_license_landscape.jpg"
           height={"calc(100vh - 6rem)"}
           width={"100%"}
           className={isSm ? 'column bottom' : 'flex between bottom'}
            style={{
             position: 'relative',
-            backgroundImage: 'url(/BSP_191_Cotopaxi+sunset.jpg)',
+            backgroundImage: 'url(/no_license_landscape.jpg)',
             overflow: "hidden",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -91,9 +91,11 @@ export default function Home(props: StripeAppProps) {
           >
             <div className="flex fit">
               <Typography sx={{
-                color: 'white',
                 lineHeight: "115%",
-              }} variant="h1">Crafted in the Andes<br />Rooted in Tradition</Typography>
+                color: '#000000',
+              }} 
+              variant="h1"
+              >Crafted in the Andes<br />Rooted in Tradition</Typography>
             </div>
             <div className="flex fit">
               <Button variant="contained" onClick={() => {

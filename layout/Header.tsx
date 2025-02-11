@@ -9,13 +9,15 @@ import { useRouter } from "next/router";
 import { UseCart } from "@/checkout/useCart";
 import CoverImage from "@/components/CoverImage";
 import TerandinaLogo from '@/public/Terandina_clear.png'
+import TerandinaWhite from '@/public/Terandina_white.png'
 import TerandinaNoText from '@/public/Terandina_no_text.png'
 import GarmentNoSleeve from '@/public/GarmentNoSleeve.png';
 import GarmentAll from '@/public/GarmentAll.png';
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import anime from "animejs";
 import MenuItem from "@/components/MenuItem";
+import ColorPicker from "@/components/ColorPicker";
 
 
 const menuItems = [
@@ -28,8 +30,8 @@ const menuItems = [
         value: "ponchos"
     },
     {
-        name: "Cardigans",
-        value: "cardigans"
+        name: "Outerwear",
+        value: "outerwear"
     },
     {
         name: "Blankets",
@@ -50,8 +52,10 @@ const menuItems = [
 ]
 
 
-export default function Header({ Cart }: {
-    Cart: UseCart
+export default function Header({ Cart, color, setColor }: {
+    Cart: UseCart, 
+    color: string,
+    setColor: Dispatch<SetStateAction<string>>
 }) {
 
     const theme = useTheme();
@@ -60,6 +64,7 @@ export default function Header({ Cart }: {
     const [activeMenu, setActiveMenu] = useState('ponchos');
 
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+
 
     useEffect(() => {
         anime({
@@ -219,7 +224,7 @@ export default function Header({ Cart }: {
                     height: "calc(100vh - 5rem) ",
                     width: "25rem",
                     // backgroundImage: 'url(/GarmentAll.png)',
-                    backgroundColor: '#efe6d6',
+                    backgroundColor: color,
                     backgroundSize: 'cover',
                     backgroundPosition: "center",
                     // transform: "translateX(-115%)",
@@ -231,6 +236,14 @@ export default function Header({ Cart }: {
                 <div className="column between" style={{
                     height: "100%"
                 }}>
+
+                    {activeMenu === 'menu' && (
+                        <div className="column fit menuPanel" style={{
+                            opacity: 0
+                        }}>
+
+                        </div>
+                    )}
 
                     {activeMenu === 'blankets' && (
                         <div className="column fit menuPanel" style={{
@@ -284,6 +297,91 @@ export default function Header({ Cart }: {
                             </div>
                         </div>
                     )}
+
+
+                    {activeMenu === 'outerwear' && (
+                        <div className="column fit snug menuPanel" style={{
+                            opacity: 0
+                        }}>
+                            <ButtonBase
+                                className="flex between middle"
+                                disableRipple
+                                key={'test'}
+                                onClick={() => setIsSidebarOpen(prev => !prev)}
+                                sx={{
+                                    height: "3rem",
+                                    padding: "0 2rem",
+                                }}>
+                                <div className="flex fit">
+                                    <Typography variant="h6" sx={{
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.05rem",
+                                        fontSize: "1rem",
+                                        display: 'inline',
+                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                        textDecoration: `none`,
+                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                        backgroundPosition: `100% 100%, 0 100%`,
+                                        backgroundRepeat: `no-repeat`,
+                                        transition: `background-size .3s`,
+                                        color: 'inherit',
+                                        cursor: "pointer",
+                                        whiteSpace: "pre-line",
+                                        fontWeight: 800,
+                                        textAlign: 'left',
+                                        '&:hover': {
+                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                        }
+                                    }}>Men's</Typography>
+                                </div>
+                                <div className="flex fit">
+                                    <ChevronRight sx={{
+                                        opacity: 0.5
+                                    }} />
+                                </div>
+                            </ButtonBase>
+
+                            <ButtonBase
+                                className="flex between middle"
+                                disableRipple
+                                key={'test'}
+                                onClick={() => setIsSidebarOpen(prev => !prev)}
+                                sx={{
+                                    height: "3rem",
+                                    padding: "0 2rem",
+                                }}>
+                                <div className="flex fit">
+                                    <Typography variant="h6" sx={{
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.05rem",
+                                        fontSize: "1rem",
+                                        display: 'inline',
+                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                        textDecoration: `none`,
+                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                        backgroundPosition: `100% 100%, 0 100%`,
+                                        backgroundRepeat: `no-repeat`,
+                                        transition: `background-size .3s`,
+                                        color: 'inherit',
+                                        cursor: "pointer",
+                                        whiteSpace: "pre-line",
+                                        fontWeight: 800,
+                                        textAlign: 'left',
+                                        '&:hover': {
+                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                        }
+                                    }}>Women's</Typography>
+                                </div>
+                                <div className="flex fit">
+                                    <ChevronRight sx={{
+                                        opacity: 0.5
+                                    }} />
+                                </div>
+                            </ButtonBase>
+
+                        </div>
+                    )}
+
 
                     {activeMenu === 'jewelry' && (
                         <div className="column fit menuPanel" style={{
@@ -448,8 +546,9 @@ export default function Header({ Cart }: {
                     position: 'fixed',
                     top: 0,
                     width: "100%",
-                    backgroundColor: '#efe6d6',
-                    height: isSm ? "5rem" : "5rem",
+                    backgroundColor: color,
+                    color: theme.palette.getContrastText(color),
+                    height: isSm ? "4rem" : "4rem",
                     zIndex: 6
 
                 }}
@@ -459,7 +558,7 @@ export default function Header({ Cart }: {
                     style={{
                         padding: isSm ? "1rem" : "1.5rem 2rem",
                         backgroundColor: 'transparent',
-                        color: theme.palette.getContrastText('#efe6d6'),
+                        color: theme.palette.getContrastText(color),
                         cursor: 'pointer',
                         height: '100%',
                         width: "100%"
@@ -485,13 +584,23 @@ export default function Header({ Cart }: {
                     } : {
 
                     }}>
-                        <Image id="logo" src={TerandinaLogo} alt="Terandina"
+                        {theme.palette.getContrastText(color) === '#fff' ? (
+                            <Image id="logo" src={TerandinaWhite} alt="Terandina"
                             onClick={() => router.push('/')}
                             style={{
                                 width: "auto",
                                 height: "4rem",
                                 opacity: 0
                             }} />
+                        ) : (
+                            <Image id="logo" src={TerandinaLogo} alt="Terandina"
+                            onClick={() => router.push('/')}
+                            style={{
+                                width: "auto",
+                                height: "4rem",
+                                opacity: 0
+                            }} />
+                        )}
 
                         {!isSm && (
 
@@ -543,11 +652,12 @@ export default function Header({ Cart }: {
                             <Button variant="contained" onClick={() => router.push('/')}>Continue Shopping</Button>
                         ) : (
                             <div className="flex compact fit">
+                                <ColorPicker color={color} setColor={setColor} />
                                 <IconButton onClick={() => {
                                     return;
                                 }}>
                                     <SearchOutlined sx={{
-                                        // color: theme.palette.primary.contrastText
+                                        color: theme.palette.getContrastText(color)
                                     }} />
                                 </IconButton>
                                 <Badge
@@ -555,14 +665,14 @@ export default function Header({ Cart }: {
                                     invisible={!Cart.cart || Cart.cart.length === 0}
                                     sx={{
                                         '& .MuiBadge-badge': {
-                                            backgroundColor: theme.palette.primary.main,
-                                            color: theme.palette.primary.contrastText
+                                            backgroundColor: color,
+                                            color: theme.palette.getContrastText(color)
                                         }
                                     }}>
                                     <Tooltip title="My Cart">
                                         <IconButton onClick={() => Cart.toggleSidebar()}>
                                             <ShoppingBagOutlined sx={{
-                                                // color: theme.palette.primary.contrastText
+                                                color: theme.palette.getContrastText(color)
                                             }} />
                                         </IconButton>
                                     </Tooltip>
