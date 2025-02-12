@@ -52,7 +52,7 @@ export default function CoverImage({ className = "", url, height, width, style =
         backgroundImage: `url(${url})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        opacity: isLoaded ? 0.8 : 0,
+        opacity: isLoaded ? 1 : 0,
         transform: isLoaded ? 'scale(1)' : 'scale(0.5)',
         transition: `opacity 0.5s ease-in-out ${delay}s
          transform 3s ease-in-out 0.5s

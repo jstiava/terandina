@@ -18,6 +18,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import anime from "animejs";
 import MenuItem from "@/components/MenuItem";
 import ColorPicker from "@/components/ColorPicker";
+import { headerHeight } from "./AuthProvider";
 
 
 const menuItems = [
@@ -220,8 +221,8 @@ export default function Header({ Cart, color, setColor }: {
                     display: isSidebarOpen ? 'flex' : 'none',
                     position: "fixed",
                     left: 0,
-                    top: "5rem",
-                    height: "calc(100vh - 5rem) ",
+                    top: headerHeight,
+                    height: `calc(100vh - ${headerHeight}) `,
                     width: "25rem",
                     // backgroundImage: 'url(/GarmentAll.png)',
                     backgroundColor: color,
@@ -548,7 +549,7 @@ export default function Header({ Cart, color, setColor }: {
                     width: "100%",
                     backgroundColor: color,
                     color: theme.palette.getContrastText(color),
-                    height: isSm ? "4rem" : "4rem",
+                    height: isSm ? headerHeight : headerHeight,
                     zIndex: 6
 
                 }}
@@ -652,7 +653,7 @@ export default function Header({ Cart, color, setColor }: {
                             <Button variant="contained" onClick={() => router.push('/')}>Continue Shopping</Button>
                         ) : (
                             <div className="flex compact fit">
-                                <ColorPicker color={color} setColor={setColor} />
+                                {/* <ColorPicker color={color} setColor={setColor} /> */}
                                 <IconButton onClick={() => {
                                     return;
                                 }}>

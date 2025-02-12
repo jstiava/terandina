@@ -8,11 +8,15 @@ import useCart from "@/checkout/useCart";
 import CartSidebar from "./CartSidebar";
 import { useState } from "react";
 
+
+
 declare module '@mui/material/Button' {
     interface ButtonPropsVariantOverrides {
       flipped: true;
     }
   }
+
+export const headerHeight = "4rem";
 
 export default function AuthProvider({
     Component,
@@ -25,7 +29,6 @@ export default function AuthProvider({
     const Cart = useCart();
 
     const [color, setColor] = useState("#f4f4f4")
-
 
     return (
         <ThemeProvider theme={theme}>
