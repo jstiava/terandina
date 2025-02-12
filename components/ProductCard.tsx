@@ -1,5 +1,5 @@
 import { StripePrice, StripeProduct } from "@/types"
-import { Button, ButtonBase, Typography, useTheme } from "@mui/material"
+import { Button, ButtonBase, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
@@ -74,6 +74,7 @@ export default function ProductCard({
 
     const router = useRouter();
     const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const [isHovering, setIsHovering] = useState(false);
 
     const [copyOfProduct, setCopyOfProduct] = useState(product);
@@ -114,8 +115,8 @@ export default function ProductCard({
             onMouseLeave={() => setIsHovering(false)}
             onClick={() => router.push(`/item/${product.id}`)}
             style={{
-                width: "25rem",
-                padding: "2rem",
+                width: isSm ? "100%" : "25rem",
+                padding: isSm ? "1rem" : "2rem",
                 animation: `popIn 0.5s ease forwards`,
                 transform: "scale(0)",
                 opacity: 0,
@@ -131,7 +132,7 @@ export default function ProductCard({
                     <CoverImageCarousel
                         images={product.images}
                         width="100%"
-                        height="25rem"
+                        height="21.5rem"
                         isHovering={isHovering}
                         style={{
                             // borderRadius: "0.5rem",

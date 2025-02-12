@@ -1,4 +1,4 @@
-import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link } from "@mui/material";
+import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link, alpha } from "@mui/material";
 import {
     ChevronRight,
     MenuOutlined,
@@ -547,7 +547,7 @@ export default function Header({ Cart, color, setColor }: {
                     position: 'fixed',
                     top: 0,
                     width: "100%",
-                    backgroundColor: color,
+                    backgroundColor: alpha(color, 0.9),
                     color: theme.palette.getContrastText(color),
                     height: isSm ? headerHeight : headerHeight,
                     zIndex: 6

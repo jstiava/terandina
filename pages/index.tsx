@@ -7,10 +7,10 @@ import anime from "animejs";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import HeroImage from '@/public/BSP_191_Cotopaxi+sunset.jpg'
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 
 
 const featuredProducts: StripeProduct[] = [
@@ -219,7 +219,7 @@ const featuredProducts: StripeProduct[] = [
     quantity: 1
   },
   {
-    "id": "prod_Rg6ZkYGd83vMaa",
+    "id": "prod_Rg6ZkYGd83vMhh",
     "object": "product",
     "active": true,
     "created": 1738192046,
@@ -355,7 +355,7 @@ const featuredProducts: StripeProduct[] = [
     quantity: 1
   },
   {
-    "id": "prod_Rg6ZkYGd83vMaa",
+    "id": "prod_Rg6ZkYGd83vMcc",
     "object": "product",
     "active": true,
     "created": 1738192046,
@@ -429,6 +429,7 @@ export default function Home(props: StripeAppProps) {
   const router = useRouter();
   const theme = useTheme();
   const [products, setProducts] = useState<StripeProduct[] | null>(null);
+  const swiperRef = useRef<any>(null);
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -464,7 +465,6 @@ export default function Home(props: StripeAppProps) {
   useEffect(() => {
     getProducts();
   }, []);
-
 
 
   if (!products) {
@@ -535,31 +535,39 @@ export default function Home(props: StripeAppProps) {
           </CoverImage>
         </div>
         <div className="flex" style={{
-          padding: "0 1rem"
+          padding: isSm ? "0" : "0 2rem"
         }}>
           <Swiper
+          ref={swiperRef}
+            direction="horizontal"
             slidesPerView={1}
             spaceBetween={10}
+            navigation={true}
+            // slidesOffsetBefore={-30}
             style={{
               display: 'flex',
               width: "100%",
               height: "32rem",
               padding: 0,
+              "--swiper-theme-color": theme.palette.primary.main,
               "--swiper-pagination-color": theme.palette.primary.main,  // Active bullet color
               "--swiper-pagination-bullet-inactive-color": "gray", // Inactive bullet color
-              "--swiper-pagination-bullet-inactive-opacity": "0.5"
+              "--swiper-pagination-bullet-inactive-opacity": "0.5",
+              "--swiper-navigation-size": 8,
+              "--swiper-navigation-top-offset": "calc(50% - 1rem)"
             } as CSSProperties}
             pagination={{
               clickable: true,
             }}
+            modules={[Pagination, Navigation]}
             breakpoints={{
               300: {
                 slidesPerView: 1,
                 spaceBetween: 10,
               },
-              700: {
+              500: {
                 slidesPerView: 2,
-                spaceBetween: 10
+                spaceBetween: 0
               },
               1200: {
                 slidesPerView: 3,
@@ -574,7 +582,6 @@ export default function Home(props: StripeAppProps) {
                 spaceBetween: 10,
               },
             }}
-            modules={[Pagination]}
             className="mySwiper"
           >
             {featuredProducts.map(product => (
