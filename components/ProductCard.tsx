@@ -120,6 +120,7 @@ export default function ProductCard({
                 animation: `popIn 0.5s ease forwards`,
                 transform: "scale(0)",
                 opacity: 0,
+                marginBottom: "2rem",
                 ...style
             }}>
             {product.images && (
@@ -171,6 +172,16 @@ export default function ProductCard({
                 />
                 </div>
                 <DisplayPrice product={copyOfProduct} />
+            </div>
+            <div className="flex between">
+            {isSm && (
+                <Button variant="contained"
+                onClick={handleAddToCart}
+                fullWidth
+                sx={{
+                    height: "2.5rem"
+                }}>Add to Cart</Button>
+            )}
             </div>
         </ButtonBase>
     )

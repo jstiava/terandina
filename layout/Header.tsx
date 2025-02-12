@@ -1,8 +1,11 @@
 import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link, alpha } from "@mui/material";
 import {
+    ArrowForward,
     ChevronLeft,
     ChevronRight,
+    EmailOutlined,
     MenuOutlined,
+    PhoneOutlined,
     SearchOutlined,
     ShoppingBagOutlined
 } from '@mui/icons-material';
@@ -245,7 +248,13 @@ export default function Header({ Cart, color, setColor }: {
                     height: "100%"
                 }}>
 
-                    <div className="column fit snug">
+                    <div className="column fit snug" style={{
+                        maxHeight: "calc(100% - 6rem)",
+                        height: "fit-content",
+                        overflowY: "scroll",
+                        marginBottom: 0,
+                        paddingTop: isSm && activeMenu != 'menu' ? "3rem" : 0
+                    }}>
 
 
                         {activeMenu === 'menu' ? (
@@ -295,6 +304,7 @@ export default function Header({ Cart, color, setColor }: {
                         ) : (
                             <>
                                 {isSm ? (
+                                    <>
                                     <ButtonBase
                                         className="flex between middle"
                                         disableRipple
@@ -303,6 +313,10 @@ export default function Header({ Cart, color, setColor }: {
                                         sx={{
                                             height: "3rem",
                                             padding: "0 1.5rem",
+                                            position: "fixed",
+                                            top: 0,
+                                            zIndex: 8,
+                                            backgroundColor: color
                                         }}>
                                         <div className="flex compact fit" >
                                             <div className="flex fit">
@@ -334,10 +348,9 @@ export default function Header({ Cart, color, setColor }: {
                                         </div>
 
                                     </ButtonBase>
+                                    </>
                                 ) : (
-                                    <div style={{
-                                        height: "1rem"
-                                    }}></div>
+                                    <></>
                                 )}
                             </>
                         )}
@@ -612,6 +625,120 @@ export default function Header({ Cart, color, setColor }: {
                         )}
 
 
+                        {activeMenu === 'handcrafted' && (
+                            <div className="column fit menuPanel" style={{
+                                opacity: 0
+                            }}>
+                                <ButtonBase
+                                    className="flex between middle"
+                                    disableRipple
+                                    key={'test'}
+                                    onClick={() => setIsSidebarOpen(prev => !prev)}
+                                    sx={{
+                                        height: "3rem",
+                                        padding: "0 2rem",
+                                    }}>
+                                    <div className="flex fit">
+                                        <Typography variant="h6" sx={{
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.05rem",
+                                            fontSize: "1rem",
+                                            display: 'inline',
+                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                            textDecoration: `none`,
+                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                            backgroundPosition: `100% 100%, 0 100%`,
+                                            backgroundRepeat: `no-repeat`,
+                                            transition: `background-size .3s`,
+                                            color: 'inherit',
+                                            cursor: "pointer",
+                                            whiteSpace: "pre-line",
+                                            fontWeight: 800,
+                                            textAlign: 'left',
+                                            '&:hover': {
+                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                            }
+                                        }}>Explore All Handcrafted Items</Typography>
+                                    </div>
+                                    <div className="flex fit">
+                                        <ChevronRight sx={{
+                                            opacity: 0.5
+                                        }} />
+                                    </div>
+                                </ButtonBase>
+
+
+                                <div className="flex" style={{
+                                    padding: "0 2rem",
+                                    flexWrap: 'wrap'
+                                }}>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 1rem)",
+                                        maxWidth: "10rem",
+                                        marginBottom: "0.5rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Bowls</Typography>
+                                    </div>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 1rem)",
+                                        maxWidth: "10rem",
+                                        marginBottom: "0.5rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Textiles</Typography>
+                                    </div>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 1rem)",
+                                        maxWidth: "10rem",
+                                        marginBottom: "0.5rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Paintings</Typography>
+                                    </div>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 1rem)",
+                                        maxWidth: "10rem",
+                                        marginBottom: "0.5rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Tools</Typography>
+                                    </div>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 1rem)",
+                                        maxWidth: "10rem",
+                                        marginBottom: "0.5rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Spirtual</Typography>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        )}
+
+
                         {activeMenu === 'ponchos' && (
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
@@ -645,7 +772,7 @@ export default function Header({ Cart, color, setColor }: {
                                             '&:hover': {
                                                 backgroundSize: "0 0.1rem, 100% 0.1rem"
                                             }
-                                        }}>Explore Ponchos</Typography>
+                                        }}>Explore All Ponchos</Typography>
                                     </div>
                                     <div className="flex fit">
                                         <ChevronRight sx={{
@@ -669,19 +796,22 @@ export default function Header({ Cart, color, setColor }: {
                     </div>
 
                     <div className="column fit" style={{
-                        padding: "1rem 0rem"
+                        padding: "1rem 0rem",
+                        // position: 'absolute',
+                        bottom: 0,
+                        backgroundColor: color
                     }}>
                         <div className="column snug">
                             <MenuItem
                                 onClick={() => setIsSidebarOpen(false)}
-                                icon={<ChevronRight sx={{
+                                icon={<ArrowForward fontSize="small" sx={{
                                     opacity: 0.5
                                 }} />}
                             >Our Values</MenuItem>
 
                             <MenuItem
                                 onClick={() => setIsSidebarOpen(false)}
-                                icon={<ChevronRight sx={{
+                                icon={<EmailOutlined fontSize="small" sx={{
                                     opacity: 0.5
                                 }} />}
                             >Contact</MenuItem>

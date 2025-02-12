@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import useCart from "@/checkout/useCart";
 import CartSidebar from "./CartSidebar";
 import { useState } from "react";
+import Head from "next/head";
 
 
 
@@ -32,6 +33,9 @@ export default function AuthProvider({
 
     return (
         <ThemeProvider theme={theme}>
+            <Head>
+            <meta name="theme-color" content={color} />
+            </Head>
             <NextNProgress color={theme.palette.primary.main} />
             <Header Cart={Cart} color={color} setColor={setColor} />
             <CartSidebar Cart={Cart} />

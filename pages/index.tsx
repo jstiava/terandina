@@ -308,7 +308,7 @@ const featuredProducts: StripeProduct[] = [
     "url": null,
     "prices": [
       {
-        "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+        "id": "price_1QmkLyJrcLUH8C2zCUqlbESS",
         "object": "price",
         "active": true,
         "billing_scheme": "per_unit",
@@ -330,7 +330,7 @@ const featuredProducts: StripeProduct[] = [
       }
     ],
     "selectedPrice": {
-      "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+      "id": "price_1QmkLyJrcLUH8C2zCUqlbESS",
       "object": "price",
       "active": true,
       "billing_scheme": "per_unit",
@@ -357,7 +357,7 @@ const featuredProducts: StripeProduct[] = [
     "object": "product",
     "active": true,
     "created": 1738192046,
-    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESQ",
     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
     "images": [
       "/P1120417.jpg"
@@ -376,7 +376,7 @@ const featuredProducts: StripeProduct[] = [
     "url": null,
     "prices": [
       {
-        "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+        "id": "price_1QmkLyJrcLUH8C2zCUqlbESQ",
         "object": "price",
         "active": true,
         "billing_scheme": "per_unit",
@@ -398,7 +398,7 @@ const featuredProducts: StripeProduct[] = [
       }
     ],
     "selectedPrice": {
-      "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+      "id": "price_1QmkLyJrcLUH8C2zCUqlbESQ",
       "object": "price",
       "active": true,
       "billing_scheme": "per_unit",
@@ -425,7 +425,7 @@ const featuredProducts: StripeProduct[] = [
     "object": "product",
     "active": true,
     "created": 1738192046,
-    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESG",
     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
     "images": [
       "/CanyonSunsetPomoWoolPoncho.jpg"
@@ -444,7 +444,7 @@ const featuredProducts: StripeProduct[] = [
     "url": null,
     "prices": [
       {
-        "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+        "id": "price_1QmkLyJrcLUH8C2zCUqlbESG",
         "object": "price",
         "active": true,
         "billing_scheme": "per_unit",
@@ -466,7 +466,7 @@ const featuredProducts: StripeProduct[] = [
       }
     ],
     "selectedPrice": {
-      "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+      "id": "price_1QmkLyJrcLUH8C2zCUqlbESG",
       "object": "price",
       "active": true,
       "billing_scheme": "per_unit",
@@ -493,7 +493,7 @@ const featuredProducts: StripeProduct[] = [
     "object": "product",
     "active": true,
     "created": 1738192046,
-    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESM",
     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
     "images": [
       "/wolf_poncho_front_NS.jpg"
@@ -512,7 +512,7 @@ const featuredProducts: StripeProduct[] = [
     "url": null,
     "prices": [
       {
-        "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+        "id": "price_1QmkLyJrcLUH8C2zCUqlbESM",
         "object": "price",
         "active": true,
         "billing_scheme": "per_unit",
@@ -534,7 +534,7 @@ const featuredProducts: StripeProduct[] = [
       }
     ],
     "selectedPrice": {
-      "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+      "id": "price_1QmkLyJrcLUH8C2zCUqlbESM",
       "object": "price",
       "active": true,
       "billing_scheme": "per_unit",
@@ -561,7 +561,7 @@ const featuredProducts: StripeProduct[] = [
     "object": "product",
     "active": true,
     "created": 1738192046,
-    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+    "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESO",
     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
     "images": [
       "/dark_brown_caradigan_front_NS.jpg"
@@ -580,7 +580,7 @@ const featuredProducts: StripeProduct[] = [
     "url": null,
     "prices": [
       {
-        "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+        "id": "price_1QmkLyJrcLUH8C2zCUqlbESO",
         "object": "price",
         "active": true,
         "billing_scheme": "per_unit",
@@ -602,7 +602,7 @@ const featuredProducts: StripeProduct[] = [
       }
     ],
     "selectedPrice": {
-      "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
+      "id": "price_1QmkLyJrcLUH8C2zCUqlbESO",
       "object": "price",
       "active": true,
       "billing_scheme": "per_unit",
