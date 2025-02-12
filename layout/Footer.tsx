@@ -31,7 +31,14 @@ export default function Footer({color} : {
 
                 </div>
                 
-                <Image src={TerandinaLogo} alt="Terandina" style={{
+                <Image src={TerandinaLogo} alt="Terandina" style={isSm ?
+                    {
+                        position: 'relative',
+                        transform: 'translate(0%, 0)',
+                        width: "auto",
+                        height: "8rem"
+                    }
+                : {
                     position: 'absolute',
                     bottom: "3.5rem",
                     transform: 'translate(-50%, 0)',

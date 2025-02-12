@@ -1,5 +1,6 @@
 import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link, alpha } from "@mui/material";
 import {
+    ChevronLeft,
     ChevronRight,
     MenuOutlined,
     SearchOutlined,
@@ -19,6 +20,7 @@ import anime from "animejs";
 import MenuItem from "@/components/MenuItem";
 import ColorPicker from "@/components/ColorPicker";
 import { headerHeight } from "./AuthProvider";
+import ScrollButton from "@/components/ScrollButton";
 
 
 const menuItems = [
@@ -54,7 +56,7 @@ const menuItems = [
 
 
 export default function Header({ Cart, color, setColor }: {
-    Cart: UseCart, 
+    Cart: UseCart,
     color: string,
     setColor: Dispatch<SetStateAction<string>>
 }) {
@@ -83,9 +85,14 @@ export default function Header({ Cart, color, setColor }: {
             easing: "easeInOutQuad",
             delay: (el, i) => (100 * i) + 100,
         });
-    }, [])
+    }, [isSm])
 
     const handleSwitchTab = (key: string) => {
+
+        if (key === activeMenu) {
+            return;
+        }
+
         anime({
             targets: ".menuPanel",
             opacity: [1, 0],
@@ -223,7 +230,7 @@ export default function Header({ Cart, color, setColor }: {
                     left: 0,
                     top: headerHeight,
                     height: `calc(100vh - ${headerHeight}) `,
-                    width: "25rem",
+                    width: isSm ? "100%" : "25rem",
                     // backgroundImage: 'url(/GarmentAll.png)',
                     backgroundColor: color,
                     backgroundSize: 'cover',
@@ -238,251 +245,428 @@ export default function Header({ Cart, color, setColor }: {
                     height: "100%"
                 }}>
 
-                    {activeMenu === 'menu' && (
-                        <div className="column fit menuPanel" style={{
-                            opacity: 0
-                        }}>
+                    <div className="column fit snug">
 
-                        </div>
-                    )}
 
-                    {activeMenu === 'blankets' && (
-                        <div className="column fit menuPanel" style={{
-                            opacity: 0
-                        }}>
-                            <ButtonBase
-                                className="flex between middle"
-                                disableRipple
-                                key={'test'}
-                                onClick={() => setIsSidebarOpen(prev => !prev)}
-                                sx={{
-                                    height: "3rem",
-                                    padding: "0 2rem",
-                                }}>
-                                <div className="flex fit">
-                                    <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.05rem",
-                                        fontSize: "1rem",
-                                        display: 'inline',
-                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                        textDecoration: `none`,
-                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                        backgroundPosition: `100% 100%, 0 100%`,
-                                        backgroundRepeat: `no-repeat`,
-                                        transition: `background-size .3s`,
-                                        color: 'inherit',
-                                        cursor: "pointer",
-                                        whiteSpace: "pre-line",
-                                        fontWeight: 800,
-                                        textAlign: 'left',
-                                        '&:hover': {
-                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                        }
-                                    }}>Explore Blankets</Typography>
-                                </div>
-                                <div className="flex fit">
-                                    <ChevronRight sx={{
-                                        opacity: 0.5
-                                    }} />
-                                </div>
-                            </ButtonBase>
-                            <div className="column fit" style={{
-                                padding: "2rem"
+                        {activeMenu === 'menu' ? (
+                            <div className="column fit snug menuPanel" style={{
+                                opacity: 0
                             }}>
-                                <div className="column compact">
+                                {menuItems.map(item => (
+                                    <ButtonBase
+                                        className="flex between middle"
+                                        disableRipple
+                                        key={item.value}
+                                        onClick={() => handleSwitchTab(item.value)}
+                                        sx={{
+                                            height: "3rem",
+                                            padding: "0 2rem",
+                                        }}>
+                                        <div className="flex fit">
+                                            <Typography variant="h6" sx={{
+                                                textTransform: "uppercase",
+                                                letterSpacing: "0.05rem",
+                                                fontSize: "1rem",
+                                                display: 'inline',
+                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                                textDecoration: `none`,
+                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                                backgroundPosition: `100% 100%, 0 100%`,
+                                                backgroundRepeat: `no-repeat`,
+                                                transition: `background-size .3s`,
+                                                color: 'inherit',
+                                                cursor: "pointer",
+                                                whiteSpace: "pre-line",
+                                                fontWeight: 800,
+                                                textAlign: 'left',
+                                                '&:hover': {
+                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                                }
+                                            }}>{item.name}</Typography>
+                                        </div>
+                                        <div className="flex fit">
+                                            <ChevronRight sx={{
+                                                opacity: 0.5
+                                            }} />
+                                        </div>
+                                    </ButtonBase>
+                                ))}
+                            </div>
+                        ) : (
+                            <>
+                                {isSm ? (
+                                    <ButtonBase
+                                        className="flex between middle"
+                                        disableRipple
+                                        key={'menu_back_button'}
+                                        onClick={() => handleSwitchTab('menu')}
+                                        sx={{
+                                            height: "3rem",
+                                            padding: "0 1.5rem",
+                                        }}>
+                                        <div className="flex compact fit" >
+                                            <div className="flex fit">
+                                                <ChevronLeft sx={{
+                                                    opacity: 0.5,
+                                                    marginTop: "-0.1rem"
+                                                }} />
+                                            </div>
+                                            <Typography variant="h6" sx={{
+                                                textTransform: "uppercase",
+                                                letterSpacing: "0.05rem",
+                                                fontSize: "1rem",
+                                                display: 'inline',
+                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                                textDecoration: `none`,
+                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                                backgroundPosition: `100% 100%, 0 100%`,
+                                                backgroundRepeat: `no-repeat`,
+                                                transition: `background-size .3s`,
+                                                color: 'inherit',
+                                                cursor: "pointer",
+                                                whiteSpace: "pre-line",
+                                                fontWeight: 800,
+                                                textAlign: 'left',
+                                                '&:hover': {
+                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                                }
+                                            }}>Back</Typography>
+                                        </div>
 
-                                    <CoverImage url={'/pile.jpg'} width={"100%"} height={"22rem"} />
-                                    {/* <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography> */}
+                                    </ButtonBase>
+                                ) : (
+                                    <div style={{
+                                        height: "1rem"
+                                    }}></div>
+                                )}
+                            </>
+                        )}
+
+                        {activeMenu === 'blankets' && (
+                            <div className="column fit menuPanel" style={{
+                                opacity: 0
+                            }}>
+                                <ButtonBase
+                                    className="flex between middle"
+                                    disableRipple
+                                    key={'test'}
+                                    onClick={() => setIsSidebarOpen(prev => !prev)}
+                                    sx={{
+                                        height: "3rem",
+                                        padding: "0 2rem",
+                                    }}>
+                                    <div className="flex fit">
+                                        <Typography variant="h6" sx={{
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.05rem",
+                                            fontSize: "1rem",
+                                            display: 'inline',
+                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                            textDecoration: `none`,
+                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                            backgroundPosition: `100% 100%, 0 100%`,
+                                            backgroundRepeat: `no-repeat`,
+                                            transition: `background-size .3s`,
+                                            color: 'inherit',
+                                            cursor: "pointer",
+                                            whiteSpace: "pre-line",
+                                            fontWeight: 800,
+                                            textAlign: 'left',
+                                            '&:hover': {
+                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                            }
+                                        }}>Explore Blankets</Typography>
+                                    </div>
+                                    <div className="flex fit">
+                                        <ChevronRight sx={{
+                                            opacity: 0.5
+                                        }} />
+                                    </div>
+                                </ButtonBase>
+                                <div className="column fit" style={{
+                                    padding: "0 2rem"
+                                }}>
+                                    <div className="column compact">
+
+                                        <CoverImage url={'/pile.jpg'} width={"100%"} height={"22rem"} />
+                                        {/* <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography> */}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
 
-                    {activeMenu === 'outerwear' && (
-                        <div className="column fit snug menuPanel" style={{
-                            opacity: 0
-                        }}>
-                            <ButtonBase
-                                className="flex between middle"
-                                disableRipple
-                                key={'test'}
-                                onClick={() => setIsSidebarOpen(prev => !prev)}
-                                sx={{
-                                    height: "3rem",
-                                    padding: "0 2rem",
-                                }}>
-                                <div className="flex fit">
-                                    <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.05rem",
-                                        fontSize: "1rem",
-                                        display: 'inline',
-                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                        textDecoration: `none`,
-                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                        backgroundPosition: `100% 100%, 0 100%`,
-                                        backgroundRepeat: `no-repeat`,
-                                        transition: `background-size .3s`,
-                                        color: 'inherit',
-                                        cursor: "pointer",
-                                        whiteSpace: "pre-line",
-                                        fontWeight: 800,
-                                        textAlign: 'left',
-                                        '&:hover': {
-                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                        }
-                                    }}>Men's</Typography>
-                                </div>
-                                <div className="flex fit">
-                                    <ChevronRight sx={{
-                                        opacity: 0.5
-                                    }} />
-                                </div>
-                            </ButtonBase>
-
-                            <ButtonBase
-                                className="flex between middle"
-                                disableRipple
-                                key={'test'}
-                                onClick={() => setIsSidebarOpen(prev => !prev)}
-                                sx={{
-                                    height: "3rem",
-                                    padding: "0 2rem",
-                                }}>
-                                <div className="flex fit">
-                                    <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.05rem",
-                                        fontSize: "1rem",
-                                        display: 'inline',
-                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                        textDecoration: `none`,
-                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                        backgroundPosition: `100% 100%, 0 100%`,
-                                        backgroundRepeat: `no-repeat`,
-                                        transition: `background-size .3s`,
-                                        color: 'inherit',
-                                        cursor: "pointer",
-                                        whiteSpace: "pre-line",
-                                        fontWeight: 800,
-                                        textAlign: 'left',
-                                        '&:hover': {
-                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                        }
-                                    }}>Women's</Typography>
-                                </div>
-                                <div className="flex fit">
-                                    <ChevronRight sx={{
-                                        opacity: 0.5
-                                    }} />
-                                </div>
-                            </ButtonBase>
-
-                        </div>
-                    )}
-
-
-                    {activeMenu === 'jewelry' && (
-                        <div className="column fit menuPanel" style={{
-                            opacity: 0
-                        }}>
-                            <ButtonBase
-                                className="flex between middle"
-                                disableRipple
-                                key={'test'}
-                                onClick={() => setIsSidebarOpen(prev => !prev)}
-                                sx={{
-                                    height: "3rem",
-                                    padding: "0 2rem",
-                                }}>
-                                <div className="flex fit">
-                                    <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.05rem",
-                                        fontSize: "1rem",
-                                        display: 'inline',
-                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                        textDecoration: `none`,
-                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                        backgroundPosition: `100% 100%, 0 100%`,
-                                        backgroundRepeat: `no-repeat`,
-                                        transition: `background-size .3s`,
-                                        color: 'inherit',
-                                        cursor: "pointer",
-                                        whiteSpace: "pre-line",
-                                        fontWeight: 800,
-                                        textAlign: 'left',
-                                        '&:hover': {
-                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                        }
-                                    }}>Explore Jewelry</Typography>
-                                </div>
-                                <div className="flex fit">
-                                    <ChevronRight sx={{
-                                        opacity: 0.5
-                                    }} />
-                                </div>
-                            </ButtonBase>
-
-                        </div>
-                    )}
-
-
-                    {activeMenu === 'ponchos' && (
-                        <div className="column fit menuPanel" style={{
-                            opacity: 0
-                        }}>
-                            <ButtonBase
-                                className="flex between middle"
-                                disableRipple
-                                key={'test'}
-                                onClick={() => setIsSidebarOpen(prev => !prev)}
-                                sx={{
-                                    height: "3rem",
-                                    padding: "0 2rem",
-                                }}>
-                                <div className="flex fit">
-                                    <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.05rem",
-                                        fontSize: "1rem",
-                                        display: 'inline',
-                                        backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                        textDecoration: `none`,
-                                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                        backgroundPosition: `100% 100%, 0 100%`,
-                                        backgroundRepeat: `no-repeat`,
-                                        transition: `background-size .3s`,
-                                        color: 'inherit',
-                                        cursor: "pointer",
-                                        whiteSpace: "pre-line",
-                                        fontWeight: 800,
-                                        textAlign: 'left',
-                                        '&:hover': {
-                                            backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                        }
-                                    }}>Explore Ponchos</Typography>
-                                </div>
-                                <div className="flex fit">
-                                    <ChevronRight sx={{
-                                        opacity: 0.5
-                                    }} />
-                                </div>
-                            </ButtonBase>
-
-                            <div className="column" style={{
-                                padding: "2rem"
+                        {activeMenu === 'outerwear' && (
+                            <div className="column fit menuPanel" style={{
+                                opacity: 0
                             }}>
-                                <div className="column compact">
+                                <ButtonBase
+                                    className="flex between middle"
+                                    disableRipple
+                                    key={'outerwear_all'}
+                                    onClick={() => router.push('/outerwear')}
+                                    sx={{
+                                        height: "3rem",
+                                        padding: "0 2rem",
+                                    }}>
+                                    <div className="flex fit">
+                                        <Typography variant="h6" sx={{
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.05rem",
+                                            fontSize: "1rem",
+                                            display: 'inline',
+                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                            textDecoration: `none`,
+                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                            backgroundPosition: `100% 100%, 0 100%`,
+                                            backgroundRepeat: `no-repeat`,
+                                            transition: `background-size .3s`,
+                                            color: 'inherit',
+                                            cursor: "pointer",
+                                            whiteSpace: "pre-line",
+                                            fontWeight: 800,
+                                            textAlign: 'left',
+                                            '&:hover': {
+                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                            }
+                                        }}>Explore All Outerwear</Typography>
+                                    </div>
+                                    <div className="flex fit">
+                                        <ChevronRight sx={{
+                                            opacity: 0.5
+                                        }} />
+                                    </div>
+                                </ButtonBase>
+                                <div className="flex" style={{
+                                    padding: "0 2rem"
+                                }}>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 0.5rem)",
+                                        maxWidth: "10rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Men's</Typography>
+                                    </div>
+                                    <div className="column compact" style={{
+                                        width: "calc(50% - 0.5rem)",
+                                        maxWidth: "10rem"
+                                    }}>
+                                        <div style={{
+                                            width: "100%",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Women's</Typography>
+                                    </div>
+                                </div>
+                                <div className="column snug fit">
+                                    <ButtonBase
+                                        className="flex between middle"
+                                        disableRipple
+                                        key={'cardigan'}
+                                        onClick={() => setIsSidebarOpen(prev => !prev)}
+                                        sx={{
+                                            height: "3rem",
+                                            padding: "0 2rem",
+                                        }}>
+                                        <div className="flex fit">
+                                            <Typography variant="h6" sx={{
+                                                textTransform: "uppercase",
+                                                letterSpacing: "0.05rem",
+                                                fontSize: "1rem",
+                                                display: 'inline',
+                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                                textDecoration: `none`,
+                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                                backgroundPosition: `100% 100%, 0 100%`,
+                                                backgroundRepeat: `no-repeat`,
+                                                transition: `background-size .3s`,
+                                                color: 'inherit',
+                                                cursor: "pointer",
+                                                whiteSpace: "pre-line",
+                                                fontWeight: 800,
+                                                textAlign: 'left',
+                                                '&:hover': {
+                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                                }
+                                            }}>Cardigans</Typography>
+                                        </div>
+                                        <div className="flex fit">
+                                            <ChevronRight sx={{
+                                                opacity: 0.5
+                                            }} />
+                                        </div>
+                                    </ButtonBase>
 
-                                    <CoverImage url={'/P1120417.jpg'} width={"100%"} height={"22rem"} />
-                                    <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography>
+                                    <ButtonBase
+                                        className="flex between middle"
+                                        disableRipple
+                                        key={'hoodies'}
+                                        onClick={() => setIsSidebarOpen(prev => !prev)}
+                                        sx={{
+                                            height: "3rem",
+                                            padding: "0 2rem",
+                                        }}>
+                                        <div className="flex fit">
+                                            <Typography variant="h6" sx={{
+                                                textTransform: "uppercase",
+                                                letterSpacing: "0.05rem",
+                                                fontSize: "1rem",
+                                                display: 'inline',
+                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                                textDecoration: `none`,
+                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                                backgroundPosition: `100% 100%, 0 100%`,
+                                                backgroundRepeat: `no-repeat`,
+                                                transition: `background-size .3s`,
+                                                color: 'inherit',
+                                                cursor: "pointer",
+                                                whiteSpace: "pre-line",
+                                                fontWeight: 800,
+                                                textAlign: 'left',
+                                                '&:hover': {
+                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                                }
+                                            }}>Hoodies</Typography>
+                                        </div>
+                                        <div className="flex fit">
+                                            <ChevronRight sx={{
+                                                opacity: 0.5
+                                            }} />
+                                        </div>
+                                    </ButtonBase>
+
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+
+                        {activeMenu === 'jewelry' && (
+                            <div className="column fit menuPanel" style={{
+                                opacity: 0
+                            }}>
+                                <ButtonBase
+                                    className="flex between middle"
+                                    disableRipple
+                                    key={'test'}
+                                    onClick={() => setIsSidebarOpen(prev => !prev)}
+                                    sx={{
+                                        height: "3rem",
+                                        padding: "0 2rem",
+                                    }}>
+                                    <div className="flex fit">
+                                        <Typography variant="h6" sx={{
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.05rem",
+                                            fontSize: "1rem",
+                                            display: 'inline',
+                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                            textDecoration: `none`,
+                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                            backgroundPosition: `100% 100%, 0 100%`,
+                                            backgroundRepeat: `no-repeat`,
+                                            transition: `background-size .3s`,
+                                            color: 'inherit',
+                                            cursor: "pointer",
+                                            whiteSpace: "pre-line",
+                                            fontWeight: 800,
+                                            textAlign: 'left',
+                                            '&:hover': {
+                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                            }
+                                        }}>Explore All Jewelry</Typography>
+                                    </div>
+                                    <div className="flex fit">
+                                        <ChevronRight sx={{
+                                            opacity: 0.5
+                                        }} />
+                                    </div>
+                                </ButtonBase>
+                                <div className="flex between" style={{
+                                    padding: "0 2rem"
+                                }}>
+                                    <div className="column compact">
+                                        <div style={{
+                                            width: "10rem",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Men's</Typography>
+                                    </div>
+                                    <div className="column compact">
+                                        <div style={{
+                                            width: "10rem",
+                                            height: "10rem",
+                                            backgroundColor: "lightGrey"
+                                        }}></div>
+                                        <Typography sx={{ textAlign: "center" }}>Women's</Typography>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        )}
+
+
+                        {activeMenu === 'ponchos' && (
+                            <div className="column fit menuPanel" style={{
+                                opacity: 0
+                            }}>
+                                <ButtonBase
+                                    className="flex between middle"
+                                    disableRipple
+                                    key={'test'}
+                                    onClick={() => setIsSidebarOpen(prev => !prev)}
+                                    sx={{
+                                        height: "3rem",
+                                        padding: "0 2rem",
+                                    }}>
+                                    <div className="flex fit">
+                                        <Typography variant="h6" sx={{
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.05rem",
+                                            fontSize: "1rem",
+                                            display: 'inline',
+                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                            textDecoration: `none`,
+                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                            backgroundPosition: `100% 100%, 0 100%`,
+                                            backgroundRepeat: `no-repeat`,
+                                            transition: `background-size .3s`,
+                                            color: 'inherit',
+                                            cursor: "pointer",
+                                            whiteSpace: "pre-line",
+                                            fontWeight: 800,
+                                            textAlign: 'left',
+                                            '&:hover': {
+                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                            }
+                                        }}>Explore Ponchos</Typography>
+                                    </div>
+                                    <div className="flex fit">
+                                        <ChevronRight sx={{
+                                            opacity: 0.5
+                                        }} />
+                                    </div>
+                                </ButtonBase>
+
+                                <div className="column" style={{
+                                    padding: "0 2rem"
+                                }}>
+                                    <div className="column compact">
+
+                                        <CoverImage url={'/P1120417.jpg'} width={"100%"} height={"22rem"} />
+                                        <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                    </div>
 
                     <div className="column fit" style={{
                         padding: "1rem 0rem"
@@ -531,16 +715,16 @@ export default function Header({ Cart, color, setColor }: {
                 </div>
             </div>
 
-            {/* <div style={{
-                position: 'absolute',
-                top: 0,
-                width: "100%",
-                height: "30rem",
-                backgroundColor: "transparent",
-                backdropFilter: "blur(100px)",
-                maskImage: "linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%)",
-                WebkitMaskImage: "linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1)"
-            }}></div> */}
+            {isSidebarOpen && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    width: "100vw",
+                    height: headerHeight,
+                    backgroundColor: color,
+                    zIndex: 5
+                }}></div>
+            )}
             <header
                 className="column snug"
                 style={{
@@ -569,6 +753,7 @@ export default function Header({ Cart, color, setColor }: {
                     {isSm && (
                         <div className="flex fit">
                             <IconButton onClick={() => {
+                                handleSwitchTab('menu')
                                 isSidebarOpen ? handleCloseSidebar() : handleOpenSidebar()
                             }}>
                                 <MenuOutlined />
@@ -579,7 +764,7 @@ export default function Header({ Cart, color, setColor }: {
 
                     <div className="flex fit" style={isSm ? {
                         position: 'absolute',
-                        top: "0.5rem",
+                        top: isSm ? "0rem" : "0.5rem",
                         left: "50vw",
                         transform: 'translateX(-50%)'
                     } : {
@@ -587,20 +772,20 @@ export default function Header({ Cart, color, setColor }: {
                     }}>
                         {theme.palette.getContrastText(color) === '#fff' ? (
                             <Image id="logo" src={TerandinaWhite} alt="Terandina"
-                            onClick={() => router.push('/')}
-                            style={{
-                                width: "auto",
-                                height: "4rem",
-                                opacity: 0
-                            }} />
+                                onClick={() => router.push('/')}
+                                style={{
+                                    width: "auto",
+                                    height: "4rem",
+                                    opacity: 0
+                                }} />
                         ) : (
                             <Image id="logo" src={TerandinaLogo} alt="Terandina"
-                            onClick={() => router.push('/')}
-                            style={{
-                                width: "auto",
-                                height: "4rem",
-                                opacity: 0
-                            }} />
+                                onClick={() => router.push('/')}
+                                style={{
+                                    width: "auto",
+                                    height: "4rem",
+                                    opacity: 0
+                                }} />
                         )}
 
                         {!isSm && (
@@ -652,32 +837,39 @@ export default function Header({ Cart, color, setColor }: {
                         {router.asPath === "/checkout" ? (
                             <Button variant="contained" onClick={() => router.push('/')}>Continue Shopping</Button>
                         ) : (
-                            <div className="flex compact fit">
+                            <div className="flex snug fit">
                                 {/* <ColorPicker color={color} setColor={setColor} /> */}
-                                <IconButton onClick={() => {
-                                    return;
-                                }}>
-                                    <SearchOutlined sx={{
-                                        color: theme.palette.getContrastText(color)
-                                    }} />
-                                </IconButton>
-                                <Badge
-                                    badgeContent={Cart.cart?.length || 0}
-                                    invisible={!Cart.cart || Cart.cart.length === 0}
-                                    sx={{
-                                        '& .MuiBadge-badge': {
-                                            backgroundColor: color,
-                                            color: theme.palette.getContrastText(color)
-                                        }
+
+                                <div className="flex compact fit">
+                                    <IconButton onClick={() => {
+                                        return;
                                     }}>
-                                    <Tooltip title="My Cart">
-                                        <IconButton onClick={() => Cart.toggleSidebar()}>
-                                            <ShoppingBagOutlined sx={{
+                                        <SearchOutlined sx={{
+                                            color: theme.palette.getContrastText(color)
+                                        }} />
+                                    </IconButton>
+                                    <Badge
+                                        badgeContent={Cart.cart?.length || 0}
+                                        invisible={!Cart.cart || Cart.cart.length === 0}
+                                        sx={{
+                                            '& .MuiBadge-badge': {
+                                                backgroundColor: color,
                                                 color: theme.palette.getContrastText(color)
-                                            }} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Badge>
+                                            }
+                                        }}>
+                                        <Tooltip title="My Cart">
+                                            <IconButton onClick={() => Cart.toggleSidebar()}>
+                                                <ShoppingBagOutlined sx={{
+                                                    color: theme.palette.getContrastText(color)
+                                                }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Badge>
+                                </div>
+                                <ScrollButton variant="contained" onClick={() => router.push('/products')} sx={{
+                                    height: "2.5rem",
+                                    marginLeft: "1rem"
+                                }}>Shop All</ScrollButton>
                             </div>
                         )}
                     </div>
