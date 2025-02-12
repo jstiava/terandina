@@ -579,9 +579,8 @@ export default function Home(props: StripeAppProps) {
           >
             {featuredProducts.map(product => (
 
-              <SwiperSlide className="slide">
+              <SwiperSlide className="slide" key={product.id}>
                 <ProductCard
-                  key={product.id}
                   product={product}
                   addToCart={props.Cart.add}
                   style={{
