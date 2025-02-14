@@ -10,6 +10,7 @@ export interface StripePrice extends Stripe.Price {
     product: string;
     unit_amount: number;
     currency: string;
+    inventory?: number;
 }
 export interface StripeProduct extends Stripe.Product {
     id: string,
@@ -23,4 +24,10 @@ export interface StripeProduct extends Stripe.Product {
     // checkout
     selectedPrice: StripePrice,
     quantity: number,
+}
+
+export interface VariantProductStub {
+    url: string,
+    pattern: "image" | "duo" | "single" | "diamond",
+    product_id: string
 }

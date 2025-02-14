@@ -1,10 +1,72 @@
 import { StripePrice, StripeProduct } from "@/types";
+import Mongo from "@/utils/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
+const sizeOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+
+async function handlePostRequest(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
+) {
 
 
-async function getProductById(productId: string) : Promise<any | null> {
+  try {
+    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
+    const newProduct: StripeProduct = req.body.product;
+    const newPrices: StripePrice[] = newProduct.prices;
+
+    if (!newProduct) {
+      return res.status(500).json({ message: "No product." })
+    }
+
+    const theProduct = await stripe.products.create({
+      name: newProduct.name,
+      description: newProduct.description,
+      images: newProduct.images
+    })
+
+    if (newPrices) {
+      const pricesSorted = newPrices.sort((a, b) => {
+        if (!a.nickname && !b.nickname) {
+          return 0;
+        }
+        if (!a.nickname) {
+          return -1;
+        }
+        if (!b.nickname) {
+          return 1;
+        }
+        return sizeOrder.indexOf(a.nickname) - sizeOrder.indexOf(b.nickname);
+      })
+
+      const addNewPrices = pricesSorted.map(price => {
+        return stripe.prices.create({
+          product: theProduct.id,
+          unit_amount: price.unit_amount,
+          currency: 'USD'
+        });
+      });
+
+      Promise.all(addNewPrices);
+    }
+
+    return res.status(200).json({
+      message: "Success",
+    })
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Something went wrong.");
+  }
+}
+
+
+async function deleteProductById(productId: string): Promise<boolean> {
+  return false;
+}
+
+async function getProductById(productId: string): Promise<any | null> {
   try {
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
     const product = await stripe.products.retrieve(productId);
@@ -25,63 +87,112 @@ async function getProductById(productId: string) : Promise<any | null> {
 
 async function getAllProducts() {
   try {
-    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
-    const products = await stripe.products.list({
-        limit: 10,
-        active: true
-      });
+    const mongo = await Mongo.getInstance();
 
-    const prices = await stripe.prices.list({
-      active: true
-    })
+    const products = await mongo.clientPromise.db('products').collection('products').find().toArray()
 
-    const productsWithPrices = products.data.map(product => {
-      return {
-        ...product,
-        prices: prices.data.filter(price => price.product === product.id)
-      }
-    })
-
-    return productsWithPrices;
+    return products;
   } catch (error) {
     console.error('Error retrieving products:', error);
   }
 }
 
 
-export default async function handleRequest(
-    req: NextApiRequest,
-    res: NextApiResponse<any>,
+async function handleDeleteRequest(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
 ) {
-    if (req.method != 'GET') {
-        res.status(405).end('Method Not Allowed');
+
+  const product_id = req.query.id
+
+  try {
+    const product = await deleteProductById(String(product_id))
+    if (!product) {
+      throw Error("No product found by that id.")
     }
+    return res.status(200).json({
+      message: "Success. Got one product.",
+      product
+    })
+  }
+  catch (err) {
+    return res.status(400).json({ message: "Failure" })
+  }
+}
 
-    const product_id = req.query.id;
 
-    if (product_id) {
-      const product = await getProductById(String(product_id))
-      if (!product) {
-        throw Error("No product found by that id.")
-      }
-      return res.status(200).json({
-        message: "Success. Got one product.",
-        product
-      })
+async function handlePatchRequest(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
+) {
+
+  const product_id = req.query.id
+
+  try {
+    // const product = await deleteProductById(String(product_id))
+    // if (!product) {
+    //   throw Error("No product found by that id.")
+    // }
+    // return res.status(200).json({
+    //   message: "Success. Got one product.",
+    //   product
+    // })
+  }
+  catch (err) {
+    return res.status(400).json({ message: "Failure" })
+  }
+
+  return res.status(400).json({ message: "Not implemented" })
+}
+
+
+
+export default async function handleRequest(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
+) {
+
+  if (req.method === 'POST') {
+    return handlePostRequest(req, res);
+  }
+
+  if (req.method === 'DELETE') {
+    return handleDeleteRequest(req, res);
+  }
+
+  if (req.method === 'PATCH') {
+    return handlePatchRequest(req, res);
+  }
+
+  if (req.method != 'GET') {
+    res.status(405).end('Method Not Allowed');
+  }
+
+  const product_id = req.query.id;
+
+  if (product_id) {
+    const product = await getProductById(String(product_id))
+    if (!product) {
+      throw Error("No product found by that id.")
     }
+    return res.status(200).json({
+      message: "Success. Got one product.",
+      product
+    })
+  }
 
-    try {
-       const products = await getAllProducts();
+  try {
+    const products = await getAllProducts();
 
-       if (!products) {
-        throw Error("No products.")
-       }
-        res.status(200).json({ 
-            message: "Success",
-            products
-        })
-    } catch (err) {
-        console.log(err);
-        res.status(500).json("Something went wrong.");
+    if (!products) {
+      throw Error("No products.")
     }
+    res.status(200).json({
+      message: "Success",
+      products
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Something went wrong.");
+  }
 }

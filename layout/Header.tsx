@@ -67,7 +67,7 @@ export default function Header({ Cart, color, setColor }: {
     const theme = useTheme();
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeMenu, setActiveMenu] = useState('ponchos');
+    const [activeMenu, setActiveMenu] = useState('placeholder');
 
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 

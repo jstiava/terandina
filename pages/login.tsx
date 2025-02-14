@@ -3,8 +3,9 @@ import React, { ChangeEvent, ChangeEventHandler, useState } from 'react';
 
 import { Button, Link, TextField, SelectChangeEvent, useTheme, Typography } from '@mui/material';
 import router, { useRouter } from 'next/router';
+import { StripeAppProps } from '@/types';
 
-export default function LoginPage(props: any) {
+export default function LoginPage(props: StripeAppProps) {
 
     const router = useRouter();
     const theme = useTheme();
@@ -38,13 +39,29 @@ export default function LoginPage(props: any) {
         }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         console.log('Log in button pressed.');
         const allValuesFilled = Object.values(loginCred).every(value => value !== '');
         if (!allValuesFilled) {
             console.log("Not all fields are filled.")
         }
-        props.Session.login(loginCred);
+        
+        const response = await fetch('api/login', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(loginCred)
+        })
+
+        if (!response.ok) {
+            console.log("Something went wrong.")
+        }
+
+        const data = await response.json();
+        console.log("Login successful");
+        // router.push('/admin')
+        
     };
 
     return (
