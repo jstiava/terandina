@@ -34,9 +34,8 @@ export default async function handleRequest(
       sig,
       endpointSecret
     );
-
+    
     res.status(200).json({ message: "Thank you, Stripe"})
-
   } catch (err: any) {
 
     console.error("Webhook Error:", err.message);
