@@ -267,6 +267,11 @@ export default function AdminPage() {
         for (i; i < response.products.length; i++) {
             const product = response.products[i];
             if (!product.prices || product.prices.length === 0) {
+                productList.push({
+                    ...product,
+                    quantity: 1,
+                    selectedPrice: null
+                })
                 continue;
             }
             productList.push({
