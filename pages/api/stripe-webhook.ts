@@ -6,16 +6,11 @@ import { unique } from "next/dist/build/utils";
 import Stripe from "stripe";
 import { buffer } from 'micro';
 
-
-/**
- * product.created
- * product.deleted
- * product.updated
- * @param req 
- * @param res 
- * @returns 
- */
-
+export const config = {
+  api: {
+    bodyParser: false, // 🔥 Disable automatic JSON parsing
+  },
+}
 
 export default async function handleRequest(
   req: NextApiRequest,
@@ -40,6 +35,8 @@ export default async function handleRequest(
       endpointSecret
     );
 
+    res.status(200).json({ message: "Thank you, Stripe"})
+
   } catch (err: any) {
 
     console.error("Webhook Error:", err.message);
@@ -57,7 +54,7 @@ export default async function handleRequest(
       await mongo.clientPromise.db('products').collection('products').insertOne(product);
 
 
-      return res.status(200).json({ message: "Successfully added." })
+      return;
     }
 
     if (event.type === "product.updated") {
@@ -73,7 +70,7 @@ export default async function handleRequest(
         }
       })
 
-      return res.status(200).json({ message: "Successfully updated." })
+      return;
 
       // TODO: Remove the product from your database
     }
@@ -86,7 +83,7 @@ export default async function handleRequest(
       }) as WithId<StripeProduct> | null
 
       if (!theProduct) {
-        return res.status(500).json({ message: "No product found." })
+        return;
       }
 
       let newPrices = theProduct.prices;
@@ -111,7 +108,7 @@ export default async function handleRequest(
         prices: newPrices
       })
 
-      return res.status(200).json({ message: "Successfully updated." })
+      return;
     }
 
 
@@ -123,7 +120,7 @@ export default async function handleRequest(
       }) as WithId<StripeProduct> | null
 
       if (!theProduct) {
-        return res.status(500).json({ message: "No product found." })
+        return;
       }
 
       const thePrice = theProduct?.prices.find(p => p.id === price.id);
@@ -138,7 +135,7 @@ export default async function handleRequest(
             unit_amount: 1
           }]
         })
-        return res.status(201).json({ message: "Price was added to list." })
+        return;
       }
 
       const newPrices = theProduct.prices.filter(x => x.id != price.id);
@@ -154,12 +151,12 @@ export default async function handleRequest(
         prices: newPrices
       })
 
-      return res.status(200).json({ message: "Successfully updated." })
+      return;
     }
 
-    res.status(200).send("Webhook received");
+    return;
   } catch (error) {
     console.error("Database update failed:", error);
-    res.status(500).send("Server error");
+    console.log("Error")
   }
 }
