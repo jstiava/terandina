@@ -31,28 +31,36 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
      {isHovering && images.length > 1 && (
       <>
        <IconButton 
-       onClick={() => setActive(prev => {
-        const newIndex = prev - 1;
-        return newIndex === -1 ? 0 : newIndex
-      })}
+       onClick={(e) => {
+        e.stopPropagation();
+        setActive(prev => {
+          const newIndex = prev - 1;
+          return newIndex === -1 ? 0 : newIndex
+        })
+       }}
        sx={{
         position: 'absolute',
-        left: "1rem",
-        bottom: "9rem",
-        border: `1px solid ${theme.palette.text.primary}`
+        right: "4rem",
+        top: "1rem",
+        border: `1px solid ${theme.palette.text.primary}`,
+        zIndex: 10
       }}>
         <ChevronLeft />
       </IconButton>
       <IconButton 
-        onClick={() => setActive(prev => {
-          const newIndex = prev + 1;
-          return newIndex === images.length ? 0 : newIndex
-        })}
+        onClick={(e) => {
+          e.stopPropagation();
+          setActive(prev => {
+            const newIndex = prev + 1;
+            return newIndex === images.length ? 0 : newIndex
+          })
+        }}
       sx={{
         position: 'absolute',
         right: "1rem",
-        bottom: "9rem",
-        border: `1px solid ${theme.palette.text.primary}`
+        top: "1rem",
+        border: `1px solid ${theme.palette.text.primary}`,
+        zIndex: 10
       }}>
         <ChevronRight />
       </IconButton>

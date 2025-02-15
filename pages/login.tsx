@@ -60,7 +60,7 @@ export default function LoginPage(props: StripeAppProps) {
 
         const data = await response.json();
         console.log("Login successful");
-        // router.push('/admin')
+        router.push('/admin')
         
     };
 

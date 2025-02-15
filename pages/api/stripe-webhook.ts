@@ -1,3 +1,4 @@
+import Mongo from "@/utils/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
@@ -32,11 +33,16 @@ export default async function handleRequest(
 
 
     try {
+
+      const mongo = await Mongo.getInstance();
         if (event.type === "product.created" || event.type === "product.updated") {
           const product = event.data.object as Stripe.Product;
           console.log("Updating product:", product);
-    
-          // TODO: Update your database with the new product details
+
+          await mongo.clientPromise.db('products').collection('products').insertOne(product);
+
+
+          return res.status(200).json({ message: "Successfully added."})
         }
     
         if (event.type === "product.deleted") {

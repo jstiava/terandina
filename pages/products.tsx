@@ -65,14 +65,15 @@ export default function Home(props: StripeAppProps) {
             <div className="column center"
                 style={{
                     width: "100%",
-                    padding: "2rem",
+                    padding: isSm ? "0.5rem" : "2rem",
                     marginTop: "6rem",
                     color: '#000000'
                 }}>
-                <div className={isSm ? 'column compact' : 'flex between'} style={{
+                <div className={isSm ? 'flex compact' : 'flex between'} style={{
                     flexWrap: 'wrap',
                     color: theme.palette.text.primary,
-                    maxWidth: "80rem"
+                    maxWidth: "80rem",
+                    width: "100%"
                 }}>
                     {products.map((product, index) => {
                         const row = Math.floor(index / 3);
@@ -87,6 +88,7 @@ export default function Home(props: StripeAppProps) {
                                 addToCart={props.Cart.add}
                                 style={{
                                     animationDelay: `${delay}ms`,
+                                    width: isSm ? "calc(50% - 0.5rem)" : "unset"
                                 }}
                             />
                         )

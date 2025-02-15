@@ -91,7 +91,7 @@ export default function ProductCard({
     }, [product]);
 
 
-    const handleAddToCart = (e : any) => {
+    const handleAddToCart = (e: any) => {
         e.stopPropagation();
 
         if (!product || !product.prices) {
@@ -111,7 +111,11 @@ export default function ProductCard({
     return (
         <ButtonBase className="column left top"
             disableRipple
-            onMouseEnter={() => setIsHovering(true)}
+            onMouseEnter={() => {
+                if (!isSm) {
+                    setIsHovering(true);
+                }
+            }}
             onMouseLeave={() => setIsHovering(false)}
             onClick={() => router.push(`/item/${product.id}`)}
             style={{
@@ -133,10 +137,11 @@ export default function ProductCard({
                     <CoverImageCarousel
                         images={product.images}
                         width="100%"
-                        height="21.5rem"
+                        height={isSm ? "12rem" : "21.5rem"}
                         isHovering={isHovering}
                         style={{
                             // borderRadius: "0.5rem",
+                            aspectRatio: "1 / 1",
                             overflow: 'hidden'
                         }} />
                     {isHovering && (
@@ -151,37 +156,39 @@ export default function ProductCard({
                     )}
                 </div>
             )}
-            <div className="flex between top"
+            <div className={isSm ? "column compact" : "flex between top"}
                 style={{
                     opacity: isHovering ? 0.85 : 1,
                     transition: "0.25s ease-in-out"
                 }}
             >
                 <div className="column compact" style={{
-                    maxWidth: "calc(100% - 5rem)",
+                    maxWidth: isSm ? "100%" : "calc(100% - 5rem)",
                 }}>
-                <Typography variant="h5" sx={{
-                    width: "fit-content",
-                    lineHeight: "115%",
-                    textAlign: 'left',
-                    fontSize: "1rem"
-                }}>{product.name}</Typography>
-                <PriceSelector 
-                    product={copyOfProduct} 
-                    handleChangePrice={handleChangePrice} 
-                />
+                    <PriceSelector
+                        product={copyOfProduct}
+                        handleChangePrice={handleChangePrice}
+                    />
+                    <Typography variant="h5" sx={{
+                        width: "fit-content",
+                        lineHeight: "115%",
+                        textAlign: 'left',
+                        fontSize: "1rem",
+                        height: "2.5rem"
+                        
+                    }}>{product.name}</Typography>
                 </div>
                 <DisplayPrice product={copyOfProduct} />
             </div>
             <div className="flex between">
-            {isSm && (
-                <Button variant="contained"
-                onClick={handleAddToCart}
-                fullWidth
-                sx={{
-                    height: "2.5rem"
-                }}>Add to Cart</Button>
-            )}
+                {isSm && (
+                    <Button variant="contained"
+                        onClick={handleAddToCart}
+                        fullWidth
+                        sx={{
+                            height: "2.5rem"
+                        }}>Add to Cart</Button>
+                )}
             </div>
         </ButtonBase>
     )

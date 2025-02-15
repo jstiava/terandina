@@ -68,17 +68,13 @@ async function deleteProductById(productId: string): Promise<boolean> {
 
 async function getProductById(productId: string): Promise<any | null> {
   try {
-    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
-    const product = await stripe.products.retrieve(productId);
+    const mongo = await Mongo.getInstance();
 
-    const prices = await stripe.prices.list({
-      product: productId,
-    });
+    const [product] = await mongo.clientPromise.db('products').collection('products').find({
+      id: productId
+    }).toArray()
 
-    return {
-      ...product,
-      prices: prices.data
-    };
+    return product
   } catch (error) {
     console.error("Error retrieving product:", error);
     return null;
@@ -121,22 +117,54 @@ async function handleDeleteRequest(
 }
 
 
+const allowedFields : (keyof StripeProduct)[] = ['images'];
+
+async function handleUpdateProduct(product_id : string, data: Partial<StripeProduct>) {
+  try {
+    const mongo = await Mongo.getInstance();
+
+    const updateData: Record<string, any> = {};
+
+    for (const key of allowedFields) {
+      if (key in data) {
+        updateData[key] = data[key]!;
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      console.log('No valid fields to update.');
+      return;
+    }
+
+    const products = await mongo.clientPromise.db('products').collection('products').updateOne({
+      id: product_id
+    }, {
+      $set: updateData
+    })
+
+    return true;
+  } catch (error) {
+    console.error('Error updating product:', error);
+  }
+  return false;
+}
+
 async function handlePatchRequest(
   req: NextApiRequest,
   res: NextApiResponse<any>,
 ) {
 
-  const product_id = req.query.id
+  const product_id = req.query.id;
+  const data = req.body;
 
   try {
-    // const product = await deleteProductById(String(product_id))
-    // if (!product) {
-    //   throw Error("No product found by that id.")
-    // }
-    // return res.status(200).json({
-    //   message: "Success. Got one product.",
-    //   product
-    // })
+    const product = await handleUpdateProduct(String(product_id), data)
+    if (!product) {
+      throw Error("No product found by that id.")
+    }
+    return res.status(200).json({
+      message: "Success. Updated product.",
+    })
   }
   catch (err) {
     return res.status(400).json({ message: "Failure" })

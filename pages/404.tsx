@@ -18,7 +18,7 @@ export default function ErrorPage(props: StripeAppProps) {
             style={{
                 width: "100%",
                 padding: "15vh 0.5rem 0 0.5rem",
-                height: "calc(100vh - 5rem)",
+                height: "100vh",
                 backgroundColor: theme.palette.primary.main,
                 color: theme.palette.primary.contrastText
             }}>
@@ -26,7 +26,7 @@ export default function ErrorPage(props: StripeAppProps) {
             <Typography variant="h1" sx={{
                 fontSize: "8rem"
             }}>404</Typography>
-            <Typography variant="h2">Errors don&apos;t make us cozy either.</Typography>
+            <Typography variant="h2">Something went wrong.</Typography>
             <Button variant="flipped" onClick={() => router.push('/')}>
                 Go to Homepage
             </Button>

@@ -33,6 +33,22 @@ import ManagePhotosField from "@/components/ManagePhotosField";
 const MAX_IMAGES = 3;
 
 
+const alphaComparator: GridComparatorFn<string> = (v1, v2) => {
+    if (v1 < v2) return -1;
+    if (v1 > v2) return 1;
+    return 0;
+};
+
+const nameAlphaComparator: GridComparatorFn<any> = (v1, v2, cellParams1, cellParams2) => {
+    return alphaComparator(
+        v1.name,
+        v2.name,
+        cellParams1,
+        cellParams2,
+    );
+};
+
+
 export default function AdminPage() {
 
     const [images, setImages] = useState<UploadType[]>([]);
@@ -83,8 +99,9 @@ export default function AdminPage() {
         {
             field: "images",
             headerName: "Images",
+            sortable: false,
             width: 100,
-            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField params={params} onChange={(uploads) => {
+            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField key={params.row.id} params={params} onChange={(uploads) => {
                 const row = products?.find(x => params.row.id);
                 if (!row) {
                     return;
@@ -93,14 +110,11 @@ export default function AdminPage() {
                     ...row,
                     images: uploads
                 })
-            }}/>
+            }} />
         },
         {
             field: "name",
             headerName: "Name",
-            sortComparator: (a, b) => {
-                return 0
-            },
             width: 250,
             editable: true,
             renderCell: (params: GridRenderCellParams<StripeProduct, string>) => {
@@ -151,6 +165,7 @@ export default function AdminPage() {
             field: "prices",
             headerName: "Price & Quantity",
             width: 300,
+            sortable: false,
             renderCell: (params: GridRenderCellParams<StripeProduct, StripePrice[]>) => {
                 return (
                     <div className="column snug" style={{
@@ -202,12 +217,14 @@ export default function AdminPage() {
                 if (isInEditMode) {
                     return [
                         <GridActionsCellItem
+                            key="save"
                             icon={<SaveOutlined />}
                             label="Save"
                             color="primary"
-                          onClick={handleSaveClick(id)}
+                            onClick={handleSaveClick(id)}
                         />,
                         <GridActionsCellItem
+                            key="cancel"
                             icon={<CancelOutlined />}
                             label="Cancel"
                             className="textPrimary"
@@ -219,6 +236,7 @@ export default function AdminPage() {
 
                 return [
                     <GridActionsCellItem
+                        key="edit"
                         icon={<EditOutlined />}
                         label="Edit"
                         className="textPrimary"
@@ -317,6 +335,9 @@ export default function AdminPage() {
                     width: "100%"
                 }}>
                     <DataGrid
+                        getRowId={(row) => {
+                            return row.id;
+                        }}
                         rows={products}
                         columns={columns}
                         editMode="row"

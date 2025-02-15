@@ -61,7 +61,7 @@ export default function Home(props: StripeAppProps) {
         });
     }
 
-    const handleAddToCart = (e : any) => {
+    const handleAddToCart = (e: any) => {
         e.stopPropagation();
 
         if (!product || !product.prices) {
@@ -89,32 +89,52 @@ export default function Home(props: StripeAppProps) {
     }
 
     return (
+        <>
+        <div className="column compact" style={{
+            position: "fixed",
+            bottom: "2rem",
+            left: "3rem",
+            // backgroundColor: 'red',
+            zIndex: 100
+        }}>
+            {product.images && product.images.map(image => (
+                <div 
+                key={image}
+                style={{
+                    width: "0.75rem",
+                    height: "0.75rem",
+                    borderRadius: "100%",
+                    border: "0.15rem solid black"
+                }}></div>
+            ))}
+        </div>
         <div className="column center"
             style={{
                 width: "100%",
-                padding: "0.5rem",
+                padding: "0.5rem 2rem",
                 marginTop: isSm ? "0rem" : "5rem"
             }}>
 
-            <div className={isSm ? 'column relaxed' : 'flex between top'} style={{
+            <div className={isSm ? 'column relaxed' : 'flex top'} style={{
                 position: 'relative',
                 flexWrap: 'wrap',
                 color: theme.palette.text.primary,
-                maxWidth: "70rem"
+                // maxWidth: "70rem"
             }}>
                 <div className="column" style={{
-                    width: isSm ? "100%" : "45%",
+                    width: isSm ? "100%" : "40%",
                 }}>
-                    {product.images && product.images.length > 0 && (
+                    {product.images && product.images.map(image => (
                         <CoverImage
-                            url={product.images[0]}
+                            key={image}
+                            url={image}
                             width="100%"
-                            height="80vh"
+                            height="90vh"
                         />
-                    )}
+                    ))}
                 </div>
                 <div className="column relaxed" style={{
-                    width: isSm ? "100%" : "45%",
+                    width: isSm ? "100%" : "30%",
                     padding: "3rem",
                     position: "sticky",
                     top: "6rem"
@@ -124,7 +144,7 @@ export default function Home(props: StripeAppProps) {
                     {product.prices && product.prices.length > 1 && (
                         <>
                             <PriceSelector
-                            size="large"
+                                size="large"
                                 product={product}
                                 handleChangePrice={handleChangePrice}
                             />
@@ -135,17 +155,18 @@ export default function Home(props: StripeAppProps) {
                             fontSize: "2rem",
                         }} product={product}
                     />
-                     <Button variant="contained"
-                            onClick={handleAddToCart}
-                            fullWidth
-                            sx={{
-                                width: "100%"
-                            }}>Add to Cart</Button>
+                    <Button variant="contained"
+                        onClick={handleAddToCart}
+                        fullWidth
+                        sx={{
+                            width: "100%"
+                        }}>Add to Cart</Button>
                     <Divider sx={{ width: "100%" }}></Divider>
-                    <Typography sx={{fontSize: "1.25rem"}}>{product.description}</Typography>
+                    <Typography sx={{ fontSize: "1.25rem" }}>{product.description}</Typography>
 
                 </div>
             </div>
         </div>
+        </>
     );
 }

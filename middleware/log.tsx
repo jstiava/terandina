@@ -1,4 +1,4 @@
-import Mongo from "@/lib/utils/mongo";
+import Mongo from "@/utils/mongo";
 
 
 export async function logAction(

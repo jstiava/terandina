@@ -3,9 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
 import jwt, { Secret } from 'jsonwebtoken';
-import { ProfileTokenDecrypted } from '@/types/globals';
 
-export default function verifyToken(req: NextApiRequest): ProfileTokenDecrypted {
+export default function verifyToken(req: NextApiRequest): any {
   // Verify the token is valid
   const authorizationHeader = req.headers.session;
   if (!authorizationHeader) {
@@ -14,7 +13,7 @@ export default function verifyToken(req: NextApiRequest): ProfileTokenDecrypted 
   const token = String(authorizationHeader);
 
   // Verify token
-  const userAuth = jwt.verify(token, process.env.JWT_SECRET as Secret) as ProfileTokenDecrypted;
+  const userAuth = jwt.verify(token, process.env.JWT_SECRET as Secret) as any;
   if (!userAuth) {
     throw Error('An error occurred while validating the token.');
   }

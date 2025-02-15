@@ -16,9 +16,10 @@ import {
   Select,
   FormControl,
   SelectChangeEvent,
+  CircularProgress,
 } from '@mui/material';
 import React, { useCallback, useRef, useState, useEffect, ChangeEvent, SetStateAction, MouseEvent, Dispatch } from 'react';
-import { Portrait, ImageOutlined, Remove, SwapHoriz, AddPhotoAlternate, Delete, Update } from '@mui/icons-material';
+import { Portrait, ImageOutlined, Remove, SwapHoriz, AddPhotoAlternate, Delete, Update, DeleteOutlined, DeleteOutline } from '@mui/icons-material';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Image from 'next/image';
@@ -52,12 +53,15 @@ export type UploadType = {
 }
 
 export default function useComplexFileDrop(presets: string[] | null, uploads: UploadType[], setUploads: Dispatch<SetStateAction<UploadType[]>>, callbacks: {
+  onLoading?: () => any
   onInsert?: any
   onDelete?: any,
   onClear?: any
 }) {
   const theme = useTheme();
   const [isDragOver, setIsDragOver] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
 
   const [uploadCount, setUploadCount] = useState(0);
@@ -99,11 +103,11 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
 
 
   const handleRemoveFile = async (uuid: string, isLocal: boolean) => {
-    
+
     setUploads((prev) => {
       const newList = prev.filter((file) => file.url != uuid);
       if (callbacks.onDelete) {
-        callbacks.onDelete();
+        callbacks.onDelete(newList);
       }
       return newList;
     })
@@ -152,6 +156,8 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
           callbacks.onInsert([...prev, ...uploadedFiles]);
           return [...prev, ...uploadedFiles]
         })
+
+        setLoading(false);
       }
     },
     onUploadError: (error) => {
@@ -177,6 +183,7 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
     const filesToUpload = files.slice(0, remainingSlots);
 
     if (filesToUpload.length > 0) {
+      setLoading(true);
       startUpload(filesToUpload);
     }
   };
@@ -188,7 +195,7 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
     setIsDragOver(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      addImage(e.dataTransfer.files); // ✅ Now works correctly
+      addImage(e.dataTransfer.files);
     }
   };
 
@@ -196,36 +203,56 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
 
   const FileUploadForm = (
     <div className='column'>
-      {uploads[0] && (
-        <div className="column" style={{ alignItems: "flex-start", height: 'fit-content', padding: '1rem 0.5rem 0 0', width: "100%" }}>
+        <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', padding: '1rem 0.5rem 0 0', width: "100%", flexWrap: 'wrap' }}>
           <>
             {uploads && uploads.map((upload) => (
-              <div className='flex between' key={upload.url} style={{ width: "100%", position: "relative" }}>
-                <div className="flex compact">
-                <div style={{
-                    width: '8rem',
-                    height: '5rem',
+              <div className='column compact left'
+                key={upload.url}
+                style={{
+                  width: "9rem",
+                  position: "relative",
+                }}>
+                <div className="column compact">
+                  <div style={{
+                    width: '9rem',
+                    height: '9rem',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     borderRadius: '0.5rem',
                     backgroundImage: upload ? `url(${upload.url})` : '',
-                  } }></div>
-                <div className='column compact' style={{ width: "calc(100% - 9rem)" }}>
-                  <Typography component="p" fontSize="0.75rem" style={{ fontWeight: 700, overflowWrap: "break-word", width: "100%" }}>{upload.url}</Typography>
-                  {upload.size && <Typography component="span" fontSize="0.75rem">{(upload.size / 1024).toFixed(2)} kb</Typography>}
-                </div>
-                </div>
-                <div style={{ position: "absolute", right: 0, backgroundColor: lighten(theme.palette.background.paper, 0.05), height: "100%" }}>
-                  <IconButton>
-                    <Delete onClick={() => handleRemoveFile(upload.url, upload.isLocal)} />
-                  </IconButton>
+                  }}>
+                    <IconButton sx={{
+                      position: "absolute",
+                      top: "-1rem",
+                      left: "-1rem",
+                      backgroundColor: theme.palette.background.paper,
+                      color: theme.palette.error.main,
+                      border: `1px solid ${theme.palette.divider}`,
+                      '&:hover': {
+                        backgroundColor: `${theme.palette.divider} !important`
+                      }
+                    }}>
+                      <DeleteOutline onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFile(upload.url, upload.isLocal)
+                      }} />
+                    </IconButton>
+
+                  </div>
                 </div>
               </div>
             ))}
+
+            <>
+              {loading && (
+                <div className="flex center middle">
+                <CircularProgress color="primary" />
+                </div>
+              )}
+            </>
           </>
         </div>
-      )}
       <div
         className={`visual-drop-area ${isDragOver ? 'drag-over' : ''}`}
         onDragOver={handleDragOver}
@@ -313,7 +340,8 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '30rem',
+            width: '95%',
+            maxWidth: "32rem",
             padding: '1rem',
             height: 'fit-content',
             maxHeight: '90vh',
