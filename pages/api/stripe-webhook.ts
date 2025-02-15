@@ -25,11 +25,14 @@ export default async function handleRequest(
   let event: Stripe.Event;
 
   try {
+    
     const sig = req.headers["stripe-signature"] as string;
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+
   } catch (err: any) {
+
     console.error("Webhook Error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }

@@ -48,6 +48,8 @@ export default async function handleRequest(
         if (!products) {
             throw Error("No products.")
         }
+
+        await mongo.clientPromise.db('products').collection('products').deleteMany({});
         await mongo.clientPromise.db('products').collection('products').insertMany(products);
         res.status(200).json({
             message: "Success"
