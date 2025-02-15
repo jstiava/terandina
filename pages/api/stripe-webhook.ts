@@ -4,6 +4,7 @@ import { WithId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { unique } from "next/dist/build/utils";
 import Stripe from "stripe";
+import { buffer } from 'micro';
 
 
 /**
@@ -25,11 +26,19 @@ export default async function handleRequest(
   let event: Stripe.Event;
 
   try {
-    
+
     const sig = req.headers["stripe-signature"] as string;
+
+    const buf = await buffer(req);
+
+    // 🔥 Verify webhook signature
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(
+      buf.toString(),
+      sig,
+      endpointSecret
+    );
 
   } catch (err: any) {
 
