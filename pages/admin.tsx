@@ -1,3 +1,4 @@
+"use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
