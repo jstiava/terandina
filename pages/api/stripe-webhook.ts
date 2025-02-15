@@ -51,7 +51,12 @@ export default async function handleRequest(
       const product = event.data.object as Stripe.Product;
       console.log("Updating product:", product);
 
-      await mongo.clientPromise.db('products').collection('products').insertOne(product);
+      await mongo.clientPromise.db('products').collection('products').insertOne({
+        ...product,
+        prices: [],
+        selectedPrice: null,
+        quantity: 1
+      });
 
 
       return;
