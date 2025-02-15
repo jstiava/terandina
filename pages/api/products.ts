@@ -1,3 +1,4 @@
+import verifySession from "@/middleware/session/verifySession";
 import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -153,6 +154,9 @@ async function handlePatchRequest(
   req: NextApiRequest,
   res: NextApiResponse<any>,
 ) {
+
+  const userAuth = verifySession(req);
+  if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   const product_id = req.query.id;
   const data = req.body;
