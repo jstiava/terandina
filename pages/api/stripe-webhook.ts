@@ -64,6 +64,14 @@ export default async function handleRequest(
       return;
     }
 
+    if (event.type === 'product.deleted') {
+      const product = event.data.object as Stripe.Product;
+      await mongo.clientPromise.db('products').collection('products').deleteOne({
+        id: product.id
+      })
+      return;
+    }
+
     if (event.type === "product.updated") {
       const product = event.data.object as Stripe.Product;
       await mongo.clientPromise.db('products').collection('products').updateOne({
@@ -80,11 +88,6 @@ export default async function handleRequest(
     if (event.type === "price.created") {
       const price = event.data.object as Stripe.Price;
       return await handlePriceCreatedEvent(price);
-    }
-
-
-    if (event.type === 'product.deleted') {
-      return;
     }
 
     if (event.type === "price.deleted" || event.type === 'price.updated') {
@@ -111,7 +114,9 @@ export default async function handleRequest(
       await mongo.clientPromise.db('products').collection('products').updateOne({
         id: theProduct.id
       }, {
-        prices: newPrices
+        $set: {
+          prices: newPrices
+        }
       })
 
       return;
@@ -152,6 +157,8 @@ const handlePriceCreatedEvent = async (price: Stripe.Price) => {
   await mongo.clientPromise.db('products').collection('products').updateOne({
     id: theProduct.id
   }, {
-    prices: newPrices
+    $set: {
+      prices: newPrices
+    }
   })
 }
