@@ -2,8 +2,8 @@
 import { headerHeight } from "@/layout/AuthProvider";
 import { StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
-import { Button, IconButton, TextField, Typography, useMediaQuery } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Button, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
     GridColDef,
     GridRenderCellParams,
@@ -49,12 +49,84 @@ const nameAlphaComparator: GridComparatorFn<any> = (v1, v2, cellParams1, cellPar
     );
 };
 
+const EditToolbar = ({ setProducts, selected }: {
+    setProducts: Dispatch<SetStateAction<StripeProduct[] | null>>,
+    selected: GridRowSelectionModel
+}) => {
+
+    const theme = useTheme();
+
+    const handleDelete = async () => {
+
+        const deleteRequest = await fetch(`api/products`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify({
+                products: selected ? Array.isArray(selected) ? selected : [selected] : []
+            })
+        })
+
+        if (!deleteRequest.ok) {
+            return;
+        }
+
+        const response = await deleteRequest.json();
+
+        setProducts(prev => {
+            if (!prev) {
+                return [];
+            }
+            let newList = [];
+            for (const product of prev) {
+                if (!selected.some(x => x === product.id)) {
+                    newList.push(product);
+                }
+            }
+            return newList;
+        })
+    }
+
+    if (!selected || selected.length === 0) {
+        return <></>
+    }
+    return (
+        <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
+            {/* <GridToolbarColumnsButton />
+  <GridToolbarFilterButton />
+  <GridToolbarDensitySelector slotProps={{ tooltip: { title: 'Change density' } }} /> */}
+            {/* <Box sx={{ flexGrow: 1 }} /> */}
+            <div className="flex compact fit">
+                {selected && (
+                    <div className="flex center middle" style={{
+                        width: "1.5rem",
+                        height: "1.5rem",
+                        borderRadius: "100%",
+                        backgroundColor: theme.palette.primary.contrastText,
+                        color: theme.palette.primary.main
+                    }}>{selected.length}</div>
+                )}
+                <Button
+                    onClick={handleDelete}
+                    variant="contained" sx={{
+                        height: "2rem"
+                    }}>Delete {selected.length} Products</Button>
+            </div>
+            {/* <Button onClick={triggerExportReport}>
+            Export
+        </Button> */}
+        </GridToolbarContainer>
+    )
+}
+
 
 export default function AdminPage() {
 
     const [images, setImages] = useState<UploadType[]>([]);
 
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -159,6 +231,25 @@ export default function AdminPage() {
                         overflowY: "scroll",
                         padding: "0.5rem 1rem"
                     }}>{params.value}</Typography>
+                )
+            }
+        },
+        {
+            field: "active",
+            headerName: "Active",
+            width: 300,
+            editable: true,
+            renderCell: (params: GridRenderCellParams<StripeProduct, string>) => {
+                return (
+                    <Typography sx={{
+                        width: "100%",
+                        overflowWrap: 'break-word',
+                        whiteSpace: 'normal',
+                        lineHeight: "115%",
+                        height: "100%",
+                        overflowY: "scroll",
+                        padding: "0.5rem 1rem"
+                    }}>{params.value ? "Active" : "Inactive"}</Typography>
                 )
             }
         },
@@ -359,10 +450,18 @@ export default function AdminPage() {
                         onRowModesModelChange={handleRowModesModelChange}
                         onRowEditStop={handleRowEditStop}
                         processRowUpdate={processRowUpdate}
-                        // slots={{ toolbar: EditToolbar }}
-                        // slotProps={{
-                        //     toolbar: { setRows, setRowModesModel },
-                        // }}
+                        onRowSelectionModelChange={newRowSelectionModel => {
+                            setRowSelectionModel(newRowSelectionModel);
+                        }}
+                        rowSelectionModel={rowSelectionModel}
+                        slots={{
+                            toolbar: () => (
+                                <EditToolbar
+                                    setProducts={setProducts}
+                                    selected={rowSelectionModel}
+                                />
+                            )
+                        }}
                         sx={{
                             width: "100%",
                             height: "calc(100vh - 7rem)"

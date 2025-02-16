@@ -101,19 +101,27 @@ async function handleDeleteRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const product_id = req.query.id
+  const products = req.body.products as string[];
 
   try {
-    const product = await deleteProductById(String(product_id))
-    if (!product) {
-      throw Error("No product found by that id.")
+
+    if (!products) {
+      throw Error("No products provided")
     }
+    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
+    
+    for (const product_id of products) {
+      await stripe.products.update(product_id, {
+        active: false
+      })
+    }
+
     return res.status(200).json({
-      message: "Success. Got one product.",
-      product
+      message: "Updated products"
     })
   }
   catch (err) {
+    console.log(err);
     return res.status(400).json({ message: "Failure" })
   }
 }

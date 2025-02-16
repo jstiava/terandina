@@ -79,11 +79,13 @@ export default async function handleRequest(
       }, {
         $set: {
           name: product.name,
-          description: product.description
+          description: product.description,
+          active: product.active,
+          metadata: product.metadata,
+          default_price: product.default_price,
         }
       })
 
-      console.log(result);
       return;
     }
 
