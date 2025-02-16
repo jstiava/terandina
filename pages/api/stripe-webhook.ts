@@ -37,7 +37,6 @@ export default async function handleRequest(
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-
   try {
 
     const mongo = await Mongo.getInstance();
@@ -75,7 +74,7 @@ export default async function handleRequest(
 
     if (event.type === "product.updated") {
       const product = event.data.object as Stripe.Product;
-      await mongo.clientPromise.db('products').collection('products').updateOne({
+      const result = await mongo.clientPromise.db('products').collection('products').updateOne({
         id: product.id
       }, {
         $set: {
@@ -83,6 +82,8 @@ export default async function handleRequest(
           description: product.description
         }
       })
+
+      console.log(result);
       return;
     }
 
@@ -96,9 +97,10 @@ export default async function handleRequest(
       console.log("Delete/Update Product")
       const price = event.data.object as Stripe.Price;
 
+      console.log(price);
       const theProduct = await mongo.clientPromise.db('products').collection('products').findOne({
         id: price.product
-      }) as WithId<StripeProduct> | null
+      }) as WithId<StripeProduct> | null;
 
       if (!theProduct) {
         console.error("No product found.")
@@ -114,6 +116,8 @@ export default async function handleRequest(
         });
       }
 
+      console.log(newPrices)
+
       const result = await mongo.clientPromise.db('products').collection('products').updateOne({
         id: theProduct.id
       }, {
@@ -122,7 +126,10 @@ export default async function handleRequest(
         }
       })
 
-      console.log(result);
+      console.log({
+        result,
+        oldProduct: theProduct
+      });
 
       return;
     }
@@ -138,6 +145,8 @@ export default async function handleRequest(
 
 
 const handlePriceCreatedEvent = async (price: Stripe.Price) => {
+
+  console.log("Create new price")
   const mongo = await Mongo.getInstance();
   const theProduct = await mongo.clientPromise.db('products').collection('products').findOne({
     id: price.product
