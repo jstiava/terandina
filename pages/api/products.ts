@@ -111,9 +111,10 @@ async function handleDeleteRequest(
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
     
     for (const product_id of products) {
-      await stripe.products.update(product_id, {
+      const result = await stripe.products.update(product_id, {
         active: false
       })
+      console.log(result);
     }
 
     return res.status(200).json({

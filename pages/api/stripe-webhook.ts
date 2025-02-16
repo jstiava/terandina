@@ -86,6 +86,8 @@ export default async function handleRequest(
         }
       })
 
+      console.log(result);
+
       return;
     }
 
