@@ -31,8 +31,6 @@ export default async function handleRequest(
       sig,
       endpointSecret
     );
-    event = req.body
-
     res.status(200).json({ message: "Thank you, Stripe" })
   } catch (err: any) {
     console.error("Webhook Error:", err.message);
@@ -132,7 +130,7 @@ export default async function handleRequest(
     return;
 
   } catch (error) {
-    console.error("Database update failed:", error);
+    console.error(error);
     console.log("Error")
   }
 
