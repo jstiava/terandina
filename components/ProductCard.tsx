@@ -35,7 +35,7 @@ export function DisplayPrice({
 
     const theme = useTheme();
 
-    if (!product.selectedPrice) {
+    if (!product.selectedPrice || !product.selectedPrice.unit_amount) {
         return (
             <Typography sx={{
                 fontSize: "1.25rem",

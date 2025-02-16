@@ -45,7 +45,7 @@ async function handlePostRequest(
       const addNewPrices = pricesSorted.map(price => {
         return stripe.prices.create({
           product: theProduct.id,
-          unit_amount: price.unit_amount,
+          unit_amount: price.unit_amount || 0,
           currency: 'USD'
         });
       });

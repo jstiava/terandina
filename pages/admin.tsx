@@ -180,7 +180,9 @@ export default function AdminPage() {
                                     {price.nickname && (<Typography variant="caption" sx={{
                                         padding: 0
                                     }}>{price.nickname}</Typography>)}
-                                    <Typography>{formatPrice(price.unit_amount * 1, price.currency)}</Typography>
+                                    {price.unit_amount && (
+                                        <Typography>{formatPrice(price.unit_amount * 1, price.currency)}</Typography>
+                                    )}
                                 </div>
                                 <div className="flex fit" style={{
                                     padding: "0.5rem"

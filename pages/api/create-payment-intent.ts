@@ -11,7 +11,7 @@ const calculateOrderAmount = (items: StripePriceQuantityStub[]) => {
 
     let amount = 0;
     for (let i = 0; i < items.length; i++) {
-        amount += items[i].price.unit_amount * items[i].quantity;
+        amount +=( items[i].price.unit_amount || 0) * items[i].quantity;
     }
     return amount;
 };
