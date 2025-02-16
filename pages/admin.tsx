@@ -256,7 +256,7 @@ export default function AdminPage() {
         let productList = [];
         let i = 0;
 
-        const productsFetch = await fetch('/api/products');
+        const productsFetch = await fetch(`/api/products?doNotCache=true`);
 
         if (!productsFetch.ok) {
             return;

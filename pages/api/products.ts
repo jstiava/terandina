@@ -1,3 +1,4 @@
+import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
 import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
@@ -201,6 +202,7 @@ export default async function handleRequest(
   }
 
   const product_id = req.query.id;
+  const doNotCache = new SafeString(req.query.doNotCache);
 
   if (product_id) {
     const product = await getProductById(String(product_id))
@@ -219,6 +221,13 @@ export default async function handleRequest(
     if (!products) {
       throw Error("No products.")
     }
+
+    if (doNotCache.isTrue()) {
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
+    }
+
     res.status(200).json({
       message: "Success",
       products

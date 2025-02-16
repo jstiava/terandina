@@ -1,4 +1,4 @@
-import { StripeProduct } from "@/types";
+import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
 import { WithId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -12,6 +12,7 @@ export const config = {
   },
 }
 
+
 export default async function handleRequest(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -23,9 +24,8 @@ export default async function handleRequest(
   try {
 
     const sig = req.headers["stripe-signature"] as string;
-
     const buf = await buffer(req);
-
+    
     // 🔥 Verify webhook signature
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
@@ -35,36 +35,41 @@ export default async function handleRequest(
       endpointSecret
     );
     
-    res.status(200).json({ message: "Thank you, Stripe"})
+    res.status(200).json({ message: "Thank you, Stripe" })
   } catch (err: any) {
-
+    
     console.error("Webhook Error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
-
+  
+  
   try {
-
+    
     const mongo = await Mongo.getInstance();
+
     if (event.type === "product.created") {
       const product = event.data.object as Stripe.Product;
-      console.log("Updating product:", product);
+
+      const prices = await mongo.clientPromise.db('products').collection('prices_temp').find({
+        product: product.id
+      }).toArray() as WithId<StripePrice>[];
 
       await mongo.clientPromise.db('products').collection('products').insertOne({
         ...product,
-        prices: [],
+        prices,
         selectedPrice: null,
         quantity: 1
       });
 
+      await mongo.clientPromise.db('products').collection('products').deleteMany({
+        _id: { $in: prices.map(p => p._id) }
+      })
 
       return;
     }
 
     if (event.type === "product.updated") {
       const product = event.data.object as Stripe.Product;
-      console.log("Deleting product:", product.id);
-
       await mongo.clientPromise.db('products').collection('products').updateOne({
         id: product.id
       }, {
@@ -73,46 +78,12 @@ export default async function handleRequest(
           description: product.description
         }
       })
-
       return;
-
-      // TODO: Remove the product from your database
     }
 
     if (event.type === "price.created") {
       const price = event.data.object as Stripe.Price;
-
-      const theProduct = await mongo.clientPromise.db('products').collection('products').findOne({
-        id: price.product
-      }) as WithId<StripeProduct> | null
-
-      if (!theProduct) {
-        return;
-      }
-
-      let newPrices = theProduct.prices;
-      if (!newPrices) {
-        newPrices = [{
-          ...price,
-          product: price.product as string,
-          unit_amount: 1
-        }]
-      }
-      else {
-        newPrices.push({
-          ...price,
-          product: price.product as string,
-          unit_amount: 1
-        });
-      }
-
-      await mongo.clientPromise.db('products').collection('products').updateOne({
-        id: theProduct.id
-      }, {
-        prices: newPrices
-      })
-
-      return;
+      return await handlePriceCreatedEvent(price);    
     }
 
 
@@ -124,7 +95,7 @@ export default async function handleRequest(
       }) as WithId<StripeProduct> | null
 
       if (!theProduct) {
-        return;
+        return await handlePriceCreatedEvent(price)
       }
 
       const thePrice = theProduct?.prices.find(p => p.id === price.id);
@@ -158,9 +129,49 @@ export default async function handleRequest(
       return;
     }
 
+    if (event.type === 'product.deleted') {
+      return;
+    }
+
+    if (event.type === "price.deleted") {
+      return;
+    }
+
     return;
+
   } catch (error) {
     console.error("Database update failed:", error);
     console.log("Error")
   }
+
+}
+
+
+const handlePriceCreatedEvent = async (price: Stripe.Price) => {
+  const mongo = await Mongo.getInstance();
+  const theProduct = await mongo.clientPromise.db('products').collection('products').findOne({
+    id: price.product
+  }) as WithId<StripeProduct> | null
+
+  if (!theProduct) {
+    await mongo.clientPromise.db('products').collection('prices_temp').insertOne({
+      ...price,
+      product: price.product as string,
+      unit_amount: 1
+    })
+    return;
+  }
+
+  let newPrices = theProduct.prices;
+  newPrices.push({
+    ...price,
+    product: price.product as string,
+    unit_amount: 1
+  });
+
+  await mongo.clientPromise.db('products').collection('products').updateOne({
+    id: theProduct.id
+  }, {
+    prices: newPrices
+  })
 }
