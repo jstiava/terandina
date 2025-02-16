@@ -51,8 +51,6 @@ class Mongo {
         Mongo.instance = null;
         throw Error('Cannot connect to Mongo');
       }
-    } else {
-      console.error("Mongo connection problem.")
     }
     return Mongo.instance;
   }

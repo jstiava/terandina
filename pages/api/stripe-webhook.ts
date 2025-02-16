@@ -31,6 +31,7 @@ export default async function handleRequest(
       sig,
       endpointSecret
     );
+    event = req.body
 
     res.status(200).json({ message: "Thank you, Stripe" })
   } catch (err: any) {
@@ -43,7 +44,9 @@ export default async function handleRequest(
 
     const mongo = await Mongo.getInstance();
 
+    console.log(event.type);
     if (event.type === "product.created") {
+      console.log("Create Product")
       const product = event.data.object as Stripe.Product;
 
       const prices = await mongo.clientPromise.db('products').collection('prices_temp').find({
@@ -86,11 +89,13 @@ export default async function handleRequest(
     }
 
     if (event.type === "price.created") {
+      console.log("Create price")
       const price = event.data.object as Stripe.Price;
       return await handlePriceCreatedEvent(price);
     }
 
     if (event.type === "price.deleted" || event.type === 'price.updated') {
+      console.log("Delete/Update Product")
       const price = event.data.object as Stripe.Price;
 
       const theProduct = await mongo.clientPromise.db('products').collection('products').findOne({
@@ -98,6 +103,7 @@ export default async function handleRequest(
       }) as WithId<StripeProduct> | null
 
       if (!theProduct) {
+        console.error("No product found.")
         return await handlePriceCreatedEvent(price)
       }
 
@@ -106,18 +112,19 @@ export default async function handleRequest(
       if (event.type === 'price.updated') {
         newPrices.push({
           ...price,
-          product: theProduct.id,
-          unit_amount: 1
+          product: theProduct.id
         });
       }
 
-      await mongo.clientPromise.db('products').collection('products').updateOne({
+      const result = await mongo.clientPromise.db('products').collection('products').updateOne({
         id: theProduct.id
       }, {
         $set: {
           prices: newPrices
         }
       })
+
+      console.log(result);
 
       return;
     }
@@ -139,10 +146,10 @@ const handlePriceCreatedEvent = async (price: Stripe.Price) => {
   }) as WithId<StripeProduct> | null
 
   if (!theProduct) {
+    console.log("No product")
     await mongo.clientPromise.db('products').collection('prices_temp').insertOne({
       ...price,
-      product: price.product as string,
-      unit_amount: 1
+      product: price.product as string
     })
     return;
   }
@@ -150,15 +157,20 @@ const handlePriceCreatedEvent = async (price: Stripe.Price) => {
   let newPrices = theProduct.prices;
   newPrices.push({
     ...price,
-    product: price.product as string,
-    unit_amount: 1
+    product: price.product as string
   });
 
-  await mongo.clientPromise.db('products').collection('products').updateOne({
+  
+  const result = await mongo.clientPromise.db('products').collection('products').updateOne({
     id: theProduct.id
   }, {
     $set: {
       prices: newPrices
     }
+  });
+
+  console.log({
+    product: theProduct,
+    result
   })
 }

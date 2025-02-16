@@ -8,7 +8,7 @@ export interface StripeAppProps {
 
 export interface StripePrice extends Stripe.Price {
     product: string;
-    unit_amount: number;
+    unit_amount: number | null;
     currency: string;
     inventory?: number;
 }
