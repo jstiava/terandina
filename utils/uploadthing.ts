@@ -1,3 +1,4 @@
+import verifySession from "@/middleware/session/verifySession";
 import {
     generateUploadButton,
     generateUploadDropzone,
@@ -13,9 +14,10 @@ const f = createUploadthing();
 
 const auth = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    
+    const userAuth = verifySession(req);
+    if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
-    return { id: "fakeid" }
+    return { userAuth }
 };
 
 export const ourFileRouter = {
@@ -28,7 +30,7 @@ export const ourFileRouter = {
         .middleware(async ({ req, res }) => {
             const user = await auth(req, res);
             if (!user) throw new UploadThingError("Unauthorized");
-            return { userId: user.id };
+            return { userId: user.userAuth.uuid };
         })
         .onUploadError((err) => {
             console.log(err)

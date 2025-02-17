@@ -1,7 +1,7 @@
 'use client';
 import React, { ChangeEvent, ChangeEventHandler, useState } from 'react';
 
-import { Button, Link, TextField, SelectChangeEvent, useTheme, Typography } from '@mui/material';
+import { Button, Link, TextField, SelectChangeEvent, useTheme, Typography, Alert, AlertTitle } from '@mui/material';
 import router, { useRouter } from 'next/router';
 import { StripeAppProps } from '@/types';
 
@@ -9,11 +9,12 @@ export default function LoginPage(props: StripeAppProps) {
 
     const router = useRouter();
     const theme = useTheme();
-    const [loginCred, setLoginCred] = useState<{username: string, password: string}>({
+    const [loginCred, setLoginCred] = useState<{ username: string, password: string }>({
         username: '',
         password: '',
     });
 
+    const [isError, setError] = useState(false);
     //   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const handleLoginCredPasswordChange = (
@@ -45,7 +46,7 @@ export default function LoginPage(props: StripeAppProps) {
         if (!allValuesFilled) {
             console.log("Not all fields are filled.")
         }
-        
+
         const response = await fetch('api/login', {
             method: "POST",
             headers: {
@@ -56,12 +57,14 @@ export default function LoginPage(props: StripeAppProps) {
 
         if (!response.ok) {
             console.log("Something went wrong.")
+            setError(true);
+            return;
         }
 
         const data = await response.json();
         console.log("Login successful");
         router.push('/admin')
-        
+
     };
 
     return (
@@ -69,6 +72,12 @@ export default function LoginPage(props: StripeAppProps) {
             <div className='column' style={{ width: "20rem", paddingTop: "20vh" }}>
                 <Typography variant="h2">Login</Typography>
                 <div className='column snug' style={{ alignItems: 'flex-start', gap: '1rem' }}>
+                    {isError && (
+                        <Alert severity='error'>
+                            <AlertTitle>Error</AlertTitle>
+                            Either your username or password was incorrect. Contact site admins for assistance.
+                        </Alert>
+                    )}
                     <TextField
                         key="username"
                         type="username"
@@ -87,12 +96,12 @@ export default function LoginPage(props: StripeAppProps) {
                         onChange={handleLoginCredPasswordChange}
                         sx={{ width: '100%' }}
                     />
-                   <div className="flex center middle">
-                   <Button fullWidth variant="contained" onClick={handleSubmit}>
-                        Login
-                    </Button>
-                    <Link href="/register">Register</Link>
-                   </div>
+                    <div className="flex center middle">
+                        <Button fullWidth variant="contained" onClick={handleSubmit}>
+                            Login
+                        </Button>
+                        <Link href="/register">Register</Link>
+                    </div>
                 </div>
             </div>
         </div>

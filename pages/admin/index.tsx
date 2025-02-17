@@ -2,7 +2,7 @@
 import { headerHeight } from "@/layout/AuthProvider";
 import { StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
-import { Button, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Checkbox, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
     GridColDef,
@@ -94,7 +94,15 @@ const EditToolbar = ({ setProducts, selected, setSelected }: {
     }
 
     if (!selected || selected.length === 0) {
-        return <></>
+        return (
+            <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.main }}>
+                <div className="flex compact fit">
+                    <Typography sx={{
+                        height:"2rem"
+                    }}>Products</Typography>
+                </div>
+            </GridToolbarContainer>
+        )
     }
     return (
         <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
@@ -190,6 +198,9 @@ export default function AdminPage() {
                 'Content-Type': "application/json"
             },
             body: JSON.stringify(newRow)
+        })
+        .catch(err => {
+            console.log("Error while updating.")
         })
     }
 
@@ -349,6 +360,29 @@ export default function AdminPage() {
             }
         },
         {
+            field: "is_featured",
+            headerName: "Featured",
+            width: 75,
+            renderCell: (params: GridRenderCellParams<StripeProduct, boolean | null>) => {
+
+                const value = params.value || false;
+                return (
+                   <div className="flex top">
+                    <Checkbox
+                    checked={value}
+                    onChange={async (e, checked) => {
+
+                       await processRowUpdate({
+                        ...params.row,
+                        is_featured: checked
+                       })
+                    }}
+                   />
+                   </div>
+                )
+            }
+        },
+        {
             field: "prices",
             headerName: "Price & Quantity",
             width: 400,
@@ -385,8 +419,8 @@ export default function AdminPage() {
                                             '& .MuiInputBase-root': {
                                                 height: "2.5rem",
                                                 '& .MuiInputBase-input': {
-                                                textAlign: "center"
-                                            }
+                                                    textAlign: "center"
+                                                }
                                             }
                                         }}
                                         value={price.inventory || 100}
@@ -404,7 +438,7 @@ export default function AdminPage() {
                                             )
                                         }}
                                     />
-                                     <IconButton><DeleteOutlined color="error" fontSize="small" /></IconButton>
+                                    <IconButton><DeleteOutlined color="error" fontSize="small" /></IconButton>
                                 </div>
                             </div>
                         ))}

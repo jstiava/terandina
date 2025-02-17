@@ -20,6 +20,7 @@ export interface StripeProduct extends Stripe.Product {
     description: string,
     images: string[],
     prices: StripePrice[],
+    is_featured: boolean,
 
     // checkout
     selectedPrice: StripePrice,

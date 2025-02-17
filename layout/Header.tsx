@@ -26,6 +26,7 @@ import MenuItem from "@/components/MenuItem";
 import ColorPicker from "@/components/ColorPicker";
 import { headerHeight } from "./AuthProvider";
 import ScrollButton from "@/components/ScrollButton";
+import MenuItemCover from "@/components/MenuItemCover";
 
 
 const menuItems = [
@@ -72,6 +73,8 @@ export default function Header({ Cart, color, setColor }: {
     const [activeMenu, setActiveMenu] = useState('placeholder');
 
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+    // const isVerySmall = useMediaQuery("(max-width: 25rem)")
+    const isVerySmall = false;
 
 
     useEffect(() => {
@@ -420,25 +423,11 @@ export default function Header({ Cart, color, setColor }: {
                                     onClick={() => router.push('outerwear')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Jewelry</MenuItem>
-                                <div className="flex between" style={{
+                                <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
                                     padding: "0 2rem"
                                 }}>
-                                    <div className="column compact">
-                                        <div style={{
-                                            width: "10rem",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Men's</Typography>
-                                    </div>
-                                    <div className="column compact">
-                                        <div style={{
-                                            width: "10rem",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Women's</Typography>
-                                    </div>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Men's</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Women's</Typography></MenuItemCover>
                                 </div>
 
 
@@ -489,70 +478,16 @@ export default function Header({ Cart, color, setColor }: {
                                 </ButtonBase>
 
 
-                                <div className="flex" style={{
-                                    padding: "0 2rem",
+                                <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
+                                    padding: "0 1.5rem 0 2rem",
                                     flexWrap: 'wrap'
                                 }}>
-                                    <div className="column compact" style={{
-                                        width: "calc(50% - 1rem)",
-                                        maxWidth: "10rem",
-                                        marginBottom: "0.5rem"
-                                    }}>
-                                        <div style={{
-                                            width: "100%",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Bowls</Typography>
-                                    </div>
-                                    <div className="column compact" style={{
-                                        width: "calc(50% - 1rem)",
-                                        maxWidth: "10rem",
-                                        marginBottom: "0.5rem"
-                                    }}>
-                                        <div style={{
-                                            width: "100%",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Textiles</Typography>
-                                    </div>
-                                    <div className="column compact" style={{
-                                        width: "calc(50% - 1rem)",
-                                        maxWidth: "10rem",
-                                        marginBottom: "0.5rem"
-                                    }}>
-                                        <div style={{
-                                            width: "100%",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Paintings</Typography>
-                                    </div>
-                                    <div className="column compact" style={{
-                                        width: "calc(50% - 1rem)",
-                                        maxWidth: "10rem",
-                                        marginBottom: "0.5rem"
-                                    }}>
-                                        <div style={{
-                                            width: "100%",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Tools</Typography>
-                                    </div>
-                                    <div className="column compact" style={{
-                                        width: "calc(50% - 1rem)",
-                                        maxWidth: "10rem",
-                                        marginBottom: "0.5rem"
-                                    }}>
-                                        <div style={{
-                                            width: "100%",
-                                            height: "10rem",
-                                            backgroundColor: "lightGrey"
-                                        }}></div>
-                                        <Typography sx={{ textAlign: "center" }}>Spirtual</Typography>
-                                    </div>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Bowls</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Textiles</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Paintings</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Tools</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Spirtual</Typography></MenuItemCover>
+                                 
                                 </div>
 
 

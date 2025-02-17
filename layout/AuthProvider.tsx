@@ -52,8 +52,6 @@ export default function AuthProvider({
 
         if (protectedRoutes.some(path => router.pathname.startsWith(path))) {
 
-            console.log("Verifying success")
-
             verifySession()
                 .then((res) => {
                     if (!res) {
@@ -63,6 +61,17 @@ export default function AuthProvider({
                     return;
                 })
             return;
+        }
+        else if (router.pathname === '/login') {
+            verifySession()
+            .then((res) => {
+
+                if (!res) {
+                    return;
+                }
+                router.push('/admin')
+                return;
+            })
         }
         else {
             return;
@@ -74,7 +83,7 @@ export default function AuthProvider({
     return (
         <ThemeProvider theme={theme}>
             <Head>
-                <meta name="theme-color" content={color} />
+                <meta name="theme-color" content={theme.palette.background.paper} />
             </Head>
             <NextNProgress color={theme.palette.primary.main} />
             <Header Cart={Cart} color={color} setColor={setColor} />

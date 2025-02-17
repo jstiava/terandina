@@ -64,6 +64,8 @@ export const getStaticProps = (async (context: any) => {
   }
 })
 
+export const TerandinaGreen = '#005445'
+
 export default function CategoryPage(props: StripeAppProps & {
   static: StaticProps
 }) {
@@ -115,9 +117,11 @@ export default function CategoryPage(props: StripeAppProps & {
         padding: 0,
         marginTop: "4rem"
       }}>
-        <div className={isMd ? "column center relaxed" : "flex fit relaxed"} style={{
-          padding: isMd ? "2rem 2rem" : "5rem 1rem",
-          width: isMd ? "100%" : 'fit-content'
+        <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
+          padding: isMd ? "1.5rem 2rem 3rem 2rem" : "5rem 1rem",
+          width: '100%',
+          backgroundColor: TerandinaGreen,
+          color: theme.palette.getContrastText(TerandinaGreen)
         }}>
         <CoverImage
             delay={0.5}
@@ -134,7 +138,8 @@ export default function CategoryPage(props: StripeAppProps & {
               padding: "2rem",
               aspectRatio: "1 / 1",
               maxHeight: "90vw",
-              maxWidth: "30rem"
+              maxWidth: "30rem",
+              border: "0.5rem solid white"
             }}
           ></CoverImage>
         <div className="column snug center middle" style={{

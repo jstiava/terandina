@@ -12,6 +12,8 @@ async function handlePostRequest(
   res: NextApiResponse<any>,
 ) {
 
+  const userAuth = verifySession(req);
+  if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   try {
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
@@ -83,11 +85,17 @@ async function getProductById(productId: string): Promise<any | null> {
   }
 }
 
-async function getAllProducts() {
+async function getAllProducts(query : Partial<{
+  [key: string]: string | string[];
+}>) {
   try {
+
+    const is_featured = query.is_featured ? new SafeString(query.is_featured) : null;
     const mongo = await Mongo.getInstance();
 
-    const products = await mongo.clientPromise.db('products').collection('products').find().toArray()
+    const products = await mongo.clientPromise.db('products').collection('products').find({
+      is_featured: is_featured ? is_featured.isTrue() : undefined
+    }).toArray()
 
     return products;
   } catch (error) {
@@ -100,6 +108,9 @@ async function handleDeleteRequest(
   req: NextApiRequest,
   res: NextApiResponse<any>,
 ) {
+
+  const userAuth = verifySession(req);
+  if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   const products = req.body.products as string[];
 
@@ -129,7 +140,7 @@ async function handleDeleteRequest(
 
 
 const sendToStripeFields: (keyof Stripe.Product)[] = ['name', 'description']
-const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description'];
+const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'is_featured'];
 
 async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
   try {
@@ -242,7 +253,7 @@ export default async function handleRequest(
   }
 
   try {
-    const products = await getAllProducts();
+    const products = await getAllProducts(req.query);
 
     if (!products) {
       throw Error("No products.")
