@@ -22,13 +22,16 @@ export const ourFileRouter = {
     imageUploader: f({
         image: {
             maxFileSize: "8MB",
-            maxFileCount: 1,
+            maxFileCount: 3,
         },
     })
         .middleware(async ({ req, res }) => {
             const user = await auth(req, res);
             if (!user) throw new UploadThingError("Unauthorized");
             return { userId: user.id };
+        })
+        .onUploadError((err) => {
+            console.log(err)
         })
         .onUploadComplete(async ({ metadata, file }) => {
             console.log("Upload complete for userId:", metadata.userId);

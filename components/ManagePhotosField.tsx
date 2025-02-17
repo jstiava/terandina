@@ -2,17 +2,20 @@ import { GridRenderCellParams } from "@mui/x-data-grid";
 import CoverImage from "./CoverImage";
 import { StripeProduct } from "@/types";
 import useComplexFileDrop, { UploadType } from "./useComplexFileDrop";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ClientUploadedFileData } from "uploadthing/types";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
+import { useUploadThing } from "@/utils/uploadthing";
+import { AddAPhotoOutlined, AspectRatio } from "@mui/icons-material";
 
 
-export default function ManagePhotosField({ params, onChange }: {
+export default function ManagePhotosField({ UploadThing, newUploads, setNewUploads, params, onChange }: {
     params: GridRenderCellParams<StripeProduct, string[]>,
-    onChange: (files: string[]) => any
+    onChange: (files: string[]) => any,
+    UploadThing: ReturnType<typeof useUploadThing>,
+    newUploads: UploadType[],
+    setNewUploads: Dispatch<SetStateAction<UploadType[]>>
 }) {
-
-
 
     const [uploads, setUploads] = useState<UploadType[]>([]);
 
@@ -30,18 +33,10 @@ export default function ManagePhotosField({ params, onChange }: {
         })
     }
 
-    const FileDrop = useComplexFileDrop(params.row.images, uploads, setUploads, {
-        onLoading: () => {
-
-        },
-        onInsert: (files: UploadType[]) => {
-            handleUpdate(files);
-            return;
-        },
-        onDelete: (files: UploadType[]) => {
-            handleUpdate(files);
-            return;
-        }
+    const FileDrop = useComplexFileDrop(UploadThing, newUploads, setNewUploads, params.row.images, uploads, setUploads, {
+       onChange: (files) => {
+        handleUpdate(files);
+       }
     })
 
     if (!uploads) {
@@ -51,30 +46,45 @@ export default function ManagePhotosField({ params, onChange }: {
     return (
         <>
             <div
-                className="flex compact"
+                className="flex snug"
                 onClick={(e) => {
                     e.stopPropagation();
                     FileDrop.openDialog()
-                }}>
-                {uploads.map(upload => (
+                }}
+                style={{
+                    height: "100%"
+                }}
+                >
+                {uploads && uploads.length != 0 ? uploads.map(upload => (
                     <div
                         key={upload.url}
                         style={{
                             height: "100%",
                             width: "fit-content",
-                            padding: "0.5rem"
+                            padding: "0.5rem",
                         }}
                     >
                         <CoverImage
                             url={upload.url}
-                            width={"60px"}
-                            height={"70px"}
+                            width={"80px"}
+                            height={"80px"}
                             style={{
-                                borderRadius: "0.25rem"
+                                borderRadius: "0.25rem",
                             }}
                         />
                     </div>
-                ))}
+                )) : (
+                    <div className="flex center middle" style={{
+                        height: "100%"
+                    }}>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            FileDrop.openDialog();
+                        }}>
+                            <AddAPhotoOutlined />
+                        </IconButton>
+                    </div>
+                )}
             </div>
             {FileDrop.FileUpload}
         </>

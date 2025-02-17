@@ -18,6 +18,9 @@ const fenix = Fenix({
 
 const theme = createTheme({
   palette: {
+    background: {
+      paper: '#f4f4f4'
+    },
     primary: {
       main: "#550e00",
     },
@@ -34,7 +37,6 @@ const theme = createTheme({
             borderRadius: "0 !important",
             height: "3rem",
             fontSize: "1.35rem",
-            
           },
         }
       }

@@ -52,22 +52,40 @@ export type UploadType = {
 
 }
 
-export default function useComplexFileDrop(presets: string[] | null, uploads: UploadType[], setUploads: Dispatch<SetStateAction<UploadType[]>>, callbacks: {
-  onLoading?: () => any
-  onInsert?: any
-  onDelete?: any,
-  onClear?: any
+export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUploadThing>, newUploads : UploadType[], setNewUploads : Dispatch<SetStateAction<UploadType[]>>, presets: string[] | null, uploads: UploadType[], setUploads: Dispatch<SetStateAction<UploadType[]>>, callbacks: {
+  onChange?: (files: UploadType[]) => any
 }) {
   const theme = useTheme();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
-
   const [uploadCount, setUploadCount] = useState(0);
 
   useEffect(() => {
+    if (!loading) {
+      return;
+    }
+
+    setUploads(prev => {
+      if (!prev) return newUploads;
+      const newList =[...prev, ...newUploads];
+      if (callbacks.onChange) {
+        callbacks.onChange(newList);
+      }
+      return newList;
+    })
+
+    setNewUploads([]);
+    setLoading(false);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newUploads])
+
+  useEffect(() => {
     setUploadCount(uploads.length);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploads]);
 
   useEffect(() => {
@@ -106,8 +124,8 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
 
     setUploads((prev) => {
       const newList = prev.filter((file) => file.url != uuid);
-      if (callbacks.onDelete) {
-        callbacks.onDelete(newList);
+      if (callbacks.onChange) {
+        callbacks.onChange(newList);
       }
       return newList;
     })
@@ -137,34 +155,6 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
   };
 
 
-
-  const { startUpload, isUploading } = useUploadThing('imageUploader', {
-    onClientUploadComplete: (res) => {
-      if (res) {
-
-        const uploadedFiles = res.map(file => ({
-          url: file.ufsUrl,
-          size: file.size,
-          isLocal: false
-        }))
-
-        setUploads(prev => {
-          if (!prev) {
-            callbacks.onInsert(uploadedFiles);
-            return uploadedFiles
-          }
-          callbacks.onInsert([...prev, ...uploadedFiles]);
-          return [...prev, ...uploadedFiles]
-        })
-
-        setLoading(false);
-      }
-    },
-    onUploadError: (error) => {
-      console.error("Upload error:", error);
-    },
-  })
-
   const MAX_IMAGES = 10;
 
   const addImage = (input: React.ChangeEvent<HTMLInputElement> | FileList) => {
@@ -184,7 +174,7 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
 
     if (filesToUpload.length > 0) {
       setLoading(true);
-      startUpload(filesToUpload);
+      UploadThing.startUpload(filesToUpload);
     }
   };
 
@@ -199,8 +189,6 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
     }
   };
 
-
-
   const FileUploadForm = (
     <div className='column'>
         <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', padding: '1rem 0.5rem 0 0', width: "100%", flexWrap: 'wrap' }}>
@@ -211,6 +199,7 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
                 style={{
                   width: "9rem",
                   position: "relative",
+                  marginBottom: "0.5rem"
                 }}>
                 <div className="column compact">
                   <div style={{
@@ -298,7 +287,7 @@ export default function useComplexFileDrop(presets: string[] | null, uploads: Up
 
 
   const FilePreview = (
-    <div className="flex" style={{ position: "relative" }}>
+    <div className="flex compact" style={{ position: "relative" }}>
       {uploads[0] && (
         <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', width: "100%", }}>
           {uploads && uploads.map((upload, index) => (

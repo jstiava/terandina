@@ -31,3 +31,12 @@ export interface VariantProductStub {
     pattern: "image" | "duo" | "single" | "diamond",
     product_id: string
 }
+
+export interface Category {
+    _id: string, 
+    name: string,
+    slug: string,
+    parent_id: string,
+    is_on_menu: boolean,
+
+}

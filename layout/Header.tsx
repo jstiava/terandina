@@ -3,6 +3,8 @@ import {
     ArrowForward,
     ChevronLeft,
     ChevronRight,
+    CloseOutlined,
+    EditOutlined,
     EmailOutlined,
     MenuOutlined,
     PhoneOutlined,
@@ -127,6 +129,11 @@ export default function Header({ Cart, color, setColor }: {
     }
 
     const handleCloseSidebar = () => {
+
+        if (!isSidebarOpen) {
+            return;
+        }
+
         anime({
             targets: ".slide-in",
             translateX: ["0", "-150%"],
@@ -262,92 +269,62 @@ export default function Header({ Cart, color, setColor }: {
                                 opacity: 0
                             }}>
                                 {menuItems.map(item => (
-                                    <ButtonBase
-                                        className="flex between middle"
-                                        disableRipple
+                                    <MenuItem
                                         key={item.value}
                                         onClick={() => handleSwitchTab(item.value)}
-                                        sx={{
-                                            height: "3rem",
-                                            padding: "0 2rem",
-                                        }}>
-                                        <div className="flex fit">
-                                            <Typography variant="h6" sx={{
-                                                textTransform: "uppercase",
-                                                letterSpacing: "0.05rem",
-                                                fontSize: "1rem",
-                                                display: 'inline',
-                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                                textDecoration: `none`,
-                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                                backgroundPosition: `100% 100%, 0 100%`,
-                                                backgroundRepeat: `no-repeat`,
-                                                transition: `background-size .3s`,
-                                                color: 'inherit',
-                                                cursor: "pointer",
-                                                whiteSpace: "pre-line",
-                                                fontWeight: 800,
-                                                textAlign: 'left',
-                                                '&:hover': {
-                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                                }
-                                            }}>{item.name}</Typography>
-                                        </div>
-                                        <div className="flex fit">
-                                            <ChevronRight sx={{
-                                                opacity: 0.5
-                                            }} />
-                                        </div>
-                                    </ButtonBase>
+                                        icon={<ChevronRight fontSize="small"/>}
+                                    >
+                                        {item.value}
+                                    </MenuItem>
                                 ))}
                             </div>
                         ) : (
                             <>
                                 {isSm ? (
                                     <>
-                                    <ButtonBase
-                                        className="flex between middle"
-                                        disableRipple
-                                        key={'menu_back_button'}
-                                        onClick={() => handleSwitchTab('menu')}
-                                        sx={{
-                                            height: "3rem",
-                                            padding: "0 1.5rem",
-                                            position: "fixed",
-                                            top: 0,
-                                            zIndex: 8,
-                                            backgroundColor: color
-                                        }}>
-                                        <div className="flex compact fit" >
-                                            <div className="flex fit">
-                                                <ChevronLeft sx={{
-                                                    opacity: 0.5,
-                                                    marginTop: "-0.1rem"
-                                                }} />
+                                        <ButtonBase
+                                            className="flex between middle"
+                                            disableRipple
+                                            key={'menu_back_button'}
+                                            onClick={() => handleSwitchTab('menu')}
+                                            sx={{
+                                                height: "3rem",
+                                                padding: "0 1.5rem",
+                                                position: "fixed",
+                                                top: 0,
+                                                zIndex: 8,
+                                                backgroundColor: color
+                                            }}>
+                                            <div className="flex compact fit" >
+                                                <div className="flex fit">
+                                                    <ChevronLeft sx={{
+                                                        opacity: 0.5,
+                                                        marginTop: "-0.1rem"
+                                                    }} />
+                                                </div>
+                                                <Typography variant="h6" sx={{
+                                                    textTransform: "uppercase",
+                                                    letterSpacing: "0.05rem",
+                                                    fontSize: "1rem",
+                                                    display: 'inline',
+                                                    backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
+                                                    textDecoration: `none`,
+                                                    backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                                                    backgroundPosition: `100% 100%, 0 100%`,
+                                                    backgroundRepeat: `no-repeat`,
+                                                    transition: `background-size .3s`,
+                                                    color: 'inherit',
+                                                    cursor: "pointer",
+                                                    whiteSpace: "pre-line",
+                                                    fontWeight: 800,
+                                                    textAlign: 'left',
+                                                    '&:hover': {
+                                                        backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                                    }
+                                                }}>Back</Typography>
                                             </div>
-                                            <Typography variant="h6" sx={{
-                                                textTransform: "uppercase",
-                                                letterSpacing: "0.05rem",
-                                                fontSize: "1rem",
-                                                display: 'inline',
-                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                                textDecoration: `none`,
-                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                                backgroundPosition: `100% 100%, 0 100%`,
-                                                backgroundRepeat: `no-repeat`,
-                                                transition: `background-size .3s`,
-                                                color: 'inherit',
-                                                cursor: "pointer",
-                                                whiteSpace: "pre-line",
-                                                fontWeight: 800,
-                                                textAlign: 'left',
-                                                '&:hover': {
-                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                                }
-                                            }}>Back</Typography>
-                                        </div>
 
-                                    </ButtonBase>
+                                        </ButtonBase>
                                     </>
                                 ) : (
                                     <></>
@@ -359,43 +336,14 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
-                                <ButtonBase
-                                    className="flex between middle"
-                                    disableRipple
-                                    key={'test'}
-                                    onClick={() => setIsSidebarOpen(prev => !prev)}
-                                    sx={{
-                                        height: "3rem",
-                                        padding: "0 2rem",
-                                    }}>
-                                    <div className="flex fit">
-                                        <Typography variant="h6" sx={{
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.05rem",
-                                            fontSize: "1rem",
-                                            display: 'inline',
-                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                            textDecoration: `none`,
-                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                            backgroundPosition: `100% 100%, 0 100%`,
-                                            backgroundRepeat: `no-repeat`,
-                                            transition: `background-size .3s`,
-                                            color: 'inherit',
-                                            cursor: "pointer",
-                                            whiteSpace: "pre-line",
-                                            fontWeight: 800,
-                                            textAlign: 'left',
-                                            '&:hover': {
-                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                            }
-                                        }}>Explore Blankets</Typography>
-                                    </div>
-                                    <div className="flex fit">
-                                        <ChevronRight sx={{
-                                            opacity: 0.5
-                                        }} />
-                                    </div>
-                                </ButtonBase>
+
+                                <MenuItem
+                                    key={'blankets'}
+                                    onClick={() => router.push('outerwear')}
+                                    icon={<ArrowForward fontSize="small" />}
+                                >Explore All Blankets</MenuItem>
+
+
                                 <div className="column fit" style={{
                                     padding: "0 2rem"
                                 }}>
@@ -413,43 +361,12 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
-                                <ButtonBase
-                                    className="flex between middle"
-                                    disableRipple
-                                    key={'outerwear_all'}
-                                    onClick={() => router.push('/outerwear')}
-                                    sx={{
-                                        height: "3rem",
-                                        padding: "0 2rem",
-                                    }}>
-                                    <div className="flex fit">
-                                        <Typography variant="h6" sx={{
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.05rem",
-                                            fontSize: "1rem",
-                                            display: 'inline',
-                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                            textDecoration: `none`,
-                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                            backgroundPosition: `100% 100%, 0 100%`,
-                                            backgroundRepeat: `no-repeat`,
-                                            transition: `background-size .3s`,
-                                            color: 'inherit',
-                                            cursor: "pointer",
-                                            whiteSpace: "pre-line",
-                                            fontWeight: 800,
-                                            textAlign: 'left',
-                                            '&:hover': {
-                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                            }
-                                        }}>Explore All Outerwear</Typography>
-                                    </div>
-                                    <div className="flex fit">
-                                        <ChevronRight sx={{
-                                            opacity: 0.5
-                                        }} />
-                                    </div>
-                                </ButtonBase>
+                                <MenuItem
+                                    key={'all outerwear'}
+                                    onClick={() => router.push('outerwear')}
+                                    icon={<ArrowForward fontSize="small" />}
+                                >Explore All Outerwear</MenuItem>
+
                                 <div className="flex" style={{
                                     padding: "0 2rem"
                                 }}>
@@ -477,81 +394,17 @@ export default function Header({ Cart, color, setColor }: {
                                     </div>
                                 </div>
                                 <div className="column snug fit">
-                                    <ButtonBase
-                                        className="flex between middle"
-                                        disableRipple
-                                        key={'cardigan'}
-                                        onClick={() => setIsSidebarOpen(prev => !prev)}
-                                        sx={{
-                                            height: "3rem",
-                                            padding: "0 2rem",
-                                        }}>
-                                        <div className="flex fit">
-                                            <Typography variant="h6" sx={{
-                                                textTransform: "uppercase",
-                                                letterSpacing: "0.05rem",
-                                                fontSize: "1rem",
-                                                display: 'inline',
-                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                                textDecoration: `none`,
-                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                                backgroundPosition: `100% 100%, 0 100%`,
-                                                backgroundRepeat: `no-repeat`,
-                                                transition: `background-size .3s`,
-                                                color: 'inherit',
-                                                cursor: "pointer",
-                                                whiteSpace: "pre-line",
-                                                fontWeight: 800,
-                                                textAlign: 'left',
-                                                '&:hover': {
-                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                                }
-                                            }}>Cardigans</Typography>
-                                        </div>
-                                        <div className="flex fit">
-                                            <ChevronRight sx={{
-                                                opacity: 0.5
-                                            }} />
-                                        </div>
-                                    </ButtonBase>
+                                    <MenuItem
+                                        key={'cardigans'}
+                                        onClick={() => router.push('outerwear')}
+                                        icon={<ArrowForward fontSize="small" />}
+                                    >Cardigans</MenuItem>
 
-                                    <ButtonBase
-                                        className="flex between middle"
-                                        disableRipple
+                                    <MenuItem
                                         key={'hoodies'}
-                                        onClick={() => setIsSidebarOpen(prev => !prev)}
-                                        sx={{
-                                            height: "3rem",
-                                            padding: "0 2rem",
-                                        }}>
-                                        <div className="flex fit">
-                                            <Typography variant="h6" sx={{
-                                                textTransform: "uppercase",
-                                                letterSpacing: "0.05rem",
-                                                fontSize: "1rem",
-                                                display: 'inline',
-                                                backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                                textDecoration: `none`,
-                                                backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                                backgroundPosition: `100% 100%, 0 100%`,
-                                                backgroundRepeat: `no-repeat`,
-                                                transition: `background-size .3s`,
-                                                color: 'inherit',
-                                                cursor: "pointer",
-                                                whiteSpace: "pre-line",
-                                                fontWeight: 800,
-                                                textAlign: 'left',
-                                                '&:hover': {
-                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                                }
-                                            }}>Hoodies</Typography>
-                                        </div>
-                                        <div className="flex fit">
-                                            <ChevronRight sx={{
-                                                opacity: 0.5
-                                            }} />
-                                        </div>
-                                    </ButtonBase>
+                                        onClick={() => router.push('outerwear')}
+                                        icon={<ArrowForward fontSize="small" />}
+                                    >Hoodies</MenuItem>
 
                                 </div>
                             </div>
@@ -562,43 +415,11 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
-                                <ButtonBase
-                                    className="flex between middle"
-                                    disableRipple
-                                    key={'test'}
-                                    onClick={() => setIsSidebarOpen(prev => !prev)}
-                                    sx={{
-                                        height: "3rem",
-                                        padding: "0 2rem",
-                                    }}>
-                                    <div className="flex fit">
-                                        <Typography variant="h6" sx={{
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.05rem",
-                                            fontSize: "1rem",
-                                            display: 'inline',
-                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                            textDecoration: `none`,
-                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                            backgroundPosition: `100% 100%, 0 100%`,
-                                            backgroundRepeat: `no-repeat`,
-                                            transition: `background-size .3s`,
-                                            color: 'inherit',
-                                            cursor: "pointer",
-                                            whiteSpace: "pre-line",
-                                            fontWeight: 800,
-                                            textAlign: 'left',
-                                            '&:hover': {
-                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                            }
-                                        }}>Explore All Jewelry</Typography>
-                                    </div>
-                                    <div className="flex fit">
-                                        <ChevronRight sx={{
-                                            opacity: 0.5
-                                        }} />
-                                    </div>
-                                </ButtonBase>
+                                <MenuItem
+                                    key={'jewelry'}
+                                    onClick={() => router.push('outerwear')}
+                                    icon={<ArrowForward fontSize="small" />}
+                                >Explore All Jewelry</MenuItem>
                                 <div className="flex between" style={{
                                     padding: "0 2rem"
                                 }}>
@@ -747,7 +568,10 @@ export default function Header({ Cart, color, setColor }: {
                                     className="flex between middle"
                                     disableRipple
                                     key={'test'}
-                                    onClick={() => setIsSidebarOpen(prev => !prev)}
+                                    onClick={() => {
+                                        setIsSidebarOpen(prev => !prev);
+                                        router.push('/ponchos');
+                                    }}
                                     sx={{
                                         height: "3rem",
                                         padding: "0 2rem",
@@ -804,16 +628,12 @@ export default function Header({ Cart, color, setColor }: {
                         <div className="column snug">
                             <MenuItem
                                 onClick={() => setIsSidebarOpen(false)}
-                                icon={<ArrowForward fontSize="small" sx={{
-                                    opacity: 0.5
-                                }} />}
+                                icon={<ArrowForward fontSize="small" />}
                             >Our Values</MenuItem>
 
                             <MenuItem
                                 onClick={() => setIsSidebarOpen(false)}
-                                icon={<EmailOutlined fontSize="small" sx={{
-                                    opacity: 0.5
-                                }} />}
+                                icon={<EmailOutlined fontSize="small" />}
                             >Contact</MenuItem>
                         </div>
 
@@ -886,7 +706,7 @@ export default function Header({ Cart, color, setColor }: {
                                 handleSwitchTab('menu')
                                 isSidebarOpen ? handleCloseSidebar() : handleOpenSidebar()
                             }}>
-                                <MenuOutlined />
+                                {isSidebarOpen ? <CloseOutlined /> : <MenuOutlined />}
                             </IconButton>
                         </div>
                     )}
@@ -947,7 +767,7 @@ export default function Header({ Cart, color, setColor }: {
                                                 textAlign: 'left',
                                                 height: "3rem",
                                                 '&:hover': {
-                                                    backgroundSize: "0 0.1rem, 100% 0.1rem"
+                                                    backgroundSize: "0 0.1rem, 100% 0.1rem",
                                                 },
                                                 opacity: 0
                                             }}>
@@ -960,6 +780,27 @@ export default function Header({ Cart, color, setColor }: {
                                     )
                                 })}
 
+                                <>
+                                    {router.pathname && router.pathname.startsWith('/admin') && (
+                                        <Button
+                                            key="edit"
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                router.push('/admin/categories')
+                                            }}
+                                            variant="outlined"
+                                            startIcon={
+                                                <EditOutlined fontSize="small" />
+                                            }
+                                            sx={{
+                                                height: "2rem"
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    )}
+                                </>
+
                             </div>
                         )}
                     </div>
@@ -971,13 +812,13 @@ export default function Header({ Cart, color, setColor }: {
                                 {/* <ColorPicker color={color} setColor={setColor} /> */}
 
                                 <div className="flex compact fit">
-                                    <IconButton onClick={() => {
+                                    {/* <IconButton onClick={() => {
                                         return;
                                     }}>
                                         <SearchOutlined sx={{
                                             color: theme.palette.getContrastText(color)
                                         }} />
-                                    </IconButton>
+                                    </IconButton> */}
                                     <Badge
                                         badgeContent={Cart.cart?.length || 0}
                                         invisible={!Cart.cart || Cart.cart.length === 0}
@@ -996,10 +837,10 @@ export default function Header({ Cart, color, setColor }: {
                                         </Tooltip>
                                     </Badge>
                                 </div>
-                                <ScrollButton variant="contained" onClick={() => router.push('/products')} sx={{
+                                {/* <ScrollButton variant="contained" onClick={() => router.push('/products')} sx={{
                                     height: "2.5rem",
                                     marginLeft: "1rem"
-                                }}>Shop All</ScrollButton>
+                                }}>Shop All</ScrollButton> */}
                             </div>
                         )}
                     </div>

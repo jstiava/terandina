@@ -41,7 +41,6 @@ export function DisplayPrice({
                 fontSize: "1.25rem",
                 color: theme.palette.primary.light,
                 width: "fit-content",
-                maxWidth: "5rem",
                 textAlign: "right",
                 lineHeight: "115%",
                 ...style
@@ -54,7 +53,6 @@ export function DisplayPrice({
             fontSize: "1.25rem",
             color: theme.palette.primary.light,
             width: "fit-content",
-            maxWidth: "5rem",
             textAlign: "right",
             lineHeight: "115%",
             ...style
@@ -137,11 +135,12 @@ export default function ProductCard({
                     <CoverImageCarousel
                         images={product.images}
                         width="100%"
-                        height={isSm ? "12rem" : "21.5rem"}
+                        height={"100%"}
                         isHovering={isHovering}
                         style={{
                             // borderRadius: "0.5rem",
                             aspectRatio: "1 / 1",
+                            height: "auto",
                             overflow: 'hidden'
                         }} />
                     {isHovering && (
@@ -174,7 +173,8 @@ export default function ProductCard({
                         lineHeight: "115%",
                         textAlign: 'left',
                         fontSize: "1rem",
-                        height: "2.5rem"
+                        minHeight: '2rem',
+                        height: "fit-content"
                         
                     }}>{product.name}</Typography>
                 </div>

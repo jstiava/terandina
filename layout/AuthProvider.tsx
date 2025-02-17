@@ -81,7 +81,7 @@ export default function AuthProvider({
             <CartSidebar Cart={Cart} />
             <div id="content" className="column snug" style={{
                 minHeight: "100vh",
-                backgroundColor: color
+                backgroundColor: theme.palette.background.paper
             }}>
                 <Component {...pageProps} Cart={Cart} />
             </div>

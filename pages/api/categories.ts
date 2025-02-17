@@ -83,15 +83,15 @@ async function getProductById(productId: string): Promise<any | null> {
   }
 }
 
-async function getAllProducts() {
+async function getAllCategories() {
   try {
     const mongo = await Mongo.getInstance();
 
-    const products = await mongo.clientPromise.db('products').collection('products').find().toArray()
+    const categories = await mongo.clientPromise.db('products').collection('categories').find().toArray()
 
-    return products;
+    return categories;
   } catch (error) {
-    console.error('Error retrieving products:', error);
+    console.error('Error retrieving categories:', error);
   }
 }
 
@@ -212,15 +212,15 @@ export default async function handleRequest(
 ) {
 
   if (req.method === 'POST') {
-    return handlePostRequest(req, res);
+    // return handlePostRequest(req, res);
   }
 
   if (req.method === 'DELETE') {
-    return handleDeleteRequest(req, res);
+    // return handleDeleteRequest(req, res);
   }
 
   if (req.method === 'PATCH') {
-    return handlePatchRequest(req, res);
+    // return handlePatchRequest(req, res);
   }
 
   if (req.method != 'GET') {
@@ -230,22 +230,22 @@ export default async function handleRequest(
   const product_id = req.query.id;
   const doNotCache = new SafeString(req.query.doNotCache);
 
-  if (product_id) {
-    const product = await getProductById(String(product_id))
-    if (!product) {
-      throw Error("No product found by that id.")
-    }
-    return res.status(200).json({
-      message: "Success. Got one product.",
-      product
-    })
-  }
+//   if (product_id) {
+//     const product = await getProductById(String(product_id))
+//     if (!product) {
+//       throw Error("No product found by that id.")
+//     }
+//     return res.status(200).json({
+//       message: "Success. Got one product.",
+//       product
+//     })
+//   }
 
   try {
-    const products = await getAllProducts();
+    const categories = await getAllCategories();
 
-    if (!products) {
-      throw Error("No products.")
+    if (!categories) {
+      throw Error("No categories.")
     }
 
     if (doNotCache.isTrue()) {
@@ -256,7 +256,7 @@ export default async function handleRequest(
 
     res.status(200).json({
       message: "Success",
-      products
+      categories
     })
   } catch (err) {
     console.log(err);

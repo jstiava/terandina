@@ -1,19 +1,32 @@
-import { ButtonBase, Typography } from "@mui/material";
+import theme from "@/styles/theme";
+import { alpha, ButtonBase, lighten, Typography, useTheme } from "@mui/material";
+import { useState } from "react";
 
 
-export default function MenuItem({ onClick, icon, children } : {
+export default function MenuItem({ onClick, icon, children }: {
     onClick: any,
-    icon: any,
+    icon?: any,
     children: any
 }) {
 
+    const theme = useTheme();
+    const [action, setAction] = useState<string | null>(null);
+
+    const hovering = alpha(theme.palette.primary.main, 0.025);
+    const down = alpha(theme.palette.primary.main, 0.05);
     return (
         <ButtonBase
+            // onMouseEnter={() => setAction('hovering')}
+            // onMouseLeave={() => setAction(null)}
+            // onMouseDown={() => setAction('down')}
             className="flex between middle"
-            disableRipple
-            onClick={onClick}
+            // disableRipple
+            onClick={(e) => {
+                setAction(null);
+                onClick(e);
+            }}
             sx={{
-                height: "3rem",
+                height: "3.25rem",
                 padding: "0 2rem",
             }}>
             <div className="flex fit">
@@ -38,9 +51,13 @@ export default function MenuItem({ onClick, icon, children } : {
                     }
                 }}>{children}</Typography>
             </div>
-            <div className="flex fit">
-                {icon}
-            </div>
+            {icon ? (
+                <div className="flex fit" style={{
+                    opacity: 0.25
+                }}>
+                    {icon}
+                </div>
+            ) : <div></div>}
         </ButtonBase>
     )
 }

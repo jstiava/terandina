@@ -26,12 +26,12 @@ import {
     GridRowId,
 } from '@mui/x-data-grid';
 import CoverImage from "@/components/CoverImage";
-import { AddOutlined, CancelOutlined, DeleteOutlined, EditOutlined, MinimizeOutlined, PhotoAlbumOutlined, PhotoOutlined, RemoveOutlined, SaveOutlined } from "@mui/icons-material";
+import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, MinimizeOutlined, PhotoAlbumOutlined, PhotoOutlined, RemoveOutlined, SaveOutlined } from "@mui/icons-material";
 import { formatPrice } from "@/components/ProductCard";
 import useComplexFileDrop, { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
 
-const MAX_IMAGES = 3;
+const MAX_IMAGES = 5;
 
 
 const alphaComparator: GridComparatorFn<string> = (v1, v2) => {
@@ -49,9 +49,10 @@ const nameAlphaComparator: GridComparatorFn<any> = (v1, v2, cellParams1, cellPar
     );
 };
 
-const EditToolbar = ({ setProducts, selected }: {
+const EditToolbar = ({ setProducts, selected, setSelected }: {
     setProducts: Dispatch<SetStateAction<StripeProduct[] | null>>,
-    selected: GridRowSelectionModel
+    selected: GridRowSelectionModel,
+    setSelected: Dispatch<SetStateAction<GridRowSelectionModel>>
 }) => {
 
     const theme = useTheme();
@@ -72,8 +73,6 @@ const EditToolbar = ({ setProducts, selected }: {
             return;
         }
 
-        const response = await deleteRequest.json();
-
         setProducts(prev => {
             if (!prev) {
                 return [];
@@ -82,6 +81,12 @@ const EditToolbar = ({ setProducts, selected }: {
             for (const product of prev) {
                 if (!selected.some(x => x === product.id)) {
                     newList.push(product);
+                }
+                else {
+                    newList.push({
+                        ...product,
+                        active: false
+                    })
                 }
             }
             return newList;
@@ -108,10 +113,17 @@ const EditToolbar = ({ setProducts, selected }: {
                     }}>{selected.length}</div>
                 )}
                 <Button
-                    onClick={handleDelete}
+                    onClick={() => setSelected([])}
+                    startIcon={<CloseOutlined />}
                     variant="contained" sx={{
                         height: "2rem"
-                    }}>Delete {selected.length} Products</Button>
+                    }}>Unselect All</Button>
+                <Button
+                    onClick={handleDelete}
+                    startIcon={<ArchiveOutlined />}
+                    variant="contained" sx={{
+                        height: "2rem"
+                    }}>Archive</Button>
             </div>
             {/* <Button onClick={triggerExportReport}>
             Export
@@ -124,9 +136,42 @@ const EditToolbar = ({ setProducts, selected }: {
 export default function AdminPage() {
 
     const [images, setImages] = useState<UploadType[]>([]);
+    const [newUploads, setNewUploads] = useState<UploadType[]>([]);
 
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+
+
+    const UploadThing = useUploadThing('imageUploader', {
+        onClientUploadComplete: (res) => {
+            if (res) {
+
+                try {
+                    const uploadedFiles = res.map(file => ({
+                        url: file.ufsUrl,
+                        size: file.size,
+                        isLocal: false
+                    }))
+
+                    setNewUploads(prev => {
+                        if (!prev) {
+                            return uploadedFiles
+                        }
+                        return [...prev, ...uploadedFiles]
+                    })
+                }
+                catch (err) {
+                    console.log(err)
+                }
+
+            }
+        },
+        onUploadError: (error) => {
+            console.error("Upload error:", error);
+        },
+
+    })
+
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -138,8 +183,19 @@ export default function AdminPage() {
     const isSm = useMediaQuery("(max-width: 90rem)");
 
 
+    const handleUpdate = async (newRow: StripeProduct) => {
+        await fetch(`/api/products?id=${newRow.id}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(newRow)
+        })
+    }
 
-    const processRowUpdate = (newRow: GridRowModel<StripeProduct>) => {
+    const processRowUpdate = async (newRow: GridRowModel<StripeProduct>) => {
+
+        await handleUpdate(newRow);
         setProducts((prev) => {
             if (!prev) return null;
             const newList = prev.map((row) => (row.id === newRow.id ? newRow : row));
@@ -174,7 +230,7 @@ export default function AdminPage() {
             headerName: "Images",
             sortable: false,
             width: 100,
-            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField key={params.row.id} params={params} onChange={(uploads) => {
+            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField UploadThing={UploadThing} newUploads={newUploads} setNewUploads={setNewUploads} key={params.row.id} params={params} onChange={(uploads) => {
                 const row = products?.find(x => params.row.id);
                 if (!row) {
                     return;
@@ -218,8 +274,47 @@ export default function AdminPage() {
         {
             field: "description",
             headerName: "Description",
-            width: 300,
+            width: 400,
             editable: true,
+            renderEditCell: (params) => {
+                return (
+                    <div className="flex top" style={{
+                        width: "100%",
+                        height: "100%"
+                    }}>
+                        <TextField
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                overflowY: "scroll",
+                                '& .MuiInputBase-root': {
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    width: "100%",
+                                    height: "fit-content",
+                                    padding: "0.5rem 1rem"
+                                },
+                                '& textarea': {
+                                    fontSize: "1rem",
+                                    lineHeight: "100%"
+                                }
+                            }}
+                            onChange={e => {
+                                if (!e.target.value) {
+                                    return;
+                                }
+                                params.api.setEditCellValue({
+                                    id: params.id,
+                                    field: params.field,
+                                    value: e.target.value
+                                })
+                            }}
+                            value={params.value}
+                            multiline
+                        />
+                    </div>
+                )
+            },
             renderCell: (params: GridRenderCellParams<StripeProduct, string>) => {
                 return (
                     <Typography sx={{
@@ -256,8 +351,66 @@ export default function AdminPage() {
         {
             field: "prices",
             headerName: "Price & Quantity",
-            width: 300,
+            width: 400,
+            editable: true,
             sortable: false,
+            renderEditCell: (params: GridRenderEditCellParams<StripeProduct, StripePrice[]>) => {
+                return (
+                    <div className="column snug"
+                        style={{
+                            height: "100%",
+                            width: "100%",
+                            overflowY: 'scroll',
+                            padding: '0.5rem'
+                        }}>
+
+                        {params.value && params.value.map(price => (
+                            <div className="flex between" key={price.id} style={{
+                                width: "100%"
+                            }}>
+                                <div className="flex fit">
+                                    {price.nickname && (<Typography variant="caption" sx={{
+                                        padding: 0
+                                    }}>{price.nickname}</Typography>)}
+                                    {price.unit_amount && (
+                                        <Typography>{formatPrice(price.unit_amount * 1, price.currency)}</Typography>
+                                    )}
+                                </div>
+                                <div className="flex fit" style={{
+                                    padding: "0.5rem"
+                                }}>
+                                    <TextField
+                                        sx={{
+                                            width: "8rem",
+                                            '& .MuiInputBase-root': {
+                                                height: "2.5rem",
+                                                '& .MuiInputBase-input': {
+                                                textAlign: "center"
+                                            }
+                                            }
+                                        }}
+                                        value={price.inventory || 100}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <div className="flex snug fit">
+
+                                                    <IconButton><RemoveOutlined fontSize="small" /></IconButton>
+                                                </div>
+                                            ),
+                                            endAdornment: (
+                                                <div className="flex snug fit">
+                                                    <IconButton><AddOutlined fontSize="small" /></IconButton>
+                                                </div>
+                                            )
+                                        }}
+                                    />
+                                     <IconButton><DeleteOutlined color="error" fontSize="small" /></IconButton>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
+            },
             renderCell: (params: GridRenderCellParams<StripeProduct, StripePrice[]>) => {
                 return (
                     <div className="column snug" style={{
@@ -275,7 +428,7 @@ export default function AdminPage() {
                                         <Typography>{formatPrice(price.unit_amount * 1, price.currency)}</Typography>
                                     )}
                                 </div>
-                                <div className="flex fit" style={{
+                                {/* <div className="flex fit" style={{
                                     padding: "0.5rem"
                                 }}>
                                     <TextField
@@ -293,7 +446,7 @@ export default function AdminPage() {
                                             width: "8rem"
                                         }}
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         ))}
                     </div>
@@ -382,7 +535,6 @@ export default function AdminPage() {
     }, []);
 
 
-
     const { startUpload, isUploading } = useUploadThing('imageUploader', {
         onClientUploadComplete: (res) => {
             if (res) {
@@ -443,7 +595,7 @@ export default function AdminPage() {
                         getRowHeight={(params) => {
                             const row = products.find(x => x.id === params.id)
                             if (!row) return 100;
-                            return Math.max(100, row.prices.length * 70)
+                            return Math.max(100, row.prices.length * 45)
                         }}
                         checkboxSelection
                         rowModesModel={rowModesModel}
@@ -459,6 +611,7 @@ export default function AdminPage() {
                                 <EditToolbar
                                     setProducts={setProducts}
                                     selected={rowSelectionModel}
+                                    setSelected={setRowSelectionModel}
                                 />
                             )
                         }}

@@ -81,7 +81,7 @@ export default function Home(props: StripeAppProps) {
           <CoverImage
             delay={0.5}
             url="/no_license_landscape.jpg"
-            height={isSm ? "calc(80vh - 6rem)" : "calc(100vh - 6rem)"}
+            height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
             width={"100%"}
             className={isSm ? 'column center middle' : 'flex between bottom'}
             style={{
@@ -113,7 +113,8 @@ export default function Home(props: StripeAppProps) {
                   textAlign: isSm ? 'center' : 'left',
                   padding: "1.5rem",
                   border: "0.25rem solid white",
-                  marginBottom: "1rem"
+                  marginBottom: "1rem",
+                  fontSize: isSm ? "1.85rem" : "2rem"
                 }}
                   variant="h1"
                 >Crafted<br /> in the Andes<br />Rooted in <br />Tradition</Typography>
@@ -127,11 +128,19 @@ export default function Home(props: StripeAppProps) {
                 >Crafted in the Andes<br />Rooted in Tradition</Typography>
               )}
             </div>
-            <div className="flex fit">
-              <Button variant="contained" onClick={() => {
+            <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
+              position: 'absolute',
+              bottom: "2rem",
+              width: "100%",
+              left: 0,
+              padding: "0 2rem"
+            } : {
+
+            }}>
+              <Button fullWidth={isSm} variant="contained" onClick={() => {
                 router.push('/products')
               }}>Shop All</Button>
-              <Button variant="text" onClick={() => router.push('/values')} sx={{
+              <Button fullWidth={isSm} variant="text" onClick={() => router.push('/values')} sx={{
                 color: '#ffffff',
                 borderColor: "#ffffff"
               }}>
@@ -148,7 +157,7 @@ export default function Home(props: StripeAppProps) {
             direction="horizontal"
             slidesPerView={1}
             spaceBetween={10}
-            navigation={true}
+            navigation={!isSm}
             // slidesOffsetBefore={-30}
             style={{
               display: 'flex',
