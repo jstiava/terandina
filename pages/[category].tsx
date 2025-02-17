@@ -19,7 +19,7 @@ interface StaticProps {
 export const getStaticPaths = (async () => {
 
   const mongo = await Mongo.getInstance()
-  const categories = await mongo.clientPromise.db('products').collection('categories').find({}).toArray();
+  const categories = await mongo.clientPromise.db('products').collection('categories').find().toArray();
 
   return {
     paths: categories.map(cat => ({
@@ -34,7 +34,7 @@ export const getStaticPaths = (async () => {
 export const getStaticProps = (async (context: any) => {
 
   console.log(context);
-  const slug = context.params?.category || null;
+  const slug = context.params?.category;
 
   if (!slug) {
     console.log("No slug")
@@ -74,9 +74,17 @@ export default function CategoryPage(props: StripeAppProps & {
   const isSm = useMediaQuery("(max-width: 45rem)");
   const isMd = useMediaQuery("(max-width: 70rem)");
 
-  const category = props.static.category;
+  useEffect(( )=> {
+    if (props && props.static) {
+      if (props.static.notFound) {
+        router.back();
+      }
+    }
 
-  if (!category) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props]);
+
+  if (!props || !props.static || !props.static.category) {
     return <></>
   }
 
@@ -99,7 +107,7 @@ export default function CategoryPage(props: StripeAppProps & {
           backgroundColor: theme.palette.background.paper,
           animation: 'fade 0.2s ease-in-out forwards'
         }}>
-          <Typography variant="h5">{category.name}</Typography>
+          <Typography variant="h5">{props.static.category.name}</Typography>
         </div>
       </ScrollButton>
       <div className="column center" style={{
@@ -136,7 +144,7 @@ export default function CategoryPage(props: StripeAppProps & {
           <div className="column center middle">
             <Typography variant="h1" sx={{
               fontSize: isMd ? '3rem' : "4rem",
-            }}>{category.name}</Typography>
+            }}>{props.static.category.name}</Typography>
             <Typography sx={{
               width: '100%',
               maxWidth: "30rem",
