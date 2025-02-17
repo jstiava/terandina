@@ -5,7 +5,7 @@ export default function MenuItemCover({children} : any) {
     return (
         <div className="column compact" style={{
             width: "calc(50% - 0.5rem)",
-            maxWidth: "10rem",
+            maxWidth: "12.5rem",
             height: "auto",
             marginBottom: "0.5rem"
         }}>

@@ -199,7 +199,7 @@ export default function Home(props: StripeAppProps) {
                 spaceBetween: 10,
               },
             }}
-            className="mySwiper"
+          className="mySwiper"
           >
             {products.map(product => (
 

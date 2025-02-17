@@ -482,11 +482,10 @@ export default function Header({ Cart, color, setColor }: {
                                     padding: "0 1.5rem 0 2rem",
                                     flexWrap: 'wrap'
                                 }}>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Bowls</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Textiles</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Paintings</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Tools</Typography></MenuItemCover>
                                      <MenuItemCover><Typography sx={{ textAlign: "center" }}>Spirtual</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Pottery</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Authentic Collectables</Typography></MenuItemCover>
+                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Accessories</Typography></MenuItemCover>
                                  
                                 </div>
 
