@@ -21,9 +21,11 @@ export interface StripeProduct extends Stripe.Product {
     images: string[],
     prices: StripePrice[],
     is_featured: boolean,
+    categories: string[], // category_ids
+    related: string[], // product_ids
 
     // checkout
-    selectedPrice: StripePrice,
+    selectedPrice: StripePrice | null,
     quantity: number,
 }
 

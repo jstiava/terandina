@@ -637,6 +637,7 @@ export default function Header({ Cart, color, setColor }: {
                     {isSm && (
                         <div className="flex fit">
                             <IconButton onClick={() => {
+                                window.scrollTo(0, 1)
                                 handleSwitchTab('menu')
                                 isSidebarOpen ? handleCloseSidebar() : handleOpenSidebar()
                             }}>

@@ -61,11 +61,15 @@ export default async function handleRequest(
         _id: { $in: prices.map(p => p._id) }
       })
 
+      console.log("Successfully created.")
+
       return;
     }
 
     if (event.type === 'product.deleted') {
+      console.log("product.deleted")
       const product = event.data.object as Stripe.Product;
+      console.log(product);
       await mongo.clientPromise.db('products').collection('products').deleteOne({
         id: product.id
       })
@@ -74,6 +78,8 @@ export default async function handleRequest(
 
     if (event.type === "product.updated") {
       const product = event.data.object as Stripe.Product;
+      console.log(product);
+
       const result = await mongo.clientPromise.db('products').collection('products').updateOne({
         id: product.id
       }, {

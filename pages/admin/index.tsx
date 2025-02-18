@@ -1,9 +1,10 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
-import { StripePrice, StripeProduct } from "@/types";
+import { Category, StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
-import { Button, Checkbox, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Checkbox, Chip, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import {
     GridColDef,
     GridRenderCellParams,
@@ -24,12 +25,16 @@ import {
     GridRowModes,
     GridRowModel,
     GridRowId,
+    GridFilterItem,
+    GridFilterModel,
 } from '@mui/x-data-grid';
 import CoverImage from "@/components/CoverImage";
-import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, MinimizeOutlined, PhotoAlbumOutlined, PhotoOutlined, RemoveOutlined, SaveOutlined } from "@mui/icons-material";
+import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupOutlined, GroupWorkOutlined, MinimizeOutlined, OpenInNew, PhotoAlbumOutlined, PhotoOutlined, RemoveOutlined, SaveOutlined, SearchOutlined } from "@mui/icons-material";
 import { formatPrice } from "@/components/ProductCard";
 import useComplexFileDrop, { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
+import { Router } from "next/router";
+import Stripe from "stripe";
 
 const MAX_IMAGES = 5;
 
@@ -49,13 +54,51 @@ const nameAlphaComparator: GridComparatorFn<any> = (v1, v2, cellParams1, cellPar
     );
 };
 
-const EditToolbar = ({ setProducts, selected, setSelected }: {
+const EditToolbar = ({ setProducts, selected, setSelected, handleAdd }: {
     setProducts: Dispatch<SetStateAction<StripeProduct[] | null>>,
     selected: GridRowSelectionModel,
-    setSelected: Dispatch<SetStateAction<GridRowSelectionModel>>
+    setSelected: Dispatch<SetStateAction<GridRowSelectionModel>>,
+    handleAdd: () => any
 }) => {
 
     const theme = useTheme();
+
+    const handleGroup = async () => {
+
+        const groupRequest = await fetch(`api/categories`, {
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify({
+                action: "Group",
+                products: selected ? Array.isArray(selected) ? selected : [selected] : []
+            })
+        })
+
+        if (!groupRequest.ok) {
+            return;
+        }
+
+        // setProducts(prev => {
+        //     if (!prev) {
+        //         return [];
+        //     }
+        //     let newList = [];
+        //     for (const product of prev) {
+        //         if (!selected.some(x => x === product.id)) {
+        //             newList.push(product);
+        //         }
+        //         else {
+        //             newList.push({
+        //                 ...product,
+        //                 active: false
+        //             })
+        //         }
+        //     }
+        //     return newList;
+        // })
+    }
 
     const handleDelete = async () => {
 
@@ -97,46 +140,64 @@ const EditToolbar = ({ setProducts, selected, setSelected }: {
         return (
             <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.main }}>
                 <div className="flex compact fit">
-                    <Typography sx={{
-                        height:"2rem"
+                    <Typography className="flex center middle fit" sx={{
+                        height: "2rem"
                     }}>Products</Typography>
+
                 </div>
+                <Button
+                    onClick={handleAdd}
+                    startIcon={<AddOutlined />}
+                    variant="outlined" sx={{
+                        height: "2rem"
+                    }}>New</Button>
             </GridToolbarContainer>
         )
     }
     return (
-        <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
-            {/* <GridToolbarColumnsButton />
+        <>
+            <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
+                {/* <GridToolbarColumnsButton />
   <GridToolbarFilterButton />
   <GridToolbarDensitySelector slotProps={{ tooltip: { title: 'Change density' } }} /> */}
-            {/* <Box sx={{ flexGrow: 1 }} /> */}
-            <div className="flex compact fit">
-                {selected && (
-                    <div className="flex center middle" style={{
-                        width: "1.5rem",
-                        height: "1.5rem",
-                        borderRadius: "100%",
-                        backgroundColor: theme.palette.primary.contrastText,
-                        color: theme.palette.primary.main
-                    }}>{selected.length}</div>
-                )}
-                <Button
-                    onClick={() => setSelected([])}
-                    startIcon={<CloseOutlined />}
-                    variant="contained" sx={{
-                        height: "2rem"
-                    }}>Unselect All</Button>
-                <Button
-                    onClick={handleDelete}
-                    startIcon={<ArchiveOutlined />}
-                    variant="contained" sx={{
-                        height: "2rem"
-                    }}>Archive</Button>
-            </div>
-            {/* <Button onClick={triggerExportReport}>
+                {/* <Box sx={{ flexGrow: 1 }} /> */}
+                <div className="flex compact fit">
+                    {selected && (
+                        <div className="flex center middle" style={{
+                            width: "1.5rem",
+                            height: "1.5rem",
+                            borderRadius: "100%",
+                            backgroundColor: theme.palette.primary.contrastText,
+                            color: theme.palette.primary.main
+                        }}>{selected.length}</div>
+                    )}
+                    <Button
+                        onClick={() => setSelected([])}
+                        startIcon={<CloseOutlined />}
+                        variant="contained" sx={{
+                            height: "2rem"
+                        }}>Unselect All</Button>
+
+                    <Button
+                        onClick={handleGroup}
+                        startIcon={<GroupWorkOutlined />}
+                        variant="contained" sx={{
+                            height: "2rem"
+                        }}>Group</Button>
+                    <Button
+                        onClick={handleDelete}
+                        startIcon={<ArchiveOutlined />}
+                        variant="contained" sx={{
+                            height: "2rem"
+                        }}>Archive</Button>
+                </div>
+                {/* <Button onClick={triggerExportReport}>
             Export
         </Button> */}
-        </GridToolbarContainer>
+            </GridToolbarContainer>
+
+
+        </>
     )
 }
 
@@ -148,6 +209,8 @@ export default function AdminPage() {
 
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+
+    const [searchValue, setSearchValue] = useState("");
 
 
     const UploadThing = useUploadThing('imageUploader', {
@@ -188,6 +251,7 @@ export default function AdminPage() {
     };
 
     const [products, setProducts] = useState<StripeProduct[] | null>(null);
+    const [categories, setCategories] = useState<Category[] | null>(null);
     const isSm = useMediaQuery("(max-width: 90rem)");
 
 
@@ -199,12 +263,62 @@ export default function AdminPage() {
             },
             body: JSON.stringify(newRow)
         })
-        .catch(err => {
-            console.log("Error while updating.")
+            .catch(err => {
+                console.log("Error while updating.")
+            })
+    }
+
+    const handleCreate = async (newRow: StripeProduct): Promise<StripeProduct> => {
+        return await fetch(`/api/products`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                product: newRow
+            })
         })
+            .then(res => res.json())
+            .then(res => {
+                if (!res.product.prices || res.product.prices.length === 0) {
+                    return {
+                        ...res.product,
+                        quantity: 1,
+                        selectedPrice: null
+                    }
+                }
+                return {
+                    ...res.product,
+                    quantity: 1,
+                    selectedPrice: res.product.prices[0]
+                };
+            })
+            .catch(err => {
+                console.log(err)
+                return null;
+            })
     }
 
     const processRowUpdate = async (newRow: GridRowModel<StripeProduct>) => {
+
+        if (newRow.id === 'new') {
+            const newProduct = await handleCreate(newRow);
+            if (!newProduct) {
+                setProducts((prev) => {
+                    if (!prev) return null;
+                    const newList = prev.filter(x => x.id != 'new');
+                    return newList;
+                });
+            } else {
+                setProducts((prev) => {
+                    if (!prev) return null;
+                    const newList = prev.filter(x => x.id != 'new');
+                    newList.push(newProduct);
+                    return newList;
+                });
+            }
+            return newRow;
+        }
 
         await handleUpdate(newRow);
         setProducts((prev) => {
@@ -232,6 +346,36 @@ export default function AdminPage() {
         setRowModesModel({
             ...rowModesModel,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
+        });
+    };
+
+    const [filterModel, setFilterModel] = useState<GridFilterModel>({
+        items: [],
+    });
+
+    const handleSearch = (value: string) => {
+
+        const item = {
+            id: "name-filter",
+            field: "name",
+            operator: "contains",
+            value: value,
+        }
+
+        if (!value || value === "") {
+            setFilterModel((prev) => {
+                const items = prev.items.filter((i) => i.field !== item.field);
+                return { ...prev, items: items };
+            });
+            setSearchValue("");
+            return;
+        }
+
+        setSearchValue(value);
+
+        setFilterModel((prev) => {
+            const items = prev.items.filter((i) => i.field !== item.field); // Remove existing filter on the same field
+            return { ...prev, items: [...items, item] }; // Add new filter
         });
     };
 
@@ -265,19 +409,79 @@ export default function AdminPage() {
                     }}
                     >
                         <Typography >{params.value}</Typography>
-                        {/* <div className="flex compact">
-                            <Button 
-                            variant="text"
-                            sx={{
-                                height: "2rem"
-                            }}
-                            onClick={e => {
-                                e.stopPropagation();
-                            }}
-                            startIcon={
-                                <PhotoAlbumOutlined fontSize="small" />
-                            }>Manage Photos</Button>
-                        </div> */}
+                        <div className="flex compact">
+                            <Button
+                                variant="text"
+                                sx={{
+                                    height: "2rem"
+                                }}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    handleEditClick(params.id)
+                                }}
+                                startIcon={
+                                    <EditOutlined fontSize="small" />
+                                }>Edit</Button>
+                            <Button
+                                variant="text"
+                                sx={{
+                                    height: "2rem"
+                                }}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    window.open(`/item/${params.id}`);
+                                }}
+                                startIcon={
+                                    <OpenInNew fontSize="small" />
+                                }>View</Button>
+                        </div>
+                    </div>
+                )
+            }
+        },
+        {
+            field: "categories",
+            headerName: "Categories",
+            type: 'singleSelect',
+            valueOptions: categories?.map(x => x.name),
+            width: 300,
+            renderCell: (params: GridRenderCellParams<StripeProduct, string[] | null>) => {
+
+                if (!params.value) {
+                    return (
+                        <div className="flex top" style={{
+                            flexWrap: 'wrap',
+                            padding: "0.5rem"
+                        }}>
+                            <Typography>No Categories</Typography>
+                        </div>
+                    )
+                }
+
+                return (
+                    <div className="flex compact top" style={{
+                        flexWrap: 'wrap',
+                        padding: "0.5rem"
+                    }}>
+                        {params.value.map(cat_id => {
+
+                            const category = categories?.find(c => c._id === cat_id);
+
+                            if (!category) {
+                                return (
+                                    <ErrorOutline color="error" key={`${cat_id}_error`} />
+                                )
+                            }
+                            return (
+                                <Chip
+                                    key={cat_id}
+                                    label={category.name}
+                                    sx={{
+                                        marginBottom: "0.5rem"
+                                    }}
+                                />
+                            )
+                        })}
                     </div>
                 )
             }
@@ -285,7 +489,7 @@ export default function AdminPage() {
         {
             field: "description",
             headerName: "Description",
-            width: 400,
+            width: 300,
             editable: true,
             renderEditCell: (params) => {
                 return (
@@ -367,18 +571,18 @@ export default function AdminPage() {
 
                 const value = params.value || false;
                 return (
-                   <div className="flex top">
-                    <Checkbox
-                    checked={value}
-                    onChange={async (e, checked) => {
+                    <div className="flex top">
+                        <Checkbox
+                            checked={value}
+                            onChange={async (e, checked) => {
 
-                       await processRowUpdate({
-                        ...params.row,
-                        is_featured: checked
-                       })
-                    }}
-                   />
-                   </div>
+                                await processRowUpdate({
+                                    ...params.row,
+                                    is_featured: checked
+                                })
+                            }}
+                        />
+                    </div>
                 )
             }
         },
@@ -531,6 +735,50 @@ export default function AdminPage() {
 
     ]
 
+    const handleAdd = () => {
+        const id = 'new';
+        setProducts((oldRows) => {
+            const newProduct: StripeProduct = {
+                id,
+                object: "product",
+                active: false,
+                created: 0,
+                default_price: '',
+                description: '',
+                images: [],
+                livemode: false,
+                metadata: {},
+                name: "",
+                package_dimensions: null,
+                shippable: null,
+                statement_descriptor: null,
+                tax_code: null,
+                type: "service",
+                unit_label: null,
+                updated: 0,
+                url: null,
+                prices: [],
+                categories: [],
+                related: [],
+                is_featured: false,
+                selectedPrice: null,
+                quantity: 1,
+                marketing_features: []
+            };
+
+
+            if (!oldRows) {
+                return [newProduct]
+            }
+            return [...oldRows, newProduct]
+        });
+
+        setRowModesModel((oldModel) => ({
+            ...oldModel,
+            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+        }));
+    }
+
     const getProducts = async () => {
 
         let productList = [];
@@ -564,8 +812,22 @@ export default function AdminPage() {
         setProducts(productList);
     }
 
+    const getCategories = async () => {
+
+        const catFetch = await fetch(`/api/categories?doNotCache=true`);
+
+        if (!catFetch.ok) {
+            return;
+        }
+
+        const response = await catFetch.json();
+
+        setCategories(response.categories);
+    }
+
     useEffect(() => {
         getProducts();
+        getCategories();
     }, []);
 
 
@@ -607,15 +869,22 @@ export default function AdminPage() {
         <div id="content"
             className="column center"
             style={{
-                padding: "1rem"
+                padding: isSm ? "1rem 0" : "1rem"
             }}>
-            <div className={isSm ? "column left" : "column center"} style={{
+            <div className={isSm ? "column left" : "column left"} style={{
                 marginTop: headerHeight,
                 maxWidth: "120rem",
-                padding: "0.5rem",
+                padding: isSm ? "0" : "0.5rem",
                 width: "100%"
             }}>
 
+                <TextField
+                    label="Search"
+                    value={searchValue}
+                    onChange={(e) => {
+                        handleSearch(e.target.value)
+                    }}
+                />
                 <div className="flex" style={{
                     width: "100%"
                 }}>
@@ -646,13 +915,16 @@ export default function AdminPage() {
                                     setProducts={setProducts}
                                     selected={rowSelectionModel}
                                     setSelected={setRowSelectionModel}
+                                    handleAdd={handleAdd}
                                 />
                             )
                         }}
                         sx={{
                             width: "100%",
-                            height: "calc(100vh - 7rem)"
+                            height: "calc(100vh - 9.5rem)"
                         }}
+                        filterModel={filterModel}
+                        onFilterModelChange={setFilterModel}
                     />
                 </div>
             </div>

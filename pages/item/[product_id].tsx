@@ -59,7 +59,10 @@ export default function Home(props: StripeAppProps) {
 
         const item_id = router.query.product_id;
 
-
+        if (!item_id) {
+            console.log("There was no product_id provided.")
+        }
+        
         const productFetch = await fetch(`/api/products?id=${item_id}`, {
             method: "GET",
             headers: {
@@ -176,7 +179,7 @@ export default function Home(props: StripeAppProps) {
 
                         <div className="column" style={{
                             position: 'relative',
-                            width: isSm ? "100%" : isMd ? '25rem': '40rem',
+                            width: isSm ? "100%" : isMd ? '25rem': '45%',
                             height: "fit-content"
                         }}>
                             {product.images && product.images.length > 0 && (
@@ -185,7 +188,7 @@ export default function Home(props: StripeAppProps) {
                                         position: "sticky",
                                         top: `calc(100vh - ${product.images.length * 32}px)`,
                                         left: "3.5rem",
-                                        zIndex: 100,
+                                        zIndex: 1,
                                         width: "fit-content",
                                         padding: "1rem 0"
                                     }}>
@@ -228,7 +231,7 @@ export default function Home(props: StripeAppProps) {
                         </div>
                     )}
                     <div className="column relaxed" style={{
-                        width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem': '40rem'})`,
+                        width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem': '45%'})`,
                         maxWidth: "40rem",
                         padding: isSm ? "0 2rem" : "3rem",
                         position: "sticky",

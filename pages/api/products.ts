@@ -6,6 +6,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
 const sizeOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+const sendToStripeFields: (keyof Stripe.Product)[] = ['name', 'description']
+const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'is_featured'];
 
 async function handlePostRequest(
   req: NextApiRequest,
@@ -24,11 +26,27 @@ async function handlePostRequest(
       return res.status(500).json({ message: "No product." })
     }
 
-    const theProduct = await stripe.products.create({
-      name: newProduct.name,
-      description: newProduct.description,
-      images: newProduct.images
-    })
+    const sendToStripeFirst : any = {};
+
+    for (const key of sendToStripeFields) {
+      if (key in newProduct) {
+        if (typeof newProduct[key] === 'string' && newProduct[key] === '') {
+          continue;
+        }
+        sendToStripeFirst[key] = newProduct[key];
+      }
+    }
+
+    if (!sendToStripeFirst.name) {
+      throw Error("Need to provide a name");
+    }
+
+    const theProduct = await stripe.products.create(sendToStripeFirst);
+
+    console.log(theProduct);
+    if (!theProduct) {
+      throw Error("The new product was not returned.")
+    }
 
     if (newPrices) {
       const pricesSorted = newPrices.sort((a, b) => {
@@ -53,10 +71,20 @@ async function handlePostRequest(
       });
 
       Promise.all(addNewPrices);
+
     }
+    
+    const foundProduct = await stripe.products.retrieve(theProduct.id);
+    const foundPrices = await stripe.prices.list({
+      product: theProduct.id
+    })
 
     return res.status(200).json({
       message: "Success",
+      product: {
+        ...foundProduct,
+        prices: foundPrices
+      }
     })
 
   } catch (err) {
@@ -90,12 +118,17 @@ async function getAllProducts(query : Partial<{
 }>) {
   try {
 
-    const is_featured = query.is_featured ? new SafeString(query.is_featured) : null;
     const mongo = await Mongo.getInstance();
 
-    const products = await mongo.clientPromise.db('products').collection('products').find({
-      is_featured: is_featured ? is_featured.isTrue() : undefined
-    }).toArray()
+    const filter : Partial<{
+      [key in keyof StripeProduct]: any
+    }> = {};
+
+    if (query.is_featured) {
+      filter.is_featured = new SafeString(query.is_featured).isTrue();
+    }
+
+    const products = await mongo.clientPromise.db('products').collection('products').find(filter).toArray()
 
     return products;
   } catch (error) {
@@ -139,8 +172,7 @@ async function handleDeleteRequest(
 }
 
 
-const sendToStripeFields: (keyof Stripe.Product)[] = ['name', 'description']
-const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'is_featured'];
+
 
 async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
   try {
@@ -176,7 +208,7 @@ async function handleUpdateProduct(product_id: string, data: Partial<StripeProdu
         console.log(res)
       })
       .catch(err => {
-        console.log(err);
+        return false;
       })
     }
 
