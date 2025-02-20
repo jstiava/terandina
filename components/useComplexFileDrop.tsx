@@ -122,6 +122,10 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
   
 
   const closeDialog = () => {
+    if (loading) {
+      alert("It's still loading...")
+      return;
+    }
     setIsOpen(false);
   };
 
