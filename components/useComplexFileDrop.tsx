@@ -60,10 +60,17 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
 
   const [loading, setLoading] = useState(false);
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [isUploadPresent, setIsUploadPresent] = useState(false);
+
   const [uploadCount, setUploadCount] = useState(0);
 
   useEffect(() => {
     if (!loading) {
+      return;
+    }
+
+    if (!isOpen) {
       return;
     }
 
@@ -112,8 +119,7 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [isUploadPresent, setIsUploadPresent] = useState(false);
+  
 
   const closeDialog = () => {
     setIsOpen(false);
