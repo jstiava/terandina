@@ -2,8 +2,8 @@
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
-import { Button, Checkbox, Chip, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { Button, Checkbox, Chip, IconButton, Popover, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import {
     GridColDef,
@@ -54,50 +54,21 @@ const nameAlphaComparator: GridComparatorFn<any> = (v1, v2, cellParams1, cellPar
     );
 };
 
-const EditToolbar = ({ setProducts, selected, setSelected, handleAdd }: {
+const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGroup }: {
     setProducts: Dispatch<SetStateAction<StripeProduct[] | null>>,
     selected: GridRowSelectionModel,
     setSelected: Dispatch<SetStateAction<GridRowSelectionModel>>,
-    handleAdd: () => any
+    handleAdd: () => any,
+    handleGroup: (name: string, type: 'variant' | 'collection', selected: GridRowSelectionModel) => any
 }) => {
 
     const theme = useTheme();
+    const [open, setOpen] = useState(false);
+    const [name, setName] = useState("Name of Group");
+    const anchorRef = useRef<any>(null);
 
-    const handleGroup = async () => {
-
-        const groupRequest = await fetch(`api/categories`, {
-            method: "POST",
-            headers: {
-                'Content-Type': "application/json"
-            },
-            body: JSON.stringify({
-                action: "Group",
-                products: selected ? Array.isArray(selected) ? selected : [selected] : []
-            })
-        })
-
-        if (!groupRequest.ok) {
-            return;
-        }
-
-        // setProducts(prev => {
-        //     if (!prev) {
-        //         return [];
-        //     }
-        //     let newList = [];
-        //     for (const product of prev) {
-        //         if (!selected.some(x => x === product.id)) {
-        //             newList.push(product);
-        //         }
-        //         else {
-        //             newList.push({
-        //                 ...product,
-        //                 active: false
-        //             })
-        //         }
-        //     }
-        //     return newList;
-        // })
+    const handleGroupRequest = (e: any) => {
+        setOpen(true);
     }
 
     const handleDelete = async () => {
@@ -156,6 +127,74 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd }: {
     }
     return (
         <>
+
+            <Popover
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                onClose={() => setOpen(false)}
+                // transition
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                disablePortal
+                sx={{
+                    '& .MuiPopover-paper': {
+                        width: "25rem",
+                        padding: "1rem"
+                    }
+                }}
+            >
+                <div className="column compact">
+                    <TextField
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    <div className="flex compact">
+                        <Button
+                            variant="text"
+                            onClick={(e) => {
+                                try {
+                                    handleGroup(name, 'variant', selected);
+                                    setOpen(false)
+                                }
+                                catch (err) {
+                                    console.error(err)
+                                    return;
+                                }
+                            }}
+                            sx={{
+                                height: "2.5rem"
+                            }}
+                        >
+                            Group as Variants
+                        </Button>
+                        <Button
+                            variant="text"
+                            onClick={(e) => {
+                                try {
+                                    handleGroup(name, 'collection', selected);
+                                    setOpen(false)
+                                }
+                                catch (err) {
+                                    console.error(err)
+                                    return;
+                                }
+                            }}
+                            sx={{
+                                height: "2.5rem"
+                            }}
+                        >
+                            Group as Collection
+                        </Button>
+                    </div>
+                </div>
+            </Popover>
             <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
                 {/* <GridToolbarColumnsButton />
   <GridToolbarFilterButton />
@@ -179,7 +218,8 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd }: {
                         }}>Unselect All</Button>
 
                     <Button
-                        onClick={handleGroup}
+                        ref={anchorRef}
+                        onClick={handleGroupRequest}
                         startIcon={<GroupWorkOutlined />}
                         variant="contained" sx={{
                             height: "2rem"
@@ -408,7 +448,7 @@ export default function AdminPage() {
                         padding: "0.5rem"
                     }}
                     >
-                        <Typography >{params.value}</Typography>
+                        <Typography >{params.value}{!params.row.active && ` (inactive)`}</Typography>
                         <div className="flex compact">
                             <Button
                                 variant="text"
@@ -733,7 +773,57 @@ export default function AdminPage() {
         },
 
 
-    ]
+    ];
+
+
+    const handleGroup = async (name: string, type: 'variant' | 'collection', selected: GridRowSelectionModel) => {
+
+
+        const catRequest = await fetch(`api/categories`, {
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify({
+                action: "Group",
+                name,
+                type,
+                products: selected ? Array.isArray(selected) ? selected : [selected] : []
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                setCategories(prev => {
+                    if (!prev) {
+                        return [res.category]
+                    }
+                    return [...prev, res.category]
+                })
+
+                setProducts(prev => {
+                    if (!prev) {
+                        return null;
+                    }
+
+
+                    const newList = prev.map(x => {
+                        if (selected.some(a => a === x.id)) {
+                            return {
+                                ...x,
+                                categories: x.categories ? [...x.categories, res.category._id] : [res.category._id]
+                            }
+                        }
+                        return x;
+                    });
+
+                    return newList;
+                })
+            })
+            .catch(err => {
+                throw Error(err);
+            })
+
+    }
 
     const handleAdd = () => {
         const id = 'new';
@@ -916,6 +1006,7 @@ export default function AdminPage() {
                                     selected={rowSelectionModel}
                                     setSelected={setRowSelectionModel}
                                     handleAdd={handleAdd}
+                                    handleGroup={handleGroup}
                                 />
                             )
                         }}

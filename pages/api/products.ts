@@ -124,7 +124,7 @@ async function getAllProducts(query : Partial<{
       [key in keyof StripeProduct]: any
     }> = {};
 
-    if (query.is_featured) {
+    if (query.is_featured != undefined) {
       filter.is_featured = new SafeString(query.is_featured).isTrue();
     }
 

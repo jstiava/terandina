@@ -51,6 +51,7 @@ const theme = createTheme({
           textTransform: 'capitalize',
           height: "3rem",
           fontSize: "1.125rem",
+          lineHeight: "115%",
           variants: [
             {
               props: { variant: "flipped" },

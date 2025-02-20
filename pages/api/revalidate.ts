@@ -8,12 +8,11 @@ async function getAllProducts() {
         const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
         const products = await stripe.products.list({
             limit: 100,
-            active: true
         });
 
         const prices = await stripe.prices.list({
-            active: true,
-            limit: 100
+            limit: 100,
+            active: true
         })
 
         const productsWithPrices = products.data.map(product => {

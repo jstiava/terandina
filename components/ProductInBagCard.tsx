@@ -37,6 +37,9 @@ export default function ProductInBagCard({
 
     const handleRemoveFromCart = () => {
         if (!removeFromCart) return;
+        if (!product.selectedPrice) {
+            return;
+        }
         removeFromCart(product.selectedPrice.id);
     }
 
@@ -44,6 +47,10 @@ export default function ProductInBagCard({
         if (!removeFromCart || !swap) return;
 
         const newValue = product.quantity + diff;
+
+        if (!product.selectedPrice) {
+            return;
+        }
 
         if (newValue === 0) {
             removeFromCart(product.selectedPrice.id);
@@ -91,7 +98,7 @@ export default function ProductInBagCard({
                     {!swap && (
                         <Typography sx={{
                             textTransform: 'uppercase'
-                        }}>{product.selectedPrice.lookup_key}</Typography>
+                        }}>{product.selectedPrice?.lookup_key}</Typography>
                     )}
                     <Typography>Quantity: {product.quantity}</Typography>
                 </div>

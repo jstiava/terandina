@@ -7,54 +7,64 @@ import Stripe from "stripe";
 
 const sizeOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 
+function formatString(input: string) {
+  return input
+    .toLowerCase()               // Convert to lowercase
+    .replace(/[^a-z\s]/g, '')    // Remove non-alphabetic characters
+    .replace(/\s+/g, '_');       // Replace spaces with underscores
+}
+
 async function handlePostRequest(
   req: NextApiRequest,
   res: NextApiResponse<any>,
 ) {
 
+  const userAuth = verifySession(req);
+  if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   try {
-    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
-    const newProduct: StripeProduct = req.body.product;
-    const newPrices: StripePrice[] = newProduct.prices;
+    const mongo = await Mongo.getInstance();
 
-    if (!newProduct) {
+    const data = req.body;
+
+    if (!data.name || !data.type || !data.products) {
       return res.status(500).json({ message: "No product." })
     }
 
-    const theProduct = await stripe.products.create({
-      name: newProduct.name,
-      description: newProduct.description,
-      images: newProduct.images
-    })
-
-    if (newPrices) {
-      const pricesSorted = newPrices.sort((a, b) => {
-        if (!a.nickname && !b.nickname) {
-          return 0;
-        }
-        if (!a.nickname) {
-          return -1;
-        }
-        if (!b.nickname) {
-          return 1;
-        }
-        return sizeOrder.indexOf(a.nickname) - sizeOrder.indexOf(b.nickname);
-      })
-
-      const addNewPrices = pricesSorted.map(price => {
-        return stripe.prices.create({
-          product: theProduct.id,
-          unit_amount: price.unit_amount || 0,
-          currency: 'USD'
-        });
-      });
-
-      Promise.all(addNewPrices);
+    const newFile = {
+      name: data.name,
+      type: data.type,
+      slug: formatString(data.name),
+      parent_id: null,
+      is_on_menu: null
     }
+
+    const newCategory = await mongo.clientPromise.db('products').collection('categories').insertOne(newFile)
+
+    if (data.products) {
+
+      console.log(data.products)
+
+      const update = await mongo.clientPromise
+        .db('products')
+        .collection('products')
+        .updateMany(
+          { id: { $in: data.products } },
+          {
+            $addToSet: { categories: newCategory.insertedId }
+          }
+        );
+
+      console.log(update);
+    }
+
 
     return res.status(200).json({
       message: "Success",
+      category: {
+        ...newFile,
+        _id: newCategory.insertedId,
+      }
     })
 
   } catch (err) {
@@ -161,12 +171,12 @@ async function handleUpdateProduct(product_id: string, data: Partial<StripeProdu
 
     if (Object.keys(sendToStripeFirst).length != 0) {
       await stripe.products.update(product_id, sendToStripeFirst)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err);
-      })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err);
+        })
     }
 
     return true;
@@ -212,7 +222,7 @@ export default async function handleRequest(
 ) {
 
   if (req.method === 'POST') {
-    // return handlePostRequest(req, res);
+    return handlePostRequest(req, res);
   }
 
   if (req.method === 'DELETE') {
@@ -230,16 +240,16 @@ export default async function handleRequest(
   const product_id = req.query.id;
   const doNotCache = new SafeString(req.query.doNotCache);
 
-//   if (product_id) {
-//     const product = await getProductById(String(product_id))
-//     if (!product) {
-//       throw Error("No product found by that id.")
-//     }
-//     return res.status(200).json({
-//       message: "Success. Got one product.",
-//       product
-//     })
-//   }
+  //   if (product_id) {
+  //     const product = await getProductById(String(product_id))
+  //     if (!product) {
+  //       throw Error("No product found by that id.")
+  //     }
+  //     return res.status(200).json({
+  //       message: "Success. Got one product.",
+  //       product
+  //     })
+  //   }
 
   try {
     const categories = await getAllCategories();

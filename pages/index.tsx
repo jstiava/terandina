@@ -151,6 +151,7 @@ export default function Home(props: StripeAppProps) {
             </div>
           </CoverImage>
         </div>
+        <Typography variant="h2">Best Sellers</Typography>
         <div className="flex" style={{
           padding: isSm ? "0" : "0 2rem"
         }}>

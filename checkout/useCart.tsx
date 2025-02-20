@@ -21,6 +21,10 @@ export default function useCart() {
     const add = (item: StripeProduct) => {
         setIsSidebarOpen(true);
 
+        if (!item.selectedPrice) {
+            return false;
+        }
+
         const existingItem = get(item.selectedPrice.id);
         if (existingItem) {
             return false;
@@ -42,7 +46,7 @@ export default function useCart() {
             if (!prev) {
                 return [];
             }
-            const newCart = prev.filter(p => p.selectedPrice.id != price_id);
+            const newCart = prev.filter(p => p.selectedPrice?.id != price_id);
             return newCart;
         })
         return false;
@@ -54,7 +58,7 @@ export default function useCart() {
             return null;
         }
 
-        return cart.find(product => product.selectedPrice.id === price_id) || null;
+        return cart.find(product => product.selectedPrice?.id === price_id) || null;
     }
 
     const toggleSidebar = () => {
@@ -72,16 +76,16 @@ export default function useCart() {
             setCart([newItem]);
             return;
         }
-        const filtered = cart.filter(p =>  p.selectedPrice.id != removedItem.selectedPrice.id);
+        const filtered = cart.filter(p =>  p.selectedPrice?.id != removedItem.selectedPrice?.id);
 
-        const alreadyExists = filtered.find(p => p.selectedPrice.id === newItem.selectedPrice.id);
+        const alreadyExists = filtered.find(p => p.selectedPrice?.id === newItem.selectedPrice?.id);
 
         if (!alreadyExists) {
             setCart([...filtered, newItem])
             return;
         }
 
-        const filteredAgain = filtered.filter(p =>  p.selectedPrice.id != newItem.selectedPrice.id);
+        const filteredAgain = filtered.filter(p =>  p.selectedPrice?.id != newItem.selectedPrice?.id);
 
         setCart([...filteredAgain, {
             ...alreadyExists,
@@ -91,7 +95,7 @@ export default function useCart() {
 
     }
 
-    const checkout = () : {price: StripePrice, quantity: number}[] => {
+    const checkout = () : {price: StripePrice | null, quantity: number}[] => {
         if (!cart) {
             return [];
         }
