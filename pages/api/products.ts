@@ -114,7 +114,7 @@ async function getProductById(productId: string): Promise<any | null> {
   }
 }
 
-async function getAllProducts(query : Partial<{
+export async function getAllProducts(query : Partial<{
   [key: string]: string | string[];
 }>) {
   try {

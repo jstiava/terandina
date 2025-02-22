@@ -119,7 +119,11 @@ const theme = createTheme({
       fontWeight: 700
     },
     body1: {
-      fontSize: "1rem"
+      fontSize: "1rem",
+      fontFamily: [
+        fenix.style.fontFamily,
+        'sans-serif',
+      ].join(','),
     },
     caption: {
       fontSize: "0.95rem",

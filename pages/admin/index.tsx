@@ -291,6 +291,9 @@ export default function AdminPage() {
 
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+
+        event.defaultMuiPrevented = true
+
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
             event.defaultMuiPrevented = true;
         }
@@ -778,9 +781,10 @@ export default function AdminPage() {
                                     alignItems: 'flex-start',
                                     width: "100%",
                                     height: "fit-content",
-                                    padding: "0.5rem 1rem"
+                                    padding: "0.5rem 1rem",
                                 },
                                 '& textarea': {
+                                    whiteSpace: 'pre-wrap',
                                     fontSize: "1rem",
                                     lineHeight: "100%"
                                 }
@@ -806,7 +810,7 @@ export default function AdminPage() {
                     <Typography sx={{
                         width: "100%",
                         overflowWrap: 'break-word',
-                        whiteSpace: 'normal',
+                        whiteSpace: 'pre-wrap',
                         lineHeight: "115%",
                         height: "100%",
                         overflowY: "scroll",
@@ -1154,9 +1158,6 @@ export default function AdminPage() {
         getProducts();
         getCategories();
     }, []);
-
-
-
 
 
 

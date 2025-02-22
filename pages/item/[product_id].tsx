@@ -213,6 +213,8 @@ export default function Home(props: StripeAppProps) {
                         </div>
                     ) : (
 
+                        <>
+                     
                         <div className="column" style={{
                             position: 'relative',
                             width: isSm ? "100%" : isMd ? '25rem' : '45%',
@@ -265,6 +267,7 @@ export default function Home(props: StripeAppProps) {
                                 ))}
                             </div>
                         </div>
+                        </>
                     )}
                     <div className="column relaxed" style={{
                         width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem' : '45%'})`,
@@ -305,7 +308,7 @@ export default function Home(props: StripeAppProps) {
                         )}
                         <DisplayPrice
                             style={{
-                                fontSize: "2rem",
+                                fontSize: "1.5rem",
                             }} product={product}
                         />
                         <Button variant="contained"
@@ -315,7 +318,7 @@ export default function Home(props: StripeAppProps) {
                                 width: "100%"
                             }}>Add to Cart</Button>
                         <Divider sx={{ width: "100%" }}></Divider>
-                        <Typography sx={{ fontSize: "1.25rem" }}>{product.description}</Typography>
+                        <Typography sx={{ fontSize: "1rem", whiteSpace: 'pre-wrap' }}>{product.description}</Typography>
 
                     </div>
                 </div>

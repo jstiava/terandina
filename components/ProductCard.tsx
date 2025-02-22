@@ -1,4 +1,4 @@
-import { StripePrice, StripeProduct } from "@/types"
+import { Category, StripePrice, StripeProduct } from "@/types"
 import { Button, ButtonBase, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, useEffect, useState } from "react";
@@ -6,8 +6,10 @@ import PriceSelector from "./PriceSelector";
 import { UseCart } from "@/checkout/useCart";
 import { Preview } from "@mui/icons-material";
 import { Router, useRouter } from "next/router";
+import CategoryVariantSelector from "./CategoryVariantSelector";
 
 export const formatPrice = (price: number | null, currency: string): string => {
+    
     try {
         if (!price || !currency) {
             return ""
@@ -20,6 +22,7 @@ export const formatPrice = (price: number | null, currency: string): string => {
 
     }
     catch (err) {
+        console.error(err);
         return "";
     }
 }
@@ -63,11 +66,13 @@ export function DisplayPrice({
 export default function ProductCard({
     product,
     addToCart,
-    style = {}
+    style = {},
+    ...props
 }: {
     product: StripeProduct,
     addToCart: UseCart['add'],
-    style?: CSSProperties
+    style?: CSSProperties,
+    categories?: Category[] | null
 }) {
 
     const router = useRouter();
@@ -75,11 +80,46 @@ export default function ProductCard({
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const [isHovering, setIsHovering] = useState(false);
 
+    const [categories, setCategories] = useState<Category[] | null>(null);
+
     const [copyOfProduct, setCopyOfProduct] = useState(product);
+
+    const getCategories = async (pro: StripeProduct) => {
+        let theCats: Category[] = [];
+
+        for (const cat_id of product.categories) {
+            const category = props.categories?.find(c => c._id === cat_id);
+
+            if (!category) {
+                continue;
+            }
+
+            await fetch(`/api/products?category=${cat_id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.products) {
+                        category.products = res.products;
+                    }
+                    theCats.push(category);
+                })
+
+        }
+
+        setCategories(theCats)
+    }
 
     useEffect(() => {
         if (!product.prices || product.prices.length === 0) {
             return;
+        }
+
+        if (props.categories && product.categories) {
+            getCategories(product)
         }
 
         setCopyOfProduct({
@@ -175,10 +215,28 @@ export default function ProductCard({
                         fontSize: "1rem",
                         minHeight: '2rem',
                         height: "fit-content"
-                        
+
                     }}>{product.name}</Typography>
+                    <div className="flex compact">
+                        {product && categories && categories.map(c => {
+
+                            if (c.type === 'variant') {
+                                return (
+                                    <CategoryVariantSelector
+                                        key={c._id}
+                                        category={c}
+                                        product={product}
+                                    />
+                                )
+                            }
+
+                            return null
+                        })}
+                    </div>
                 </div>
-                <DisplayPrice product={copyOfProduct} />
+                <DisplayPrice product={copyOfProduct} style={{
+                    fontSize: '1rem'
+                }} />
             </div>
             <div className="flex between">
                 {isSm && (

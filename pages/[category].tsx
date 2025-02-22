@@ -9,11 +9,15 @@ import { GetStaticPaths } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { getAllProducts } from "./api/products";
+import { notFound } from "next/navigation";
+import { ObjectId } from "mongodb";
 
 
 interface StaticProps {
   notFound?: boolean;
   category: Category;
+  products?: StripeProduct[]
 }
 
 export const getStaticPaths = (async () => {
@@ -46,21 +50,52 @@ export const getStaticProps = (async (context: any) => {
   const mongo = await Mongo.getInstance();
   const [category] = await mongo.clientPromise.db('products').collection('categories').find({ slug }).toArray();
 
+
   if (!category) {
     return {
       notFound: true
     }
   }
 
-  return {
-    props: {
-      static: {
-        category: {
-          ...category,
-          _id: category._id.toString()
+  const products = await getAllProducts({
+    category: category._id.toString()
+  })
+
+  if (!products) {
+    return {
+      notFound: true
+    }
+  }
+
+  try {
+
+    return {
+      props: {
+        static: {
+          category: {
+            ...category,
+            _id: category._id.toString()
+          },
+        products: products?.map(p => {
+
+            console.log(p.categories);
+            return {
+              ...p,
+              _id: p._id.toString(),
+              categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
+              selectedPrice: p.prices ? {
+                ...p.prices[0],
+                quantity: 1
+              } : null,
+              quantity: 1
+            }
+          })
         }
       }
     }
+  }
+  catch (err) {
+    console.log(err);
   }
 })
 
@@ -72,11 +107,10 @@ export default function CategoryPage(props: StripeAppProps & {
 
   const theme = useTheme();
   const router = useRouter();
-  const [products, setProducts] = useState<StripeProduct[] | null>(null);
   const isSm = useMediaQuery("(max-width: 45rem)");
   const isMd = useMediaQuery("(max-width: 70rem)");
 
-  useEffect(( )=> {
+  useEffect(() => {
     if (props && props.static) {
       if (props.static.notFound) {
         router.back();
@@ -117,13 +151,13 @@ export default function CategoryPage(props: StripeAppProps & {
         padding: 0,
         marginTop: "4rem"
       }}>
-        <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
+        {/* <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
           padding: isMd ? "1.5rem 2rem 3rem 2rem" : "5rem 1rem",
           width: '100%',
           backgroundColor: TerandinaGreen,
           color: theme.palette.getContrastText(TerandinaGreen)
         }}>
-        <CoverImage
+          <CoverImage
             delay={0.5}
             url="https://65bog6nsnm.ufs.sh/f/zzMJdtYlsE1VqNu8SvcT2iIUmRWwShujze9OlD4aBKokpLVn"
             height={"50vh"}
@@ -142,23 +176,23 @@ export default function CategoryPage(props: StripeAppProps & {
               border: "0.5rem solid white"
             }}
           ></CoverImage>
-        <div className="column snug center middle" style={{
-          minHeight: "20vh",
-          height: "fit-content",
-        }}>
-          <div className="column center middle">
-            <Typography variant="h1" sx={{
-              fontSize: isMd ? '3rem' : "4rem",
-            }}>{props.static.category.name}</Typography>
-            <Typography sx={{
-              width: '100%',
-              maxWidth: "30rem",
-              textAlign: 'justify',
-              fontSize: '1.25rem'
-            }}>Native American ponchos from Ecuador, particularly those crafted by Indigenous Andean communities like the Otavalo, are vibrant, handwoven garments made from wool or alpaca. Featuring intricate geometric patterns and bold colors, these ponchos offer warmth, cultural significance, and a connection to ancestral traditions. Often used for protection against the Andean climate, they symbolize heritage, craftsmanship, and Indigenous identity.</Typography>
+          <div className="column snug center middle" style={{
+            minHeight: "20vh",
+            height: "fit-content",
+          }}>
+            <div className="column center middle">
+              <Typography variant="h1" sx={{
+                fontSize: isMd ? '3rem' : "4rem",
+              }}>{props.static.category.name}</Typography>
+              <Typography sx={{
+                width: '100%',
+                maxWidth: "30rem",
+                textAlign: 'justify',
+                fontSize: '1.25rem'
+              }}>Native American ponchos from Ecuador, particularly those crafted by Indigenous Andean communities like the Otavalo, are vibrant, handwoven garments made from wool or alpaca. Featuring intricate geometric patterns and bold colors, these ponchos offer warmth, cultural significance, and a connection to ancestral traditions. Often used for protection against the Andean climate, they symbolize heritage, craftsmanship, and Indigenous identity.</Typography>
+            </div>
           </div>
-        </div>
-        </div>
+        </div> */}
 
         <div className={isSm ? 'flex compact' : 'flex between'} style={{
           flexWrap: 'wrap',
@@ -167,7 +201,7 @@ export default function CategoryPage(props: StripeAppProps & {
           width: "100%",
           minHeight: "100vh"
         }}>
-          {products && products.map((product, index) => {
+          {props.static.products && props.static.products.map((product, index) => {
             const row = Math.floor(index / 3);
             const col = index % 3;
 
@@ -178,6 +212,7 @@ export default function CategoryPage(props: StripeAppProps & {
                 key={product.id}
                 product={product}
                 addToCart={props.Cart.add}
+                categories={props.categories}
                 style={{
                   animationDelay: `${delay}ms`,
                   width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0.5rem)"
