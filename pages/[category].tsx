@@ -2,7 +2,7 @@
 import CoverImage from "@/components/CoverImage";
 import ProductCard from "@/components/ProductCard";
 import ScrollButton from "@/components/ScrollButton";
-import { Category, StripeAppProps, StripeProduct } from "@/types";
+import { Category, StripeAppProps, StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
 import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { GetStaticPaths } from "next";
@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getAllProducts } from "./api/products";
 import { notFound } from "next/navigation";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 
 
 interface StaticProps {
@@ -76,20 +76,21 @@ export const getStaticProps = (async (context: any) => {
             ...category,
             _id: category._id.toString()
           },
-        products: products?.map(p => {
+          products: []
+        // products: products?.map(p => {
 
-            console.log(p.categories);
-            return {
-              ...p,
-              _id: p._id.toString(),
-              categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
-              selectedPrice: p.prices ? {
-                ...p.prices[0],
-                quantity: 1
-              } : null,
-              quantity: 1
-            }
-          })
+        //     console.log(p);
+        //     return {
+        //       ...p,
+        //       _id: p._id.toString(),
+        //       categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
+        //       selectedPrice: p.prices && p.prices.length >= 1 ? {
+        //         ...p.prices[0],
+        //         quantity: 1
+        //       } : null,
+        //       quantity: 1
+        //     }
+        //   })
         }
       }
     }
