@@ -48,7 +48,7 @@ export const getStaticProps = (async (context: any) => {
   }
 
   const mongo = await Mongo.getInstance();
-  const [category] = await mongo.clientPromise.db('products').collection('categories').find({ slug }).toArray();
+  const [category] = await mongo.clientPromise.db('products').collection('categories').find({ slug, type: 'collection' }).toArray();
 
 
   if (!category) {
@@ -76,21 +76,19 @@ export const getStaticProps = (async (context: any) => {
             ...category,
             _id: category._id.toString()
           },
-          products: []
-        // products: products?.map(p => {
-
-        //     console.log(p);
-        //     return {
-        //       ...p,
-        //       _id: p._id.toString(),
-        //       categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
-        //       selectedPrice: p.prices && p.prices.length >= 1 ? {
-        //         ...p.prices[0],
-        //         quantity: 1
-        //       } : null,
-        //       quantity: 1
-        //     }
-        //   })
+        products: products?.map(p => {
+            return {
+              ...p,
+              _id: p._id.toString(),
+              categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
+             selectedPrice: null,
+             prices: p.prices ? p.prices.map((price : WithId<StripePrice>) => ({
+              ...price,
+              _id: price._id ? price._id.toString() : price.id
+             })) : [],
+              quantity: 1
+            }
+          })
         }
       }
     }
