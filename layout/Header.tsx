@@ -342,7 +342,7 @@ export default function Header({ Cart, color, setColor }: {
 
                                 <MenuItem
                                     key={'blankets'}
-                                    onClick={() => router.push('blankets')}
+                                    onClick={() => router.push('/blankets')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Blankets</MenuItem>
 

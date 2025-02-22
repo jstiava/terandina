@@ -226,6 +226,7 @@ export default function ProductCard({
                                         key={c._id}
                                         category={c}
                                         product={product}
+                                        size='small'
                                     />
                                 )
                             }

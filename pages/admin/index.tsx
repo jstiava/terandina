@@ -782,15 +782,17 @@ export default function AdminPage() {
                                     width: "100%",
                                     height: "fit-content",
                                     padding: "0.5rem 1rem",
+                                    minHeight: "100%"
                                 },
                                 '& textarea': {
                                     whiteSpace: 'pre-wrap',
                                     fontSize: "1rem",
-                                    lineHeight: "100%"
+                                    lineHeight: "100%",
+                                    minHeight: "100%"
                                 }
                             }}
                             onChange={e => {
-                                if (!e.target.value) {
+                                if (e.target.value === null) {
                                     return;
                                 }
                                 params.api.setEditCellValue({

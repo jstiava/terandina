@@ -1,7 +1,7 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps } from "@/types";
-import { Button, Typography, useMediaQuery } from "@mui/material";
+import { Button, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridRenderCellParams } from "@mui/x-data-grid";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -35,16 +35,77 @@ export default function CategoryAdminPage(props: StripeAppProps) {
         {
             field: "name",
             headerName: "Name",
-            width: 250,
+            width: 200,
         },
         {
             field: "type",
             headerName: "Type",
-            width: 250,
+            width: 100,
             renderCell: (params: GridRenderCellParams<Category, string>) => {
                 return params.value === 'variant' ? "Variant" : "Collection"
             }
-        }
+        },
+        {
+            field: "description",
+            headerName: "Description",
+            width: 300,
+            editable: true,
+            renderEditCell: (params : GridRenderCellParams<Category, string | null>) => {
+                return (
+                    <div className="flex top" style={{
+                        width: "100%",
+                        height: "100%"
+                    }}>
+                        <TextField
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                overflowY: "scroll",
+                                '& .MuiInputBase-root': {
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    width: "100%",
+                                    height: "fit-content",
+                                    padding: "0.5rem 1rem",
+                                    minHeight: "100%"
+                                },
+                                '& textarea': {
+                                    whiteSpace: 'pre-wrap',
+                                    fontSize: "1rem",
+                                    lineHeight: "100%",
+                                    minHeight: "100%"
+                                }
+                            }}
+                            onChange={e => {
+                                if (e.target.value === null) {
+                                    return;
+                                }
+                                params.api.setEditCellValue({
+                                    id: params.id,
+                                    field: params.field,
+                                    value: e.target.value
+                                })
+                            }}
+                            value={params.value}
+                            multiline
+                        />
+                    </div>
+                )
+            },
+            renderCell: (params: GridRenderCellParams<Category, string>) => {
+                return (
+                    <Typography sx={{
+                        width: "100%",
+                        overflowWrap: 'break-word',
+                        whiteSpace: 'pre-wrap',
+                        lineHeight: "115%",
+                        height: "100%",
+                        overflowY: "scroll",
+                        padding: "0.5rem 1rem"
+                    }}>{params.value}</Typography>
+                )
+            }
+        },
     ]
 
     return (
