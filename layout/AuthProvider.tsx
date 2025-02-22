@@ -10,6 +10,7 @@ import CartSidebar from "./CartSidebar";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { Category } from "@/types";
 
 
 
@@ -33,8 +34,24 @@ export default function AuthProvider({
 
     const Cart = useCart();
     const router = useRouter();
-
     const [color, setColor] = useState("#f4f4f4");
+    const [categories, setCategories] = useState(null);
+
+    const getCategories = async () => {
+
+        const catFetch = await fetch(`/api/categories`);
+
+        if (!catFetch.ok) {
+            return;
+        }
+
+        const response = await catFetch.json();
+
+        setCategories(response.categories.map((c : Category) => ({
+            ...c,
+            products: []
+        })));
+    }
 
     const verifySession = async () => {
 
@@ -47,6 +64,10 @@ export default function AuthProvider({
         const response = await verifyFetch.json();
         return true;
     }
+
+    useEffect(() => {
+        getCategories();
+    }, [])
 
     useEffect(() => {
 
@@ -80,6 +101,10 @@ export default function AuthProvider({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.asPath]);
 
+    if (!categories) {
+        return <></>
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <Head>
@@ -92,7 +117,7 @@ export default function AuthProvider({
                 minHeight: "100vh",
                 backgroundColor: theme.palette.background.paper
             }}>
-                <Component {...pageProps} Cart={Cart} />
+                <Component {...pageProps} Cart={Cart} categories={categories} />
             </div>
             <Footer color={color} />
         </ThemeProvider>

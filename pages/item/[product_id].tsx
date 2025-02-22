@@ -3,15 +3,16 @@
 import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
-import { StripeAppProps, StripePrice, StripeProduct } from "@/types";
+import { Category, StripeAppProps, StripePrice, StripeProduct } from "@/types";
 import fetchAppServer from "@/utils/fetch";
-import { Button, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Chip, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import CategoryVariantSelector from "@/components/CategoryVariantSelector";
 
 
 export default function Home(props: StripeAppProps) {
@@ -19,6 +20,7 @@ export default function Home(props: StripeAppProps) {
     const theme = useTheme();
     const router = useRouter();
     const [product, setProduct] = useState<StripeProduct | null>(null);
+    const [categories, setCategories] = useState<Category[] | null>(null);
     const swiperRef = useRef<any>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -62,7 +64,7 @@ export default function Home(props: StripeAppProps) {
         if (!item_id) {
             console.log("There was no product_id provided.")
         }
-        
+
         const productFetch = await fetch(`/api/products?id=${item_id}`, {
             method: "GET",
             headers: {
@@ -75,6 +77,37 @@ export default function Home(props: StripeAppProps) {
         }
 
         const response = await productFetch.json();
+
+
+        if (response.product.categories) {
+
+            let theCats: Category[] = [];
+
+            for (const cat_id of response.product.categories) {
+                const category = props.categories?.find(c => c._id === cat_id);
+
+                if (!category) {
+                    continue;
+                }
+
+                await fetch(`/api/products?category=${cat_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.products) {
+                            category.products = res.products;
+                        }
+                        theCats.push(category);
+                    })
+
+            }
+
+            setCategories(theCats)
+        }
 
 
         setProduct({
@@ -169,7 +202,10 @@ export default function Home(props: StripeAppProps) {
                                         <CoverImage
                                             url={image}
                                             width="100vw"
-                                            height="calc(100vh - 15rem)"
+                                            height="auto"
+                                            style={{
+                                                aspectRatio: "1/1"
+                                            }}
                                         />
                                     </SwiperSlide>
                                 ))}
@@ -179,7 +215,7 @@ export default function Home(props: StripeAppProps) {
 
                         <div className="column" style={{
                             position: 'relative',
-                            width: isSm ? "100%" : isMd ? '25rem': '45%',
+                            width: isSm ? "100%" : isMd ? '25rem' : '45%',
                             height: "fit-content"
                         }}>
                             {product.images && product.images.length > 0 && (
@@ -231,7 +267,7 @@ export default function Home(props: StripeAppProps) {
                         </div>
                     )}
                     <div className="column relaxed" style={{
-                        width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem': '45%'})`,
+                        width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem' : '45%'})`,
                         maxWidth: "40rem",
                         padding: isSm ? "0 2rem" : "3rem",
                         position: "sticky",
@@ -240,6 +276,23 @@ export default function Home(props: StripeAppProps) {
                         <Typography variant="h1" sx={{
                             fontSize: "1rem"
                         }}>{product.name}</Typography>
+
+                        <div className="flex compact">
+                            {product && categories && categories.map(c => {
+
+                                if (c.type === 'variant') {
+                                    return (
+                                        <CategoryVariantSelector
+                                            key={c._id}
+                                            category={c}
+                                            product={product}
+                                        />
+                                    )
+                                }
+
+                                return null
+                            })}
+                        </div>
                         {/* <Divider sx={{ width: "100%" }}></Divider> */}
                         {product.prices && product.prices.length > 1 && (
                             <>

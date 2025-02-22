@@ -3,7 +3,8 @@ import { UseCart } from "./checkout/useCart";
 
 
 export interface StripeAppProps {
-    Cart: UseCart
+    Cart: UseCart,
+    categories: Category[] | null
 }
 
 export interface StripePrice extends Stripe.Price {
@@ -41,6 +42,7 @@ export interface Category {
     slug: string,
     parent_id: string,
     is_on_menu: boolean,
-    type: 'variant' | 'collection'
+    type: 'variant' | 'collection',
+    products: StripeProduct[]
 
 }

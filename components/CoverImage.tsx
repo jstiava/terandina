@@ -31,10 +31,10 @@ export default function CoverImage({ className = "", url, height, width, style =
         style={{
           width: width,
           height: height,
-          backgroundColor: theme.palette.primary.main,
+          // backgroundColor: theme.palette.primary.main,
           backgroundPosition: 'center',
-          opacity: isLoaded ? 1 : 0,
-          transform: isLoaded ? 'scale(1)' : 'scale(0.5)',
+          opacity: 1,
+          transform: 'scale(1)',
           transition: `opacity 0.5s ease-in-out ${delay}s`,
           ...style,
         }}

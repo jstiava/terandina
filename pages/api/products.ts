@@ -2,6 +2,7 @@ import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
 import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
+import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
@@ -127,6 +128,10 @@ async function getAllProducts(query : Partial<{
     if (query.is_featured != undefined) {
       filter.is_featured = new SafeString(query.is_featured).isTrue();
     }
+    if (query.category != undefined) {
+      const cat_id = new ObjectId(new SafeString(query.category).toString());
+      filter.categories = cat_id;
+    }
 
     const products = await mongo.clientPromise.db('products').collection('products').find(filter).toArray()
 
@@ -190,7 +195,15 @@ async function handleUpdateProduct(product_id: string, data: Partial<StripeProdu
 
     for (const key of allowedFields) {
       if (key in data) {
-        updateData[key] = data[key]!;
+        if (key === 'categories') {
+          const ids = data[key]?.map(id => {
+            return new ObjectId(id);
+          })
+          updateData[key] = ids;
+        }
+        else {
+          updateData[key] = data[key]!;
+        }
       }
     }
 

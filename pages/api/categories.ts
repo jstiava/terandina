@@ -2,6 +2,7 @@ import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
 import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
+import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
@@ -157,7 +158,7 @@ async function handleUpdateProduct(product_id: string, data: Partial<StripeProdu
 
     for (const key of allowedFields) {
       if (key in data) {
-        updateData[key] = data[key]!;
+          updateData[key] = data[key]!;
       }
     }
 
