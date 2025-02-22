@@ -27,6 +27,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { VariantProductStub } from '@/types';
 import { useUploadThing } from '@/utils/uploadthing';
 import { isLocale } from 'validator';
+import UploadForm from './UploadForm';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -52,8 +53,9 @@ export type UploadType = {
 
 }
 
-export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUploadThing>, newUploads : UploadType[], setNewUploads : Dispatch<SetStateAction<UploadType[]>>, presets: string[] | null, uploads: UploadType[], setUploads: Dispatch<SetStateAction<UploadType[]>>, callbacks: {
-  onChange?: (files: UploadType[]) => any
+export default function useComplexFileDrop(uploads: UploadType[] | null, setUploads: Dispatch<SetStateAction<UploadType[] | null>>, callbacks: {
+  onChange: (files: UploadType[]) => any,
+  onRemoveAll?: () => any
 }) {
   const theme = useTheme();
   const [isDragOver, setIsDragOver] = useState(false);
@@ -65,61 +67,23 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
 
   const [uploadCount, setUploadCount] = useState(0);
 
-  useEffect(() => {
-    if (!loading) {
-      return;
-    }
 
-    if (!isOpen) {
-      return;
-    }
+  const handleAddedFiles = (newImages : UploadType[]) => {
 
-    setUploads(prev => {
-      if (!prev) return newUploads;
-      const newList =[...prev, ...newUploads];
-      if (callbacks.onChange) {
-        callbacks.onChange(newList);
+    setUploads((prev) => {
+      if (!prev) {
+        callbacks.onChange(newImages)
+        return newImages;
       }
+
+      const newList = [...prev, ...newImages]
+      callbacks.onChange(newList)
       return newList;
     })
 
-    setNewUploads([]);
-    setLoading(false);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newUploads])
-
-  useEffect(() => {
-    setUploadCount(uploads.length);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploads]);
-
-  useEffect(() => {
-    if (!presets || presets.length === 0) return;
-
-    setIsUploadPresent(true);
-
-    let theUploads = uploads;
-
-    presets.forEach((file) => {
-
-      if (theUploads.some(x => x.url === file)) {
-        return;
-      }
-      theUploads.push({
-        url: file,
-        isLocal: false
-      })
-    });
 
 
-    setUploads(theUploads);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  
+  }
 
   const closeDialog = () => {
     if (loading) {
@@ -133,6 +97,7 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
   const handleRemoveFile = async (uuid: string, isLocal: boolean) => {
 
     setUploads((prev) => {
+      if (!prev) return null;
       const newList = prev.filter((file) => file.url != uuid);
       if (callbacks.onChange) {
         callbacks.onChange(newList);
@@ -167,160 +132,6 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
 
   const MAX_IMAGES = 10;
 
-  const addImage = (input: React.ChangeEvent<HTMLInputElement> | FileList) => {
-    let files: File[] = [];
-
-    // Handle input from file input event
-    if ("target" in input && input.target.files) {
-      files = Array.from(input.target.files);
-    }
-    // Handle input from drag-and-drop
-    else if (input instanceof FileList) {
-      files = Array.from(input);
-    }
-
-    const remainingSlots = MAX_IMAGES - uploads.length;
-    const filesToUpload = files.slice(0, remainingSlots);
-
-    if (filesToUpload.length > 0) {
-      setLoading(true);
-      UploadThing.startUpload(filesToUpload);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsDragOver(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      addImage(e.dataTransfer.files);
-    }
-  };
-
-  const FileUploadForm = (
-    <div className='column'>
-        <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', padding: '1rem 0.5rem 0 0', width: "100%", flexWrap: 'wrap' }}>
-          <>
-            {uploads && uploads.map((upload) => (
-              <div className='column compact left'
-                key={upload.url}
-                style={{
-                  width: "9rem",
-                  position: "relative",
-                  marginBottom: "0.5rem"
-                }}>
-                <div className="column compact">
-                  <div style={{
-                    width: '9rem',
-                    height: '9rem',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    borderRadius: '0.5rem',
-                    backgroundImage: upload ? `url(${upload.url})` : '',
-                  }}>
-                    <IconButton sx={{
-                      position: "absolute",
-                      top: "-1rem",
-                      left: "-1rem",
-                      backgroundColor: theme.palette.background.paper,
-                      color: theme.palette.error.main,
-                      border: `1px solid ${theme.palette.divider}`,
-                      '&:hover': {
-                        backgroundColor: `${theme.palette.divider} !important`
-                      }
-                    }}>
-                      <DeleteOutline onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveFile(upload.url, upload.isLocal)
-                      }} />
-                    </IconButton>
-
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <>
-              {loading && (
-                <div className="flex center middle">
-                <CircularProgress color="primary" />
-                </div>
-              )}
-            </>
-          </>
-        </div>
-      <div
-        className={`visual-drop-area ${isDragOver ? 'drag-over' : ''}`}
-        onDragOver={handleDragOver}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDrop={e => {
-          handleDrop(e);
-        }}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          height: 'fit-content',
-          padding: '2rem',
-          justifyContent: 'center',
-          alignItems: 'center',
-          border: `2px dashed ${theme.palette.divider}`,
-          borderRadius: '0.5rem',
-        }}
-      >
-        <>
-          <Typography component="p" style={{ fontWeight: 'bold', padding: 0 }}>
-            Drop image here.
-          </Typography>
-          <Typography variant="caption" style={{ padding: 0 }}>Accepted: jpg, png, webp</Typography>
-          <Button onClick={e => {
-            e.stopPropagation()
-          }} component="label" variant="outlined" sx={{ width: '100%', marginTop: '1rem' }}>
-            Upload file
-            <VisuallyHiddenInput
-              type="file"
-              multiple
-              onChange={addImage}
-              accept={'*'}
-            />
-          </Button>
-        </>
-      </div>
-    </div>
-  );
-
-
-
-
-  const FilePreview = (
-    <div className="flex compact" style={{ position: "relative" }}>
-      {uploads[0] && (
-        <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', width: "100%", }}>
-          {uploads && uploads.map((upload, index) => (
-            <ButtonBase
-              key={upload.url}
-              onClick={(e) => {
-                openDialog();
-              }}
-              sx={{
-                width: '8rem',
-                height: '5rem',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                borderRadius: '0.5rem',
-                backgroundImage: upload ? `url(${upload.url})` : '',
-              }}
-            ></ButtonBase>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 
   const FileUploadDialog = (
     <>
@@ -350,7 +161,64 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
           }}
           onClick={() => closeDialog()}
         >
-          {isOpen && FileUploadForm}
+          <div className="column">
+            <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', padding: '1rem 0.5rem 0 0', width: "100%", flexWrap: 'wrap' }}>
+              <>
+                {uploads && uploads.map((upload) => (
+                  <div className='column compact left'
+                    key={upload.url}
+                    style={{
+                      width: "9rem",
+                      position: "relative",
+                      marginBottom: "0.5rem"
+                    }}>
+                    <div className="column compact">
+                      <div style={{
+                        width: '9rem',
+                        height: '9rem',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        borderRadius: '0.5rem',
+                        backgroundImage: upload ? `url(${upload.url})` : '',
+                      }}>
+                        <IconButton sx={{
+                          position: "absolute",
+                          top: "-1rem",
+                          left: "-1rem",
+                          backgroundColor: theme.palette.background.paper,
+                          color: theme.palette.error.main,
+                          border: `1px solid ${theme.palette.divider}`,
+                          '&:hover': {
+                            backgroundColor: `${theme.palette.divider} !important`
+                          }
+                        }}>
+                          <DeleteOutline onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveFile(upload.url, upload.isLocal)
+                          }} />
+                        </IconButton>
+
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <>
+                  {loading && (
+                    <div className="flex center middle">
+                      <CircularProgress color="primary" />
+                    </div>
+                  )}
+                </>
+              </>
+            </div>
+            {isOpen && (
+              <UploadForm
+                onAdd={handleAddedFiles}
+              />
+            )}
+          </div>
           <div
             className="flex compact"
             style={{
@@ -373,7 +241,11 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
               color="error"
               variant="text"
               onClick={e => {
+                e.stopPropagation();
                 setUploads([]);
+                if (callbacks.onRemoveAll) {
+                  callbacks.onRemoveAll();
+                }
               }}
             >
               Remove All
@@ -386,7 +258,6 @@ export default function useComplexFileDrop(UploadThing : ReturnType<typeof useUp
 
   return {
     FileUpload: FileUploadDialog,
-    FilePreview,
     openDialog,
     isUploadPresent,
     isFileUploadOpen: isOpen,

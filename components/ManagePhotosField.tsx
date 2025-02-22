@@ -2,27 +2,25 @@ import { GridRenderCellParams } from "@mui/x-data-grid";
 import CoverImage from "./CoverImage";
 import { StripeProduct } from "@/types";
 import useComplexFileDrop, { UploadType } from "./useComplexFileDrop";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ClientUploadedFileData } from "uploadthing/types";
 import { CircularProgress, IconButton } from "@mui/material";
 import { useUploadThing } from "@/utils/uploadthing";
 import { AddAPhotoOutlined, AspectRatio } from "@mui/icons-material";
 
 
-export default function ManagePhotosField({ UploadThing, newUploads, setNewUploads, params, onChange }: {
+export default function ManagePhotosField({ params, onChange }: {
     params: GridRenderCellParams<StripeProduct, string[]>,
-    onChange: (files: string[]) => any,
-    UploadThing: ReturnType<typeof useUploadThing>,
-    newUploads: UploadType[],
-    setNewUploads: Dispatch<SetStateAction<UploadType[]>>
+    onChange: (files: string[]) => any
 }) {
 
-    const [uploads, setUploads] = useState<UploadType[]>([]);
+    const [uploads, setUploads] = useState<UploadType[] | null>(null);
 
     const handleUpdate = (files: UploadType[]) => {
         const theImages = files.map(x => x.url);
         onChange(theImages);
-        fetch(`/api/products?id=${params.row.id}`, {
+        console.log("Action")
+        fetch(`/api/products?id=${params.id}`, {
             method: "PATCH",
             headers: {
                 'Content-Type': "application/json"
@@ -33,9 +31,20 @@ export default function ManagePhotosField({ UploadThing, newUploads, setNewUploa
         })
     }
 
-    const FileDrop = useComplexFileDrop(UploadThing, newUploads, setNewUploads, params.row.images, uploads, setUploads, {
-       onChange: (files) => {
-        handleUpdate(files);
+    useEffect(() => {
+        setUploads(params.row.images.map(image => ({
+            url: image,
+            size: 0,
+            isLocal: false
+        })))
+    }, [])
+
+    const FileDrop = useComplexFileDrop(uploads, setUploads, {
+        onChange: (files) => {
+            handleUpdate(files);
+        },
+       onRemoveAll: () => {
+        handleUpdate([]);
        }
     })
 

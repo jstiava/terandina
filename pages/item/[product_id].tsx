@@ -80,7 +80,7 @@ export default function Home(props: StripeAppProps) {
         setProduct({
             ...response.product,
             quantity: 1,
-            images: [...response.product.images, ...response.product.images, ...response.product.images],
+            images: response.product.images,
             selectedPrice: response.product.prices[0]
         });
     }

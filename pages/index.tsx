@@ -156,7 +156,7 @@ export default function Home(props: StripeAppProps) {
           padding: isSm ? "0" : "0 2rem"
         }}>
           <Swiper
-          ref={swiperRef}
+            ref={swiperRef}
             direction="horizontal"
             slidesPerView={1}
             spaceBetween={10}
@@ -200,7 +200,7 @@ export default function Home(props: StripeAppProps) {
                 spaceBetween: 10,
               },
             }}
-          className="mySwiper"
+            className="mySwiper"
           >
             {products.map(product => (
 
@@ -217,7 +217,24 @@ export default function Home(props: StripeAppProps) {
             ))}
           </Swiper>
         </div>
-        <div className="flex" style={{height: "50vh"}}></div>
+        <div className="flex">
+          <CoverImage
+            url="/poncho_cover"
+            width="50vw"
+            height="auto"
+            style={{
+              aspectRatio: "1/1"
+            }}
+          />
+          <CoverImage
+            url="/jewelry_cover"
+            width="50vw"
+            height="auto"
+            style={{
+              aspectRatio: "1/1"
+            }}
+          />
+        </div>
       </div>
     </>
   );

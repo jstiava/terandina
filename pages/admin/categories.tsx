@@ -1,14 +1,16 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps } from "@/types";
-import { Typography, useMediaQuery } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Button, Typography, useMediaQuery } from "@mui/material";
+import { DataGrid, GridRenderCellParams } from "@mui/x-data-grid";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 
 
 export default function CategoryAdminPage(props: StripeAppProps) {
     const isSm = useMediaQuery("(max-width: 90rem)");
+    const router = useRouter();
 
     const [categories, setCategories] = useState<Category[] | null>(null);
 
@@ -35,6 +37,14 @@ export default function CategoryAdminPage(props: StripeAppProps) {
             headerName: "Name",
             width: 250,
         },
+        {
+            field: "type",
+            headerName: "Type",
+            width: 250,
+            renderCell: (params: GridRenderCellParams<Category, string>) => {
+                return params.value === 'variant' ? "Variant" : "Collection"
+            }
+        }
     ]
 
     return (
@@ -43,12 +53,20 @@ export default function CategoryAdminPage(props: StripeAppProps) {
             style={{
                 padding: "1rem"
             }}>
-            <div className={isSm ? "column left" : "column center"} style={{
+            <div className={isSm ? "column left" : "column left"} style={{
                 marginTop: headerHeight,
                 maxWidth: "120rem",
                 padding: "0.5rem",
                 width: "100%"
             }}>
+                   <div className="flex fit">
+                   <Button
+                    variant="outlined"
+                    onClick={e => {
+                        router.push('/admin')
+                    }}
+                    >Edit Products</Button>
+                   </div>
                 <div className="flex">
                     {categories && (
                         <DataGrid

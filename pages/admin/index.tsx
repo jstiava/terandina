@@ -2,7 +2,7 @@
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
-import { Button, Checkbox, Chip, IconButton, Popover, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -27,9 +27,11 @@ import {
     GridRowId,
     GridFilterItem,
     GridFilterModel,
+    GridFilterOperator,
+    GridFilterInputValueProps,
 } from '@mui/x-data-grid';
 import CoverImage from "@/components/CoverImage";
-import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupOutlined, GroupWorkOutlined, MinimizeOutlined, OpenInNew, PhotoAlbumOutlined, PhotoOutlined, RemoveOutlined, SaveOutlined, SearchOutlined } from "@mui/icons-material";
+import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupOutlined, GroupWorkOutlined, MinimizeOutlined, OpenInNew, PanoramaSharp, PhotoAlbumOutlined, PhotoOutlined, PropaneTankSharp, RemoveOutlined, SaveOutlined, SearchOutlined } from "@mui/icons-material";
 import { formatPrice } from "@/components/ProductCard";
 import useComplexFileDrop, { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
@@ -242,7 +244,39 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
 }
 
 
+const CategorySelectInput = ({ categories, ...props }: { categories: Category[] } & GridFilterInputValueProps) => {
+
+
+    return (
+        <FormControl variant="standard" fullWidth size="small" sx={{
+            justifyContent: 'flex-end'
+        }}>
+            <InputLabel id="demo-simple-select-label">Categories</InputLabel>
+            <Select
+                size="small"
+                multiple
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={props.item.value || []}
+                label="Category"
+                renderValue={(selected) => selected.join(', ')}
+                onChange={(e) => {
+                    console.log(props)
+                    props.applyValue({ ...props.item, value: e.target.value })
+                }}
+            >
+                {categories.map(cat => (
+                    <MenuItem key={cat._id} value={cat.name}>{cat.name}</MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    )
+}
+
+
 export default function AdminPage() {
+
+    const theme = useTheme();
 
     const [images, setImages] = useState<UploadType[]>([]);
     const [newUploads, setNewUploads] = useState<UploadType[]>([]);
@@ -253,35 +287,7 @@ export default function AdminPage() {
     const [searchValue, setSearchValue] = useState("");
 
 
-    const UploadThing = useUploadThing('imageUploader', {
-        onClientUploadComplete: (res) => {
-            if (res) {
 
-                try {
-                    const uploadedFiles = res.map(file => ({
-                        url: file.ufsUrl,
-                        size: file.size,
-                        isLocal: false
-                    }))
-
-                    setNewUploads(prev => {
-                        if (!prev) {
-                            return uploadedFiles
-                        }
-                        return [...prev, ...uploadedFiles]
-                    })
-                }
-                catch (err) {
-                    console.log(err)
-                }
-
-            }
-        },
-        onUploadError: (error) => {
-            console.error("Upload error:", error);
-        },
-
-    })
 
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
@@ -293,6 +299,7 @@ export default function AdminPage() {
     const [products, setProducts] = useState<StripeProduct[] | null>(null);
     const [categories, setCategories] = useState<Category[] | null>(null);
     const isSm = useMediaQuery("(max-width: 90rem)");
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
 
     const handleUpdate = async (newRow: StripeProduct) => {
@@ -360,6 +367,17 @@ export default function AdminPage() {
             return newRow;
         }
 
+        if (categories && newRow.categories) {
+            const cat_ids = newRow.categories.map(cat_name => {
+                const category = categories.find(c => c.name === cat_name);
+                if (!category) {
+                    return null;
+                }
+                return category._id;
+            })
+            newRow.categories = cat_ids.filter(x => x != null);
+        }
+
         await handleUpdate(newRow);
         setProducts((prev) => {
             if (!prev) return null;
@@ -374,6 +392,7 @@ export default function AdminPage() {
     };
 
     const handleEditClick = (id: GridRowId) => () => {
+        console.log(id);
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     };
 
@@ -419,21 +438,45 @@ export default function AdminPage() {
         });
     };
 
+    const customCategoryFilterOperator: GridFilterOperator<any, number>[] = [
+        {
+            label: 'Is',
+            value: 'is',
+            getApplyFilterFn: (filterItem: GridFilterItem) => {
+                return (params: any) => {
+                    if (!filterItem || !filterItem.value) {
+                        return true;
+                    }
+
+                    for (const cat of filterItem.value) {
+                        if (params.some((p: any[]) => p === cat)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+            },
+            InputComponent: CategorySelectInput,
+            InputComponentProps: { categories }
+        },
+    ];
+
     const columns: GridColDef<StripeProduct>[] = [
         {
             field: "images",
             headerName: "Images",
             sortable: false,
             width: 100,
-            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField UploadThing={UploadThing} newUploads={newUploads} setNewUploads={setNewUploads} key={params.row.id} params={params} onChange={(uploads) => {
-                const row = products?.find(x => params.row.id);
+            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField key={params.id} params={params} onChange={(uploads) => {
+                const row = products?.find(x => params.id);
                 if (!row) {
                     return;
                 }
-                processRowUpdate({
-                    ...row,
-                    images: uploads
-                })
+                console.log(row);
+                // processRowUpdate({
+                //     ...row,
+                //     images: uploads
+                // })
             }} />
         },
         {
@@ -455,10 +498,7 @@ export default function AdminPage() {
                                 sx={{
                                     height: "2rem"
                                 }}
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    handleEditClick(params.id)
-                                }}
+                                onClick={handleEditClick(params.id)}
                                 startIcon={
                                     <EditOutlined fontSize="small" />
                                 }>Edit</Button>
@@ -485,6 +525,182 @@ export default function AdminPage() {
             type: 'singleSelect',
             valueOptions: categories?.map(x => x.name),
             width: 300,
+            filterable: true,
+            editable: true,
+            filterOperators: customCategoryFilterOperator,
+            valueGetter: (value: string[], row) => {
+                if (!categories) {
+                    return [];
+                }
+
+                if (value && value instanceof Array) {
+                    const names = value.map(c_id => {
+                        const theFound = categories.find(c => c._id === c_id);
+                        if (!theFound) {
+                            return null;
+                        }
+                        return theFound.name;
+                    })
+                    return names;
+                }
+                return []
+            },
+            renderEditCell: (params: GridRenderCellParams<StripeProduct, string[] | null>) => {
+
+                if (!params.value) {
+                    return (
+                        <div className="flex top" style={{
+                            flexWrap: 'wrap',
+                            padding: "0.5rem"
+                        }}>
+                            <Typography>No Categories</Typography>
+                        </div>
+                    )
+                }
+
+                return (
+                    <div className="column compact" style={{
+                        padding: "0.5rem",
+                        height: "100%",
+                        overflowY: "scroll",
+                        width: "100%"
+                    }}>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {params.value.map(cat_name => {
+
+                                if (!cat_name) {
+                                    return;
+                                }
+
+                                const category = categories?.find(c => c.name === cat_name);
+
+                                if (!category) {
+                                    return (
+                                        <ErrorOutline color="error" key={`${cat_name}_error`} />
+                                    )
+                                }
+                                return (
+                                    <Chip
+                                        size="small"
+                                        key={category._id}
+                                        label={category.name}
+                                        onDelete={(e) => {
+                                            if (!params.value) {
+                                                return;
+                                            }
+
+                                            const newList = params.value.filter(x => x != category.name)
+                                            params.api.setEditCellValue({
+                                                id: params.id,
+                                                field: params.field,
+                                                value: newList
+                                            })
+                                            console.log(e);
+                                        }}
+                                        sx={{
+                                            marginBottom: "0.25rem"
+                                        }}
+                                    />
+                                )
+                            })}
+
+                        </div>
+                        <Typography variant="h6" sx={{
+                            fontSize: "0.75rem",
+                            lineHeight: '100%',
+                            textTransform: "uppercase"
+                        }}>Collections</Typography>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {categories && categories.map(category => {
+
+                                if (category.type === 'variant') {
+                                    return null;
+                                }
+
+
+                                if (params.value?.some(c_name => c_name === category.name)) {
+                                    return null;
+                                }
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        variant="outlined"
+                                        key={category._id}
+                                        label={category.name}
+                                        onClick={(e) => {
+
+                                            if (!params.value) {
+                                                return;
+                                            }
+
+                                            params.api.setEditCellValue({
+                                                id: params.id,
+                                                field: params.field,
+                                                value: [...params.value, category.name]
+                                            })
+                                            return;
+                                        }}
+                                        sx={{
+                                            marginBottom: "0.25rem"
+                                        }}
+                                    />
+                                )
+                            })}
+                        </div>
+
+                        <Typography variant="h6" sx={{
+                            fontSize: "0.75rem",
+                            lineHeight: '100%',
+                            textTransform: "uppercase"
+                        }}>Variants</Typography>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {categories && categories.map(category => {
+
+                                if (category.type === 'collection') {
+                                    return null;
+                                }
+
+
+                                if (params.value?.some(c_name => c_name === category.name)) {
+                                    return null;
+                                }
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        variant="outlined"
+                                        key={category._id}
+                                        label={category.name}
+                                        onClick={(e) => {
+
+                                            if (!params.value) {
+                                                return;
+                                            }
+
+                                            params.api.setEditCellValue({
+                                                id: params.id,
+                                                field: params.field,
+                                                value: [...params.value, category.name]
+                                            })
+                                            return;
+                                        }}
+                                        sx={{
+                                            marginBottom: "0.25rem"
+                                        }}
+                                    />
+                                )
+                            })}
+                        </div>
+                    </div>
+                )
+            },
             renderCell: (params: GridRenderCellParams<StripeProduct, string[] | null>) => {
 
                 if (!params.value) {
@@ -499,29 +715,44 @@ export default function AdminPage() {
                 }
 
                 return (
-                    <div className="flex compact top" style={{
+                    <div className="flex compact2 top" style={{
                         flexWrap: 'wrap',
                         padding: "0.5rem"
                     }}>
-                        {params.value.map(cat_id => {
+                        {params.value.map(cat_name => {
 
-                            const category = categories?.find(c => c._id === cat_id);
+                            if (!cat_name) {
+                                return;
+                            }
+
+                            const category = categories?.find(c => c.name === cat_name);
 
                             if (!category) {
                                 return (
-                                    <ErrorOutline color="error" key={`${cat_id}_error`} />
+                                    <ErrorOutline color="error" key={`${cat_name}_error`} />
                                 )
                             }
                             return (
                                 <Chip
-                                    key={cat_id}
+                                    size="small"
+                                    key={category._id}
                                     label={category.name}
                                     sx={{
-                                        marginBottom: "0.5rem"
+                                        marginBottom: "0.25rem"
                                     }}
                                 />
                             )
                         })}
+                        <Chip
+                            size="small"
+                            key="create"
+                            label="Add Category"
+                            variant="outlined"
+                            onClick={handleEditClick(params.id)}
+                            sx={{
+                                marginBottom: "0.25rem"
+                            }}
+                        />
                     </div>
                 )
             }
@@ -587,42 +818,46 @@ export default function AdminPage() {
         {
             field: "active",
             headerName: "Active",
-            width: 300,
+            width: 150,
             editable: true,
-            renderCell: (params: GridRenderCellParams<StripeProduct, string>) => {
+            filterable: true,
+            type: 'boolean',
+            renderCell: (params: GridRenderCellParams<StripeProduct, boolean>) => {
+                const value = params.value === undefined ? false : params.value;
                 return (
-                    <Typography sx={{
-                        width: "100%",
-                        overflowWrap: 'break-word',
-                        whiteSpace: 'normal',
-                        lineHeight: "115%",
-                        height: "100%",
-                        overflowY: "scroll",
-                        padding: "0.5rem 1rem"
-                    }}>{params.value ? "Active" : "Inactive"}</Typography>
+                    <Checkbox
+                        checked={value}
+                        onChange={async (e, checked) => {
+
+                            await processRowUpdate({
+                                ...params.row,
+                                active: checked
+                            })
+                        }}
+                    />
                 )
             }
         },
         {
             field: "is_featured",
             headerName: "Featured",
+            filterable: true,
+            type: 'boolean',
             width: 75,
-            renderCell: (params: GridRenderCellParams<StripeProduct, boolean | null>) => {
+            renderCell: (params: GridRenderCellParams<StripeProduct, boolean>) => {
 
                 const value = params.value || false;
                 return (
-                    <div className="flex top">
-                        <Checkbox
-                            checked={value}
-                            onChange={async (e, checked) => {
+                    <Checkbox
+                        checked={value}
+                        onChange={async (e, checked) => {
 
-                                await processRowUpdate({
-                                    ...params.row,
-                                    is_featured: checked
-                                })
-                            }}
-                        />
-                    </div>
+                            await processRowUpdate({
+                                ...params.row,
+                                is_featured: checked
+                            })
+                        }}
+                    />
                 )
             }
         },
@@ -921,35 +1156,9 @@ export default function AdminPage() {
     }, []);
 
 
-    const { startUpload, isUploading } = useUploadThing('imageUploader', {
-        onClientUploadComplete: (res) => {
-            if (res) {
-                res.forEach((uploadedFile) => {
-                    console.log(uploadedFile)
-                    // append({
-                    //   url: uploadedFile.url,
-                    //   altText: productName,
-                    //   isPrimary: images.length === 0,
-                    // });
-                });
-            }
-        },
-        onUploadError: (error) => {
-            console.error("Upload error:", error);
-        },
-    })
 
-    const addImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const files = Array.from(event.target.files);
-            const remainingSlots = MAX_IMAGES - images.length;
-            const filesToUpload = files.slice(0, remainingSlots);
 
-            if (filesToUpload.length > 0) {
-                startUpload(filesToUpload);
-            }
-        }
-    };
+
 
     if (!products) {
         return <></>
@@ -959,7 +1168,7 @@ export default function AdminPage() {
         <div id="content"
             className="column center"
             style={{
-                padding: isSm ? "1rem 0" : "1rem"
+                padding: isMobile ? "1rem 0" : "1rem"
             }}>
             <div className={isSm ? "column left" : "column left"} style={{
                 marginTop: headerHeight,
@@ -975,6 +1184,7 @@ export default function AdminPage() {
                         handleSearch(e.target.value)
                     }}
                 />
+
                 <div className="flex" style={{
                     width: "100%"
                 }}>
@@ -1016,6 +1226,20 @@ export default function AdminPage() {
                         }}
                         filterModel={filterModel}
                         onFilterModelChange={setFilterModel}
+                        initialState={{
+                            filter: {
+                                filterModel: {
+                                    items: [
+                                        {
+                                            id: 1,
+                                            field: 'categories',
+                                            value: 'is',
+                                            operator: 'is',
+                                        },
+                                    ],
+                                },
+                            },
+                        }}
                     />
                 </div>
             </div>
