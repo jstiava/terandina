@@ -217,23 +217,71 @@ export default function Home(props: StripeAppProps) {
             ))}
           </Swiper>
         </div>
-        <div className="flex">
+        <div className={isSm  ? 'column snug' : "flex snug"} style={{
+          width: "100%"
+        }}>
           <CoverImage
-            url="/poncho_cover"
-            width="50vw"
+          className="column compact center middle"
+            url="/poncho_cover.jpg"
+            width={ isSm ? "100%" : "50vw"}
             height="auto"
             style={{
-              aspectRatio: "1/1"
+              aspectRatio: "1/1",
+              // backgroundImage: 'url(/poncho_cover.jpg)',
             }}
-          />
+          >
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundImage: 'radial-gradient(#000000aa, #00000000)',
+              zIndex: 0
+            }}></div>
+            <Typography variant="h2" sx={{
+               padding: "1.5rem",
+              //  border: "0.25rem solid white",
+                color: 'white',
+                zIndex: 1
+            }}>Explore All Ponchos</Typography>
+            <Button
+              variant="contained"
+             >Shop Ponchos</Button>
+          </CoverImage>
           <CoverImage
-            url="/jewelry_cover"
-            width="50vw"
+          className="column compact center middle"
+            url="/jewelry_cover.jpg"
+            width={ isSm ? "100%" : "50vw"}
             height="auto"
             style={{
-              aspectRatio: "1/1"
+              aspectRatio: "1/1",
+              position: 'relative',
+              // backgroundImage: 'url(/jewelry_cover.jpg)',
+              overflow: "hidden",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
-          />
+          >
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundImage: 'radial-gradient(#000000aa, #00000000)',
+              zIndex: 0
+            }}></div>
+             <Typography variant="h2" sx={{
+               padding: "1.5rem",
+              //  border: "0.25rem solid white",
+               color: 'white',
+               zIndex: 1
+             }}>Explore All Jewelry</Typography>
+             <Button
+              variant="contained"
+             >Shop Jewelry</Button>
+          </CoverImage>
         </div>
       </div>
     </>
@@ -241,416 +289,3 @@ export default function Home(props: StripeAppProps) {
 }
 
 
-
-
-
-// const featuredProducts: StripeProduct[] = [
-//   {
-//     "id": "prod_Rg6ZkYGd83vMZy",
-//     "object": "product",
-//     "active": true,
-//     "created": 1738192046,
-//     "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESF",
-//     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
-//     "images": [
-//       "https://files.stripe.com/links/MDB8YWNjdF8xUW1MU3NKcmNMVUg4QzJ6fGZsX3Rlc3RfdGJCREdYRjdJaXlseVNOTWY0SGNtR1E100gylJlHLy"
-//     ],
-//     "livemode": false,
-//     "marketing_features": [],
-//     "metadata": {},
-//     "name": "Skyriver Blue - Pishi Alpaca Poncho",
-//     "package_dimensions": null,
-//     "shippable": null,
-//     "statement_descriptor": null,
-//     "tax_code": null,
-//     "type": "service",
-//     "unit_label": null,
-//     "updated": 1738192047,
-//     "url": null,
-//     "prices": [
-//       {
-//         "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
-//         "object": "price",
-//         "active": true,
-//         "billing_scheme": "per_unit",
-//         "created": 1738192046,
-//         "currency": "usd",
-//         "custom_unit_amount": null,
-//         "livemode": false,
-//         "lookup_key": null,
-//         "metadata": {},
-//         "nickname": null,
-//         "product": "prod_Rg6ZkYGd83vMZy",
-//         "recurring": null,
-//         "tax_behavior": "unspecified",
-//         "tiers_mode": null,
-//         "transform_quantity": null,
-//         "type": "one_time",
-//         "unit_amount": 9500,
-//         "unit_amount_decimal": "9500"
-//       }
-//     ],
-//     "selectedPrice": {
-//       "id": "price_1QmkLyJrcLUH8C2zCUqlbESF",
-//       "object": "price",
-//       "active": true,
-//       "billing_scheme": "per_unit",
-//       "created": 1738192046,
-//       "currency": "usd",
-//       "custom_unit_amount": null,
-//       "livemode": false,
-//       "lookup_key": null,
-//       "metadata": {},
-//       "nickname": null,
-//       "product": "prod_Rg6ZkYGd83vMZy",
-//       "recurring": null,
-//       "tax_behavior": "unspecified",
-//       "tiers_mode": null,
-//       "transform_quantity": null,
-//       "type": "one_time",
-//       "unit_amount": 9500,
-//       "unit_amount_decimal": "9500"
-//     },
-//     quantity: 1
-//   },
-//   {
-//     "id": "prod_Rg6ZkYGd83vMbb",
-//     "object": "product",
-//     "active": true,
-//     "created": 1738192046,
-//     "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESF",
-//     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
-//     "images": [
-//       "/SacredSmokeHeavyWoolPoncho.jpg"
-//     ],
-//     "livemode": false,
-//     "marketing_features": [],
-//     "metadata": {},
-//     "name": "Sacred Smoke - Heavy Wool Poncho",
-//     "package_dimensions": null,
-//     "shippable": null,
-//     "statement_descriptor": null,
-//     "tax_code": null,
-//     "type": "service",
-//     "unit_label": null,
-//     "updated": 1738192047,
-//     "url": null,
-//     "prices": [
-//       {
-//         "id": "price_1QmkLyJrcLUH8C2zCUqlbESS",
-//         "object": "price",
-//         "active": true,
-//         "billing_scheme": "per_unit",
-//         "created": 1738192046,
-//         "currency": "usd",
-//         "custom_unit_amount": null,
-//         "livemode": false,
-//         "lookup_key": null,
-//         "metadata": {},
-//         "nickname": null,
-//         "product": "prod_Rg6ZkYGd83vMZy",
-//         "recurring": null,
-//         "tax_behavior": "unspecified",
-//         "tiers_mode": null,
-//         "transform_quantity": null,
-//         "type": "one_time",
-//         "unit_amount": 9500,
-//         "unit_amount_decimal": "9500"
-//       }
-//     ],
-//     "selectedPrice": {
-//       "id": "price_1QmkLyJrcLUH8C2zCUqlbESS",
-//       "object": "price",
-//       "active": true,
-//       "billing_scheme": "per_unit",
-//       "created": 1738192046,
-//       "currency": "usd",
-//       "custom_unit_amount": null,
-//       "livemode": false,
-//       "lookup_key": null,
-//       "metadata": {},
-//       "nickname": null,
-//       "product": "prod_Rg6ZkYGd83vMZy",
-//       "recurring": null,
-//       "tax_behavior": "unspecified",
-//       "tiers_mode": null,
-//       "transform_quantity": null,
-//       "type": "one_time",
-//       "unit_amount": 9500,
-//       "unit_amount_decimal": "9500"
-//     },
-//     quantity: 1
-//   },
-//   {
-//     "id": "prod_Rg6ZkYGd83vMZz",
-//     "object": "product",
-//     "active": true,
-//     "created": 1738192046,
-//     "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESQ",
-//     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
-//     "images": [
-//       "/P1120417.jpg"
-//     ],
-//     "livemode": false,
-//     "marketing_features": [],
-//     "metadata": {},
-//     "name": "Skyriver Blue - Pishi Alpaca Poncho",
-//     "package_dimensions": null,
-//     "shippable": null,
-//     "statement_descriptor": null,
-//     "tax_code": null,
-//     "type": "service",
-//     "unit_label": null,
-//     "updated": 1738192047,
-//     "url": null,
-//     "prices": [
-//       {
-//         "id": "price_1QmkLyJrcLUH8C2zCUqlbESQ",
-//         "object": "price",
-//         "active": true,
-//         "billing_scheme": "per_unit",
-//         "created": 1738192046,
-//         "currency": "usd",
-//         "custom_unit_amount": null,
-//         "livemode": false,
-//         "lookup_key": null,
-//         "metadata": {},
-//         "nickname": null,
-//         "product": "prod_Rg6ZkYGd83vMZy",
-//         "recurring": null,
-//         "tax_behavior": "unspecified",
-//         "tiers_mode": null,
-//         "transform_quantity": null,
-//         "type": "one_time",
-//         "unit_amount": 9500,
-//         "unit_amount_decimal": "9500"
-//       }
-//     ],
-//     "selectedPrice": {
-//       "id": "price_1QmkLyJrcLUH8C2zCUqlbESQ",
-//       "object": "price",
-//       "active": true,
-//       "billing_scheme": "per_unit",
-//       "created": 1738192046,
-//       "currency": "usd",
-//       "custom_unit_amount": null,
-//       "livemode": false,
-//       "lookup_key": null,
-//       "metadata": {},
-//       "nickname": null,
-//       "product": "prod_Rg6ZkYGd83vMZy",
-//       "recurring": null,
-//       "tax_behavior": "unspecified",
-//       "tiers_mode": null,
-//       "transform_quantity": null,
-//       "type": "one_time",
-//       "unit_amount": 9500,
-//       "unit_amount_decimal": "9500"
-//     },
-//     quantity: 1
-//   },
-//   {
-//     "id": "prod_Rg6ZkYGd83vMhh",
-//     "object": "product",
-//     "active": true,
-//     "created": 1738192046,
-//     "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESG",
-//     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
-//     "images": [
-//       "/CanyonSunsetPomoWoolPoncho.jpg"
-//     ],
-//     "livemode": false,
-//     "marketing_features": [],
-//     "metadata": {},
-//     "name": "Canyon Sunset - Heavy Wool Poncho",
-//     "package_dimensions": null,
-//     "shippable": null,
-//     "statement_descriptor": null,
-//     "tax_code": null,
-//     "type": "service",
-//     "unit_label": null,
-//     "updated": 1738192047,
-//     "url": null,
-//     "prices": [
-//       {
-//         "id": "price_1QmkLyJrcLUH8C2zCUqlbESG",
-//         "object": "price",
-//         "active": true,
-//         "billing_scheme": "per_unit",
-//         "created": 1738192046,
-//         "currency": "usd",
-//         "custom_unit_amount": null,
-//         "livemode": false,
-//         "lookup_key": null,
-//         "metadata": {},
-//         "nickname": null,
-//         "product": "prod_Rg6ZkYGd83vMZy",
-//         "recurring": null,
-//         "tax_behavior": "unspecified",
-//         "tiers_mode": null,
-//         "transform_quantity": null,
-//         "type": "one_time",
-//         "unit_amount": 9500,
-//         "unit_amount_decimal": "9500"
-//       }
-//     ],
-//     "selectedPrice": {
-//       "id": "price_1QmkLyJrcLUH8C2zCUqlbESG",
-//       "object": "price",
-//       "active": true,
-//       "billing_scheme": "per_unit",
-//       "created": 1738192046,
-//       "currency": "usd",
-//       "custom_unit_amount": null,
-//       "livemode": false,
-//       "lookup_key": null,
-//       "metadata": {},
-//       "nickname": null,
-//       "product": "prod_Rg6ZkYGd83vMZy",
-//       "recurring": null,
-//       "tax_behavior": "unspecified",
-//       "tiers_mode": null,
-//       "transform_quantity": null,
-//       "type": "one_time",
-//       "unit_amount": 9500,
-//       "unit_amount_decimal": "9500"
-//     },
-//     quantity: 1
-//   },
-//   {
-//     "id": "prod_Rg6ZkYGd83vMaa",
-//     "object": "product",
-//     "active": true,
-//     "created": 1738192046,
-//     "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESM",
-//     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
-//     "images": [
-//       "/wolf_poncho_front_NS.jpg"
-//     ],
-//     "livemode": false,
-//     "marketing_features": [],
-//     "metadata": {},
-//     "name": "Spirit of the Wolf - Sumaq Alpaca Poncho",
-//     "package_dimensions": null,
-//     "shippable": null,
-//     "statement_descriptor": null,
-//     "tax_code": null,
-//     "type": "service",
-//     "unit_label": null,
-//     "updated": 1738192047,
-//     "url": null,
-//     "prices": [
-//       {
-//         "id": "price_1QmkLyJrcLUH8C2zCUqlbESM",
-//         "object": "price",
-//         "active": true,
-//         "billing_scheme": "per_unit",
-//         "created": 1738192046,
-//         "currency": "usd",
-//         "custom_unit_amount": null,
-//         "livemode": false,
-//         "lookup_key": null,
-//         "metadata": {},
-//         "nickname": null,
-//         "product": "prod_Rg6ZkYGd83vMZy",
-//         "recurring": null,
-//         "tax_behavior": "unspecified",
-//         "tiers_mode": null,
-//         "transform_quantity": null,
-//         "type": "one_time",
-//         "unit_amount": 9500,
-//         "unit_amount_decimal": "9500"
-//       }
-//     ],
-//     "selectedPrice": {
-//       "id": "price_1QmkLyJrcLUH8C2zCUqlbESM",
-//       "object": "price",
-//       "active": true,
-//       "billing_scheme": "per_unit",
-//       "created": 1738192046,
-//       "currency": "usd",
-//       "custom_unit_amount": null,
-//       "livemode": false,
-//       "lookup_key": null,
-//       "metadata": {},
-//       "nickname": null,
-//       "product": "prod_Rg6ZkYGd83vMZy",
-//       "recurring": null,
-//       "tax_behavior": "unspecified",
-//       "tiers_mode": null,
-//       "transform_quantity": null,
-//       "type": "one_time",
-//       "unit_amount": 9500,
-//       "unit_amount_decimal": "9500"
-//     },
-//     quantity: 1
-//   },
-//   {
-//     "id": "prod_Rg6ZkYGd83vMcc",
-//     "object": "product",
-//     "active": true,
-//     "created": 1738192046,
-//     "default_price": "price_1QmkLyJrcLUH8C2zCUqlbESO",
-//     "description": "Our unisex Smooth Alpaca Ponchos are handmade from baby alpaca, offering an ultrasoft and midweight feel that will keep you warm and cozy. Unlike our traditional alpaca ponchos, these have a smoother texture that provide cozy comfort without the furrier feel. They feature traditional patterns and vibrant colors designed by authentic native artisans from the Andes. Our ponchos are one size and are made to fit everyone. Other details include a one-button collar, and a fringed bottom.",
-//     "images": [
-//       "/dark_brown_caradigan_front_NS.jpg"
-//     ],
-//     "livemode": false,
-//     "marketing_features": [],
-//     "metadata": {},
-//     "name": "Black Flame - Alpaca Cardigan",
-//     "package_dimensions": null,
-//     "shippable": null,
-//     "statement_descriptor": null,
-//     "tax_code": null,
-//     "type": "service",
-//     "unit_label": null,
-//     "updated": 1738192047,
-//     "url": null,
-//     "prices": [
-//       {
-//         "id": "price_1QmkLyJrcLUH8C2zCUqlbESO",
-//         "object": "price",
-//         "active": true,
-//         "billing_scheme": "per_unit",
-//         "created": 1738192046,
-//         "currency": "usd",
-//         "custom_unit_amount": null,
-//         "livemode": false,
-//         "lookup_key": null,
-//         "metadata": {},
-//         "nickname": null,
-//         "product": "prod_Rg6ZkYGd83vMZy",
-//         "recurring": null,
-//         "tax_behavior": "unspecified",
-//         "tiers_mode": null,
-//         "transform_quantity": null,
-//         "type": "one_time",
-//         "unit_amount": 9500,
-//         "unit_amount_decimal": "9500"
-//       }
-//     ],
-//     "selectedPrice": {
-//       "id": "price_1QmkLyJrcLUH8C2zCUqlbESO",
-//       "object": "price",
-//       "active": true,
-//       "billing_scheme": "per_unit",
-//       "created": 1738192046,
-//       "currency": "usd",
-//       "custom_unit_amount": null,
-//       "livemode": false,
-//       "lookup_key": null,
-//       "metadata": {},
-//       "nickname": null,
-//       "product": "prod_Rg6ZkYGd83vMZy",
-//       "recurring": null,
-//       "tax_behavior": "unspecified",
-//       "tiers_mode": null,
-//       "transform_quantity": null,
-//       "type": "one_time",
-//       "unit_amount": 9500,
-//       "unit_amount_decimal": "9500"
-//     },
-//     quantity: 1
-//   },
-// ]
