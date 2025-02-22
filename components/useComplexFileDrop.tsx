@@ -18,6 +18,20 @@ import {
   SelectChangeEvent,
   CircularProgress,
 } from '@mui/material';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  horizontalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import React, { useCallback, useRef, useState, useEffect, ChangeEvent, SetStateAction, MouseEvent, Dispatch } from 'react';
 import { Portrait, ImageOutlined, Remove, SwapHoriz, AddPhotoAlternate, Delete, Update, DeleteOutlined, DeleteOutline } from '@mui/icons-material';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
@@ -28,6 +42,14 @@ import { VariantProductStub } from '@/types';
 import { useUploadThing } from '@/utils/uploadthing';
 import { isLocale } from 'validator';
 import UploadForm from './UploadForm';
+import PhotoItem from './PhotoItem';
+
+function arrayMove(array: any[], fromIndex: number, toIndex: number) {
+  const updatedArray = [...array];
+  const [movedItem] = updatedArray.splice(fromIndex, 1); // Remove the item
+  updatedArray.splice(toIndex, 0, movedItem); // Insert at the new index
+  return updatedArray;
+}
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -63,12 +85,25 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
   const [loading, setLoading] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [order, setOrder] = useState<UploadType[] | null>(null);
   const [isUploadPresent, setIsUploadPresent] = useState(false);
+  const [hasLinkListOrderChanged, setHasLinkListOrderChanged] = useState(false);
 
   const [uploadCount, setUploadCount] = useState(0);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-  const handleAddedFiles = (newImages : UploadType[]) => {
+  useEffect(() => {
+    setOrder(uploads);
+  }, [uploads])
+
+
+  const handleAddedFiles = (newImages: UploadType[]) => {
 
     setUploads((prev) => {
       if (!prev) {
@@ -90,8 +125,36 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
       alert("It's still loading...")
       return;
     }
+    setHasLinkListOrderChanged(false);
+    setOrder(uploads);
     setIsOpen(false);
   };
+
+  const handleDragEnd = (event: any) => {
+
+    const { active, over } = event;
+
+    try {
+      const { active, over } = event;
+
+      if (active.id !== over.id) {
+        setHasLinkListOrderChanged(true);
+        setOrder((items) => {
+
+          if (!items) return null;
+          const oldIndex = items.findIndex(item => item.url === active.id);
+          const newIndex = items.findIndex(item => item.url === over.id);
+
+          return arrayMove(items, oldIndex, newIndex);
+        });
+      }
+    }
+    catch (err) {
+      console.log("Drag-n-drop failed.");
+    }
+
+    return;
+  }
 
 
   const handleRemoveFile = async (uuid: string, isLocal: boolean) => {
@@ -159,58 +222,39 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
             overflowX: 'hidden',
             overflowY: 'scroll',
           }}
-          onClick={() => closeDialog()}
         >
           <div className="column">
             <div className="flex compact" style={{ alignItems: "flex-start", height: 'fit-content', padding: '1rem 0.5rem 0 0', width: "100%", flexWrap: 'wrap' }}>
+              <DndContext
+                key={'photo_reorder'}
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                autoScroll={false}
+              >
+                <SortableContext
+                  items={order ? order.map(x => {
+                    return { id: x.url }
+                  }) : []}
+                >
+                  {order && order.map((upload) => (
+                    <PhotoItem
+                      key={upload.url}
+                      id={upload.url}
+                      upload={upload}
+                      handleRemoveFile={handleRemoveFile}
+                    />
+                  ))}
+
+                </SortableContext>
+              </DndContext>
+
               <>
-                {uploads && uploads.map((upload) => (
-                  <div className='column compact left'
-                    key={upload.url}
-                    style={{
-                      width: "9rem",
-                      position: "relative",
-                      marginBottom: "0.5rem"
-                    }}>
-                    <div className="column compact">
-                      <div style={{
-                        width: '9rem',
-                        height: '9rem',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        borderRadius: '0.5rem',
-                        backgroundImage: upload ? `url(${upload.url})` : '',
-                      }}>
-                        <IconButton sx={{
-                          position: "absolute",
-                          top: "-1rem",
-                          left: "-1rem",
-                          backgroundColor: theme.palette.background.paper,
-                          color: theme.palette.error.main,
-                          border: `1px solid ${theme.palette.divider}`,
-                          '&:hover': {
-                            backgroundColor: `${theme.palette.divider} !important`
-                          }
-                        }}>
-                          <DeleteOutline onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveFile(upload.url, upload.isLocal)
-                          }} />
-                        </IconButton>
-
-                      </div>
-                    </div>
+                {loading && (
+                  <div className="flex center middle">
+                    <CircularProgress color="primary" />
                   </div>
-                ))}
-
-                <>
-                  {loading && (
-                    <div className="flex center middle">
-                      <CircularProgress color="primary" />
-                    </div>
-                  )}
-                </>
+                )}
               </>
             </div>
             {isOpen && (
@@ -220,7 +264,7 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
             )}
           </div>
           <div
-            className="flex compact"
+            className="flex between"
             style={{
               position: 'sticky',
               bottom: 0,
@@ -229,12 +273,14 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
               borderTop: `1px solid ${theme.palette.divider}`,
             }}
           >
+            <div className="flex compact fit">
+
             <Button
               variant="text"
               onClick={e => {
                 closeDialog();
               }}
-            >
+              >
               Cancel
             </Button>
             <Button
@@ -247,9 +293,27 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
                   callbacks.onRemoveAll();
                 }
               }}
-            >
+              >
               Remove All
             </Button>
+              </div>
+
+            {order && hasLinkListOrderChanged && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    height: "2.5rem"
+                  }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setUploads(order);
+                    callbacks.onChange(order);
+                    setHasLinkListOrderChanged(false);
+                  }}
+                >
+                  Save Order
+                </Button>
+            )}
           </div>
         </Paper>
       </Modal>
