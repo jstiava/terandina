@@ -342,7 +342,7 @@ export default function Header({ Cart, color, setColor }: {
 
                                 <MenuItem
                                     key={'blankets'}
-                                    onClick={() => router.push('outerwear')}
+                                    onClick={() => router.push('blankets')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Blankets</MenuItem>
 
@@ -420,7 +420,7 @@ export default function Header({ Cart, color, setColor }: {
                             }}>
                                 <MenuItem
                                     key={'jewelry'}
-                                    onClick={() => router.push('outerwear')}
+                                    onClick={() => router.push('jewelry')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Jewelry</MenuItem>
                                 <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
@@ -443,7 +443,7 @@ export default function Header({ Cart, color, setColor }: {
                                     className="flex between middle"
                                     disableRipple
                                     key={'test'}
-                                    onClick={() => setIsSidebarOpen(prev => !prev)}
+                                    onClick={() => router.push('/handcrafted')}
                                     sx={{
                                         height: "3rem",
                                         padding: "0 2rem",

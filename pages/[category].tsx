@@ -130,9 +130,6 @@ export default function CategoryPage(props: StripeAppProps & {
         <title>Terandina - Handcrafted Native Outerwear and Accessories</title>
         <link rel="icon" type="image/png" href="/Terandina_no_text.png" />
       </Head>
-      <ScrollButton
-        scrollPercentage={0.5}
-      >
         <div className="flex center" style={{
           position: 'fixed',
           zIndex: 1,
@@ -145,11 +142,10 @@ export default function CategoryPage(props: StripeAppProps & {
         }}>
           <Typography variant="h5">{props.static.category.name}</Typography>
         </div>
-      </ScrollButton>
       <div className="column center" style={{
         width: "100%",
         padding: 0,
-        marginTop: "4rem"
+        marginTop: "8rem"
       }}>
         {/* <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
           padding: isMd ? "1.5rem 2rem 3rem 2rem" : "5rem 1rem",
