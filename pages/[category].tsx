@@ -81,11 +81,14 @@ export const getStaticProps = (async (context: any) => {
               ...p,
               _id: p._id.toString(),
               categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
-             selectedPrice: null,
-             prices: p.prices ? p.prices.map((price : WithId<StripePrice>) => ({
-              ...price,
-              _id: price._id ? price._id.toString() : price.id
-             })) : [],
+              prices: p.prices ? p.prices.map((price : WithId<StripePrice>) => ({
+                ...price,
+                _id: price._id ? price._id.toString() : price.id
+              })) : [],
+              selectedPrice: p.prices && p.prices.length > 0 ? {
+                ...p.prices[0],
+                _id: p.prices[0]._id ? p.prices[0]._id.toString() : p.prices[0].id
+              } : null,
               quantity: 1
             }
           })
