@@ -4,7 +4,7 @@ import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
 import { UseCart } from "@/checkout/useCart";
-import { Preview } from "@mui/icons-material";
+import { ArrowForward, ArrowRightOutlined, Preview } from "@mui/icons-material";
 import { Router, useRouter } from "next/router";
 import CategoryVariantSelector from "./CategoryVariantSelector";
 
@@ -245,30 +245,30 @@ export default function ProductCard({
                     }} />
                     {isSm && product && categories ? (
                         <div className="flex fit">
-                            <AvatarGroup spacing={36} max={2} total={2}
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    setIsVariantMenuOpen(true);
-                                }}
-                            >
-                                {categories.map(c => {
+                            {categories.map(c => {
 
-                                    if (c.type === 'variant') {
-                                        return (
-                                            <>
+                                if (c.type === 'variant') {
+                                    return (
+                                        <>
+                                            <AvatarGroup spacing={36} max={2} total={2}
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    setIsVariantMenuOpen(true);
+                                                }}
+                                            >
                                                 {c.products.map(p => {
 
                                                     return (
                                                         <Avatar key={p.id} alt={p.name} src={p.images[0]} />
                                                     )
                                                 })}
-                                            </>
-                                        )
-                                    }
+                                            </AvatarGroup>
+                                        </>
+                                    )
+                                }
 
-                                    return null;
-                                })}
-                            </AvatarGroup>
+                                return null;
+                            })}
                         </div>
                     ) : (
                         <></>
@@ -289,34 +289,47 @@ export default function ProductCard({
                 e.stopPropagation();
                 setIsVariantMenuOpen(false)
             }}>
-                <div className="column compact" style={{
+                <div className="column" style={{
                     padding: "2rem 1rem",
                     backgroundColor: 'white'
                 }}>
                     {categories && categories.map(c => {
-
+                        
                         if (c.type === 'variant') {
+                            
                             return (
                                 <>
-                                    {c.products.map(p => {
+                                <Typography variant="h6" sx={{
+                                    textTransform: "uppercase",
+                                    opacity: 0.75,
+                                    fontSize: "1rem"
+                                }}>{c.name}</Typography>
+                                    <div className="column compact">
+                                        {c.products.map(p => {
 
-                                        return (
-                                          <ButtonBase className="flex left" 
-                                          onClick={e => {
-                                            router.push(`/item/${p.id}`)
-                                          }}
-                                          style={{
-                                            padding: "0.25rem 0.5rem",
-                                            backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
-                                            borderRadius: "0.25rem"
-                                          }}>
-                                              <Avatar key={p.id} alt={p.name} src={p.images[0]} />
-                                              <Typography sx={{
-                                                fontSize: "1rem"
-                                              }}>{p.name}</Typography>
-                                          </ButtonBase>
-                                        )
-                                    })}
+                                            return (
+                                                <ButtonBase className="flex between"
+                                                    onClick={e => {
+                                                        router.push(`/item/${p.id}`)
+                                                    }}
+                                                    style={{
+                                                        padding: "0.25rem 0.75rem",
+                                                        backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
+                                                        borderRadius: "0.25rem"
+                                                    }}>
+                                                   <div className="flex compact">
+                                                   <Avatar key={p.id} alt={p.name} src={p.images[0]} />
+                                                    <Typography sx={{
+                                                        fontSize: "1rem"
+                                                    }}>{p.name}</Typography>
+                                                   </div>
+                                                   <ArrowForward fontSize="small" sx={{
+                                                    opacity: 0.75
+                                                   }} />
+                                                </ButtonBase>
+                                            )
+                                        })}
+                                    </div>
                                 </>
                             )
                         }
