@@ -95,7 +95,13 @@ export default async function handleRequest(
         if (req.query.product_id) {
             const product = await getProductByIdFromStripe(req.query.product_id.toString());
             if (!product) {
-                throw Error("Product not found in Stripe")
+                await mongo.clientPromise.db('products').collection('products').deleteOne({
+                    id: req.query.product_id.toString()
+                });
+                return res.status(201).json({
+                    message: "Product not found in Stripe. Delete this.",
+                    product: null
+                })
             }
 
             const sendFromStripeToDatabase: any = {};

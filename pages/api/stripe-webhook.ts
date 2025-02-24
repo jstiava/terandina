@@ -59,7 +59,6 @@ export default async function handleRequest(
     if (event.type === 'product.deleted') {
       console.log("product.deleted")
       const product = event.data.object as Stripe.Product;
-      console.log(product);
       await mongo.clientPromise.db('products').collection('products').deleteOne({
         id: product.id
       })

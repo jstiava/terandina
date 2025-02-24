@@ -328,6 +328,13 @@ export default function AdminPage() {
         .then(res => res.json())
         .then(res => {
             if (!res.product) {
+                setProducts(prev => {
+                    if (!prev) {
+                        return [res.product]
+                    }
+                    const theList = prev.filter(x => x.id != product_id);
+                    return theList;
+                })
                 return;
             }
             setProducts(prev => {
