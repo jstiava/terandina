@@ -1,7 +1,7 @@
 import { Category, StripePrice, StripeProduct } from "@/types"
 import { Avatar, AvatarGroup, Button, ButtonBase, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
 import { UseCart } from "@/checkout/useCart";
 import { ArrowForward, ArrowRightOutlined, Preview } from "@mui/icons-material";
@@ -249,7 +249,7 @@ export default function ProductCard({
 
                                 if (c.type === 'variant') {
                                     return (
-                                        <>
+                                        <Fragment key={c._id}>
                                             <AvatarGroup spacing={36} max={2} total={2}
                                                 onClick={e => {
                                                     e.stopPropagation();
@@ -263,7 +263,7 @@ export default function ProductCard({
                                                     )
                                                 })}
                                             </AvatarGroup>
-                                        </>
+                                        </Fragment>
                                     )
                                 }
 
@@ -294,21 +294,23 @@ export default function ProductCard({
                     backgroundColor: 'white'
                 }}>
                     {categories && categories.map(c => {
-                        
+
                         if (c.type === 'variant') {
-                            
+
                             return (
-                                <>
-                                <Typography variant="h6" sx={{
-                                    textTransform: "uppercase",
-                                    opacity: 0.75,
-                                    fontSize: "1rem"
-                                }}>{c.name}</Typography>
+                                <Fragment key={c._id}>
+                                    <Typography variant="h6" sx={{
+                                        textTransform: "uppercase",
+                                        opacity: 0.75,
+                                        fontSize: "1rem"
+                                    }}>{c.name}</Typography>
                                     <div className="column compact">
                                         {c.products.map(p => {
 
                                             return (
-                                                <ButtonBase className="flex between"
+                                                <ButtonBase
+                                                    key={p.id}
+                                                    className="flex between"
                                                     onClick={e => {
                                                         router.push(`/item/${p.id}`)
                                                     }}
@@ -317,20 +319,20 @@ export default function ProductCard({
                                                         backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
                                                         borderRadius: "0.25rem"
                                                     }}>
-                                                   <div className="flex compact">
-                                                   <Avatar key={p.id} alt={p.name} src={p.images[0]} />
-                                                    <Typography sx={{
-                                                        fontSize: "1rem"
-                                                    }}>{p.name}</Typography>
-                                                   </div>
-                                                   <ArrowForward fontSize="small" sx={{
-                                                    opacity: 0.75
-                                                   }} />
+                                                    <div className="flex compact">
+                                                        <Avatar key={p.id} alt={p.name} src={p.images[0]} />
+                                                        <Typography sx={{
+                                                            fontSize: "1rem"
+                                                        }}>{p.name}</Typography>
+                                                    </div>
+                                                    <ArrowForward fontSize="small" sx={{
+                                                        opacity: 0.75
+                                                    }} />
                                                 </ButtonBase>
                                             )
                                         })}
                                     </div>
-                                </>
+                                </Fragment>
                             )
                         }
 
