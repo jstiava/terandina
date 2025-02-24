@@ -1,5 +1,5 @@
 import { Category, StripePrice, StripeProduct } from "@/types"
-import { Button, ButtonBase, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Avatar, AvatarGroup, Button, ButtonBase, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
@@ -9,7 +9,7 @@ import { Router, useRouter } from "next/router";
 import CategoryVariantSelector from "./CategoryVariantSelector";
 
 export const formatPrice = (price: number | null, currency: string): string => {
-    
+
     try {
         if (!price || !currency) {
             return ""
@@ -79,6 +79,7 @@ export default function ProductCard({
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const [isHovering, setIsHovering] = useState(false);
+    const [isVariantMenuOpen, setIsVariantMenuOpen] = useState(false);
 
     const [categories, setCategories] = useState<Category[] | null>(null);
 
@@ -217,27 +218,62 @@ export default function ProductCard({
                         height: "fit-content"
 
                     }}>{product.name}</Typography>
-                    <div className="flex compact">
-                        {product && categories && categories.map(c => {
 
-                            if (c.type === 'variant') {
-                                return (
-                                    <CategoryVariantSelector
-                                        key={c._id}
-                                        category={c}
-                                        product={product}
-                                        size='small'
-                                    />
-                                )
-                            }
+                    {!isSm && (
+                        <div className="flex compact">
+                            {product && categories && categories.map(c => {
 
-                            return null
-                        })}
-                    </div>
+                                if (c.type === 'variant') {
+                                    return (
+                                        <CategoryVariantSelector
+                                            key={c._id}
+                                            category={c}
+                                            product={product}
+                                            size='small'
+                                        />
+                                    )
+                                }
+
+                                return null
+                            })}
+                        </div>
+                    )}
                 </div>
-                <DisplayPrice product={copyOfProduct} style={{
-                    fontSize: '1rem'
-                }} />
+                <div className={isSm ? "flex between" : "flex fit"}>
+                    <DisplayPrice product={copyOfProduct} style={{
+                        fontSize: '1rem'
+                    }} />
+                    {isSm && product && categories ? (
+                        <div className="flex fit">
+                            <AvatarGroup spacing={36} max={2} total={2}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    setIsVariantMenuOpen(true);
+                                }}
+                            >
+                                {categories.map(c => {
+
+                                    if (c.type === 'variant') {
+                                        return (
+                                            <>
+                                                {c.products.map(p => {
+
+                                                    return (
+                                                        <Avatar key={p.id} alt={p.name} src={p.images[0]} />
+                                                    )
+                                                })}
+                                            </>
+                                        )
+                                    }
+
+                                    return null;
+                                })}
+                            </AvatarGroup>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+                </div>
             </div>
             <div className="flex between">
                 {isSm && (
@@ -249,6 +285,46 @@ export default function ProductCard({
                         }}>Add to Cart</Button>
                 )}
             </div>
+            <Drawer anchor="bottom" open={isVariantMenuOpen} onClose={(e: any, reason) => {
+                e.stopPropagation();
+                setIsVariantMenuOpen(false)
+            }}>
+                <div className="column compact" style={{
+                    padding: "2rem 1rem",
+                    backgroundColor: 'white'
+                }}>
+                    {categories && categories.map(c => {
+
+                        if (c.type === 'variant') {
+                            return (
+                                <>
+                                    {c.products.map(p => {
+
+                                        return (
+                                          <ButtonBase className="flex left" 
+                                          onClick={e => {
+                                            router.push(`/item/${p.id}`)
+                                          }}
+                                          style={{
+                                            padding: "0.25rem 0.5rem",
+                                            backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
+                                            borderRadius: "0.25rem"
+                                          }}>
+                                              <Avatar key={p.id} alt={p.name} src={p.images[0]} />
+                                              <Typography sx={{
+                                                fontSize: "1rem"
+                                              }}>{p.name}</Typography>
+                                          </ButtonBase>
+                                        )
+                                    })}
+                                </>
+                            )
+                        }
+
+                        return null;
+                    })}
+                </div>
+            </Drawer>
         </ButtonBase>
     )
 }
