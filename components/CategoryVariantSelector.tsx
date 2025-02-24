@@ -4,7 +4,7 @@ import { ButtonBase, Tooltip, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 
 
-export default function CategoryVariantSelector({ product, category, size = 'medium' }: { product : StripeProduct, category: Category, size : 'small' | 'medium' | 'large' }) {
+export default function CategoryVariantSelector({ product, category, size = 'medium' }: { product : StripeProduct, category: Category, size? : 'small' | 'medium' | 'large' }) {
 
     const theme = useTheme();
     const router = useRouter();
