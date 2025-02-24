@@ -5,7 +5,7 @@ const playwrite_cursive_font = Playwrite_IN({
   variable: "--font-playwrite-in",
 });
 
-const zain_sans_font = Zain({
+export const zain_sans_font = Zain({
   variable: "--font-zain",
   subsets: ["latin"],
   weight: "700"

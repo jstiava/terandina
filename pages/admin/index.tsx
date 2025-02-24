@@ -2,7 +2,7 @@
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
-import { Button, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -37,6 +37,8 @@ import useComplexFileDrop, { UploadType } from "@/components/useComplexFileDrop"
 import ManagePhotosField from "@/components/ManagePhotosField";
 import { Router } from "next/router";
 import Stripe from "stripe";
+import Image from "next/image";
+import { zain_sans_font } from "@/styles/theme";
 
 const MAX_IMAGES = 5;
 
@@ -318,6 +320,30 @@ export default function AdminPage() {
             })
     }
 
+    const handleRevalidateProduct = async (product_id : string) => {
+
+        return await fetch(`/api/revalidate?product_id=${product_id}`, {
+            method: "GET",
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (!res.product) {
+                return;
+            }
+            setProducts(prev => {
+                if (!prev) {
+                    return [res.product]
+                }
+                const theList = prev.filter(x => x.id != res.product.id);
+                return [...theList, res.product]
+            })
+        })
+        .catch(err => {
+            return;
+        })
+
+    }
+
     const handleCreate = async (newRow: StripeProduct): Promise<StripeProduct> => {
         return await fetch(`/api/products`, {
             method: "POST",
@@ -348,6 +374,8 @@ export default function AdminPage() {
                 return null;
             })
     }
+
+   
 
     const processRowUpdate = async (newRow: GridRowModel<StripeProduct>) => {
 
@@ -495,7 +523,7 @@ export default function AdminPage() {
                     }}
                     >
                         <Typography >{params.value}{!params.row.active && ` (inactive)`}</Typography>
-                        <div className="flex compact">
+                        <div className="flex compact fit">
                             <Button
                                 variant="text"
                                 sx={{
@@ -517,6 +545,35 @@ export default function AdminPage() {
                                 startIcon={
                                     <OpenInNew fontSize="small" />
                                 }>View</Button>
+                            <ButtonBase
+                            style={{
+                                borderRadius: "0.25rem"
+                            }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRevalidateProduct(params.id.toString());
+                                    return;
+                                }}
+                            >
+                                <div className="flex compact fit" style={{
+                                    backgroundColor: '#6860ff',
+                                    color: 'white',
+                                    padding: "0.25rem 0.5rem",
+                                    borderRadius: "0.25rem"
+                                }}>
+                                    <div style={{
+                                        backgroundImage: 'url("/stripe-icon.png")',
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                        width: "1rem",
+                                        height: "1rem",
+                                        
+                                    }}></div>
+                                    <Typography sx={{
+                                        fontFamily: [zain_sans_font.style.fontFamily, 'sans-serif'].join(',')
+                                    }}>Pull</Typography>
+                                </div>
+                            </ButtonBase>
                         </div>
                     </div>
                 )

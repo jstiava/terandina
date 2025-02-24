@@ -41,28 +41,18 @@ export default async function handleRequest(
 
     const mongo = await Mongo.getInstance();
 
-    console.log(event.type);
     if (event.type === "product.created") {
       console.log("Create Product")
       const product = event.data.object as Stripe.Product;
-
-      const prices = await mongo.clientPromise.db('products').collection('prices_temp').find({
-        product: product.id
-      }).toArray() as WithId<StripePrice>[];
-
+      
       await mongo.clientPromise.db('products').collection('products').insertOne({
         ...product,
-        prices,
+        prices: [],
         selectedPrice: null,
         quantity: 1
       });
-
-      await mongo.clientPromise.db('products').collection('products').deleteMany({
-        _id: { $in: prices.map(p => p._id) }
-      })
-
-      console.log("Successfully created.")
-
+      
+      
       return;
     }
 
@@ -91,9 +81,6 @@ export default async function handleRequest(
           default_price: product.default_price,
         }
       })
-
-      console.log(result);
-
       return;
     }
 
@@ -107,7 +94,6 @@ export default async function handleRequest(
       console.log("Delete/Update Product")
       const price = event.data.object as Stripe.Price;
 
-      console.log(price);
       const theProduct = await mongo.clientPromise.db('products').collection('products').findOne({
         id: price.product
       }) as WithId<StripeProduct> | null;
@@ -154,7 +140,7 @@ export default async function handleRequest(
 }
 
 
-const handlePriceCreatedEvent = async (price: Stripe.Price) => {
+const handlePriceCreatedEvent = async (price: Stripe.Price, retry: number = 0) => {
 
   console.log("Create new price")
   const mongo = await Mongo.getInstance();
@@ -163,7 +149,10 @@ const handlePriceCreatedEvent = async (price: Stripe.Price) => {
   }) as WithId<StripeProduct> | null
 
   if (!theProduct) {
-    console.log("No product")
+    if (retry < 3) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      return handlePriceCreatedEvent(price, retry + 1);
+    }
     await mongo.clientPromise.db('products').collection('prices_temp').insertOne({
       ...price,
       product: price.product as string

@@ -1,7 +1,51 @@
+import SafeString from "@/middleware/security";
+import verifySession from "@/middleware/session/verifySession";
 import Mongo from "@/utils/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getProductById, handleUpdateProduct } from "./products";
 import Stripe from "stripe";
+import { StripePrice, StripeProduct } from "@/types";
 
+
+export async function getProductByIdFromStripe(product_id: string): Promise<Partial<StripeProduct> | null> {
+    try {
+        const mongo = await Mongo.getInstance();
+        const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
+
+        console.log(product_id);
+        const product = await stripe.products.retrieve(product_id);
+        if (!product) {
+            return null;
+        }
+
+        const prices = await stripe.prices.list({
+            product: product_id,
+            active: true,
+            limit: 100
+        });
+
+        console.log({
+            ...product,
+            prices: prices.data
+        })
+
+        if (!prices || !prices.data) {
+            return product;
+        }
+
+
+        return {
+            ...product,
+            prices: prices.data.map(price => ({
+                ...price,
+                product: String(price.product)
+            }))
+        }
+    } catch (error) {
+        console.error("Error retrieving product:", error);
+        return null;
+    }
+}
 
 async function getAllProducts() {
     try {
@@ -15,10 +59,10 @@ async function getAllProducts() {
             active: true
         })
 
-        const productsWithPrices = products.data.map(product => {
+        const productsWithPrices = products.data.map((product: Stripe.Product) => {
             return {
                 ...product,
-                prices: prices.data.filter(price => price.product === product.id)
+                prices: prices.data.filter((price: Stripe.Price) => price.product === product.id)
             }
         })
 
@@ -28,34 +72,72 @@ async function getAllProducts() {
     }
 }
 
+
+const fieldsFromStripe: (keyof StripeProduct)[] = ['name', 'description', 'prices', 'active'];
+
 export default async function handleRequest(
     req: NextApiRequest,
     res: NextApiResponse<any>,
 ) {
 
-
     if (req.method != 'GET') {
         res.status(405).end('Method Not Allowed');
     }
 
-    const product_id = req.query.id;
+    const userAuth = verifySession(req);
+    if (!userAuth) return res.status(401).json({ message: 'Usage' });
+
     const mongo = await Mongo.getInstance();
 
+
     try {
-        const products = await getAllProducts();
 
+        if (req.query.product_id) {
+            const product = await getProductByIdFromStripe(req.query.product_id.toString());
+            if (!product) {
+                throw Error("Product not found in Stripe")
+            }
 
-        if (!products) {
-            throw Error("No products.")
+            const sendFromStripeToDatabase: any = {};
+
+            for (const key of fieldsFromStripe) {
+                if (key in product) {
+                    sendFromStripeToDatabase[key] = product[key];
+                }
+            }
+
+            await mongo.clientPromise.db('products').collection('products').updateOne({
+                id: product.id
+              }, {
+                $set: sendFromStripeToDatabase
+              })
+
+            const theProduct = await getProductById(req.query.product_id.toString());
+
+            return res.status(200).json({
+                message: "Success",
+                product: theProduct
+            })
         }
 
-        await mongo.clientPromise.db('products').collection('products').deleteMany({});
-        await mongo.clientPromise.db('products').collection('products').insertMany(products);
-        res.status(200).json({
-            message: "Success"
-        })
+
+        throw Error("Cannot revalidate wholesale anymore.");
+
+        // const products = await getAllProducts();
+
+
+        // if (!products) {
+        //     throw Error("No products.")
+        // }
+
+        // await mongo.clientPromise.db('products').collection('products').deleteMany({});
+        // await mongo.clientPromise.db('products').collection('products').insertMany(products);
+
+        // res.status(200).json({
+        //     message: "Success"
+        // })
     } catch (err) {
         console.log(err);
-        res.status(500).json("Something went wrong.");
     }
+    return res.status(500).json("Something went wrong.");
 }

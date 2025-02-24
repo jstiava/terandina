@@ -17,8 +17,6 @@ export interface StripeProduct extends Stripe.Product {
     id: string,
     name: string,
     metadata: any,
-    default_price: string,
-    description: string,
     images: string[],
     prices: StripePrice[],
     is_featured: boolean,

@@ -99,7 +99,7 @@ async function deleteProductById(productId: string): Promise<boolean> {
   return false;
 }
 
-async function getProductById(productId: string): Promise<any | null> {
+export async function getProductById(productId: string): Promise<any | null> {
   try {
     const mongo = await Mongo.getInstance();
 
@@ -179,7 +179,7 @@ async function handleDeleteRequest(
 
 
 
-async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
+export async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
   try {
     const mongo = await Mongo.getInstance();
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
