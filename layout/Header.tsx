@@ -176,9 +176,9 @@ export default function Header({ Cart, color, setColor }: {
             return;
         }
 
-        
+
         setIsSidebarOpen(true);
-        
+
         anime({
             targets: ".slide-in",
             translateX: ["-100%", "0%"],
@@ -189,7 +189,7 @@ export default function Header({ Cart, color, setColor }: {
                 console.log("Animation Complete!");
             }
         });
-        
+
         anime({
             targets: ".fade",
             opacity: [0, 1],
@@ -283,7 +283,7 @@ export default function Header({ Cart, color, setColor }: {
                                     <MenuItem
                                         key={item.value}
                                         onClick={() => handleSwitchTab(item.value)}
-                                        icon={<ChevronRight fontSize="small"/>}
+                                        icon={<ChevronRight fontSize="small" />}
                                     >
                                         {item.value}
                                     </MenuItem>
@@ -293,11 +293,14 @@ export default function Header({ Cart, color, setColor }: {
                             <>
                                 {isSm ? (
                                     <>
-                                        <ButtonBase
-                                            className="flex between middle"
+                                        <MenuItem
+                                            key={'back'}
                                             disableRipple
-                                            key={'menu_back_button'}
                                             onClick={() => handleSwitchTab('menu')}
+                                            reverse
+                                            icon={<ChevronLeft sx={{
+                                                marginTop: "-0.1rem !important"
+                                            }} />}
                                             sx={{
                                                 height: "3rem",
                                                 padding: "0 1.5rem",
@@ -305,37 +308,8 @@ export default function Header({ Cart, color, setColor }: {
                                                 top: 0,
                                                 zIndex: 8,
                                                 backgroundColor: color
-                                            }}>
-                                            <div className="flex compact fit" >
-                                                <div className="flex fit">
-                                                    <ChevronLeft sx={{
-                                                        opacity: 0.5,
-                                                        marginTop: "-0.1rem"
-                                                    }} />
-                                                </div>
-                                                <Typography variant="h6" sx={{
-                                                    textTransform: "uppercase",
-                                                    letterSpacing: "0.05rem",
-                                                    fontSize: "1rem",
-                                                    display: 'inline',
-                                                    backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                                    textDecoration: `none`,
-                                                    backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                                    backgroundPosition: `100% 100%, 0 100%`,
-                                                    backgroundRepeat: `no-repeat`,
-                                                    transition: `background-size .3s`,
-                                                    color: 'inherit',
-                                                    cursor: "pointer",
-                                                    whiteSpace: "pre-line",
-                                                    fontWeight: 800,
-                                                    textAlign: 'left',
-                                                    '&:hover': {
-                                                        backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                                    }
-                                                }}>Back</Typography>
-                                            </div>
-
-                                        </ButtonBase>
+                                            }}
+                                        >Back</MenuItem>
                                     </>
                                 ) : (
                                     <></>
@@ -349,6 +323,7 @@ export default function Header({ Cart, color, setColor }: {
                             }}>
 
                                 <MenuItem
+                                    focused
                                     key={'blankets'}
                                     onClick={() => pleasePush('/blankets')}
                                     icon={<ArrowForward fontSize="small" />}
@@ -373,6 +348,7 @@ export default function Header({ Cart, color, setColor }: {
                                 opacity: 0
                             }}>
                                 <MenuItem
+                                    focused
                                     key={'all outerwear'}
                                     onClick={() => pleasePush('/outerwear')}
                                     icon={<ArrowForward fontSize="small" />}
@@ -427,6 +403,7 @@ export default function Header({ Cart, color, setColor }: {
                                 opacity: 0
                             }}>
                                 <MenuItem
+                                    focused
                                     key={'jewelry'}
                                     onClick={() => pleasePush('/jewelry')}
                                     icon={<ArrowForward fontSize="small" />}
@@ -434,8 +411,8 @@ export default function Header({ Cart, color, setColor }: {
                                 <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
                                     padding: "0 2rem"
                                 }}>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Men's</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Women's</Typography></MenuItemCover>
+                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Men's</Typography></MenuItemCover>
+                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Women's</Typography></MenuItemCover>
                                 </div>
 
 
@@ -447,54 +424,28 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
-                                <ButtonBase
-                                    className="flex between middle"
-                                    disableRipple
-                                    key={'test'}
-                                    onClick={() => pleasePush('/handcrafted')}
-                                    sx={{
-                                        height: "3rem",
-                                        padding: "0 2rem",
-                                    }}>
-                                    <div className="flex fit">
-                                        <Typography variant="h6" sx={{
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.05rem",
-                                            fontSize: "1rem",
-                                            display: 'inline',
-                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                            textDecoration: `none`,
-                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                            backgroundPosition: `100% 100%, 0 100%`,
-                                            backgroundRepeat: `no-repeat`,
-                                            transition: `background-size .3s`,
-                                            color: 'inherit',
-                                            cursor: "pointer",
-                                            whiteSpace: "pre-line",
-                                            fontWeight: 800,
-                                            textAlign: 'left',
-                                            '&:hover': {
-                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                            }
-                                        }}>Explore All Handcrafted Items</Typography>
-                                    </div>
-                                    <div className="flex fit">
-                                        <ChevronRight sx={{
-                                            opacity: 0.5
-                                        }} />
-                                    </div>
-                                </ButtonBase>
 
+                                <MenuItem
+                                    focused
+                                    key={'handcrafted'}
+                                    onClick={() => pleasePush('/handcrafted')}
+                                    icon={<ArrowForward fontSize="small" />}
+                                >Explore All Handcrafted</MenuItem>
 
                                 <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
                                     padding: "0 1.5rem 0 2rem",
                                     flexWrap: 'wrap'
                                 }}>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Spirtual</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Pottery</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Authentic Collectables</Typography></MenuItemCover>
-                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Accessories</Typography></MenuItemCover>
-                                 
+                                    <MenuItemCover
+                                        src={'/AmethystTree2.jpg'}
+                                        onClick={() => {
+                                            pleasePush(`/spiritual`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Spirtual</Typography></MenuItemCover>
+                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Pottery</Typography></MenuItemCover>
+                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Authentic Collectables</Typography></MenuItemCover>
+                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Accessories</Typography></MenuItemCover>
+
                                 </div>
 
 
@@ -506,46 +457,12 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
-                                <ButtonBase
-                                    className="flex between middle"
-                                    disableRipple
-                                    key={'test'}
-                                    onClick={() => {
-                                        setIsSidebarOpen(prev => !prev);
-                                        pleasePush('/ponchos');
-                                    }}
-                                    sx={{
-                                        height: "3rem",
-                                        padding: "0 2rem",
-                                    }}>
-                                    <div className="flex fit">
-                                        <Typography variant="h6" sx={{
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.05rem",
-                                            fontSize: "1rem",
-                                            display: 'inline',
-                                            backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
-                                            textDecoration: `none`,
-                                            backgroundSize: `100% 0.1rem, 0 0.1rem`,
-                                            backgroundPosition: `100% 100%, 0 100%`,
-                                            backgroundRepeat: `no-repeat`,
-                                            transition: `background-size .3s`,
-                                            color: 'inherit',
-                                            cursor: "pointer",
-                                            whiteSpace: "pre-line",
-                                            fontWeight: 800,
-                                            textAlign: 'left',
-                                            '&:hover': {
-                                                backgroundSize: "0 0.1rem, 100% 0.1rem"
-                                            }
-                                        }}>Explore All Ponchos</Typography>
-                                    </div>
-                                    <div className="flex fit">
-                                        <ChevronRight sx={{
-                                            opacity: 0.5
-                                        }} />
-                                    </div>
-                                </ButtonBase>
+                                <MenuItem
+                                    focused
+                                    key={'ponchos'}
+                                    onClick={() => pleasePush('/ponchos')}
+                                    icon={<ArrowForward fontSize="small" />}
+                                >Explore All Ponchos</MenuItem>
 
                                 <div className="column" style={{
                                     padding: "0 2rem"

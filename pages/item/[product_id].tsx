@@ -214,59 +214,59 @@ export default function Home(props: StripeAppProps) {
                     ) : (
 
                         <>
-                     
-                        <div className="column" style={{
-                            position: 'relative',
-                            width: isSm ? "100%" : isMd ? '25rem' : '45%',
-                            height: "fit-content"
-                        }}>
-                            {product.images && product.images.length > 0 && (
-                                <>
-                                    <div className="column compact" style={{
-                                        position: "sticky",
-                                        top: `calc(100vh - ${product.images.length * 32}px)`,
-                                        left: "3.5rem",
-                                        zIndex: 1,
-                                        width: "fit-content",
-                                        padding: "1rem 0"
-                                    }}>
-                                        {product.images && product.images.map((image, index) => {
 
-                                            const top = (index * (clientHeight - 90 + 8));
-                                            return (
-                                                <div
-                                                    onClick={() => window.scrollTo({ top, behavior: 'smooth' })}
-                                                    key={`${image}_${index}`}
-                                                    style={{
-                                                        width: "0.75rem",
-                                                        height: "0.75rem",
-                                                        borderRadius: "100%",
-                                                        border: "0.15rem solid black",
-                                                        backgroundColor: scrollHeight >= (top - ((clientHeight - 90) / 2)) && scrollHeight <= (top + ((clientHeight - 90) / 2)) ? 'black' : 'white',
+                            <div className="column" style={{
+                                position: 'relative',
+                                width: isSm ? "100%" : isMd ? '25rem' : '45%',
+                                height: "fit-content"
+                            }}>
+                                {product.images && product.images.length > 0 && (
+                                    <>
+                                        <div className="column compact" style={{
+                                            position: "sticky",
+                                            top: `calc(100vh - ${product.images.length * 32}px)`,
+                                            left: "3.5rem",
+                                            zIndex: 1,
+                                            width: "fit-content",
+                                            padding: "1rem 0"
+                                        }}>
+                                            {product.images && product.images.map((image, index) => {
 
-                                                    }}></div>
-                                            )
-                                        })}
-                                        {/* <>
+                                                const top = (index * (clientHeight - 90 + 8));
+                                                return (
+                                                    <div
+                                                        onClick={() => window.scrollTo({ top, behavior: 'smooth' })}
+                                                        key={`${image}_${index}`}
+                                                        style={{
+                                                            width: "0.75rem",
+                                                            height: "0.75rem",
+                                                            borderRadius: "100%",
+                                                            border: "0.15rem solid black",
+                                                            backgroundColor: scrollHeight >= (top - ((clientHeight - 90) / 2)) && scrollHeight <= (top + ((clientHeight - 90) / 2)) ? 'black' : 'white',
+
+                                                        }}></div>
+                                                )
+                                            })}
+                                            {/* <>
                              <Typography>{scrollHeight / clientHeight}</Typography>
                              </> */}
-                                    </div>
-                                </>
-                            )}
-                            <div className="column" style={{
-                                width: "100%",
-                                marginTop: `calc(-1 * ${(product.images.length * 32) + 16}px)`,
-                            }}>
-                                {product.images && product.images.map(image => (
-                                    <CoverImage
-                                        key={image}
-                                        url={image}
-                                        width="100%"
-                                        height="calc(100vh - 90px)"
-                                    />
-                                ))}
+                                        </div>
+                                    </>
+                                )}
+                                <div className="column" style={{
+                                    width: "100%",
+                                    marginTop: `calc(-1 * ${(product.images.length * 32) + 16}px)`,
+                                }}>
+                                    {product.images && product.images.map(image => (
+                                        <CoverImage
+                                            key={image}
+                                            url={image}
+                                            width="100%"
+                                            height="calc(100vh - 90px)"
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
                         </>
                     )}
                     <div className="column relaxed" style={{
@@ -276,9 +276,17 @@ export default function Home(props: StripeAppProps) {
                         position: "sticky",
                         top: "6rem"
                     }}>
-                        <Typography variant="h1" sx={{
-                            fontSize: "1rem"
-                        }}>{product.name}</Typography>
+                        <div className="flex between top">
+                            <Typography variant="h1" sx={{
+                                fontSize: "1rem"
+                            }}>{product.name}</Typography>
+                            <DisplayPrice
+                                style={{
+                                    fontSize: "1rem",
+                                    marginLeft: "1rem"
+                                }} product={product}
+                            />
+                        </div>
 
                         <div className="flex compact">
                             {product && categories && categories.map(c => {
@@ -306,19 +314,26 @@ export default function Home(props: StripeAppProps) {
                                 />
                             </>
                         )}
-                        <DisplayPrice
-                            style={{
-                                fontSize: "1.5rem",
-                            }} product={product}
-                        />
-                        <Button variant="contained"
+
+                        <Button variant="outlined"
                             onClick={handleAddToCart}
                             fullWidth
                             sx={{
                                 width: "100%"
                             }}>Add to Cart</Button>
-                        <Divider sx={{ width: "100%" }}></Divider>
-                        <Typography sx={{ fontSize: "1rem", whiteSpace: 'pre-wrap' }}>{product.description}</Typography>
+                        {product.description && (
+                            <div className="column compact">
+                                <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DESCRIPTION</Typography>
+                                <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.description}</Typography>
+                            </div>
+                        )}
+
+                        {product.details && (
+                            <div className="column compact">
+                                <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
+                                <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
+                            </div>
+                        )}
 
                     </div>
                 </div>

@@ -262,6 +262,9 @@ export default function ProductCard({
                                                     e.stopPropagation();
                                                     setIsVariantMenuOpen(true);
                                                 }}
+                                                sx={{
+                                                    marginLeft: "0.5rem"
+                                                }}
                                             >
                                                 {c.products.map(p => {
 
@@ -293,10 +296,15 @@ export default function ProductCard({
                         }}>Add to Cart</Button>
                 )}
             </div>
-            <Drawer anchor="bottom" open={isVariantMenuOpen} onClose={(e: any, reason) => {
-                e.stopPropagation();
-                setIsVariantMenuOpen(false)
-            }}>
+            <Drawer anchor="bottom" open={isVariantMenuOpen}
+                onClose={(e: any, reason) => {
+                    e.stopPropagation();
+                    setIsVariantMenuOpen(false)
+                }}
+                onClick={e => {
+                    e.stopPropagation();
+                }}
+            >
                 <div className="column" style={{
                     padding: "2rem 1rem",
                     backgroundColor: 'white'
@@ -312,18 +320,18 @@ export default function ProductCard({
                                         opacity: 0.75,
                                         fontSize: "1rem"
                                     }}>{c.name}</Typography>
-                                    <div className="column compact">
-                                        {c.products.map(p => {
-
+                                    <div className="column snug">
+                                        {c.products.map((p: any) => {
                                             return (
                                                 <ButtonBase
                                                     key={p.id}
                                                     className="flex between"
                                                     onClick={e => {
+                                                        e.stopPropagation();
                                                         router.push(`/item/${p.id}`)
                                                     }}
                                                     style={{
-                                                        padding: "0.25rem 0.75rem",
+                                                        padding: "0.5rem 0.75rem 0.5rem 0.5rem",
                                                         backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
                                                         borderRadius: "0.25rem"
                                                     }}>

@@ -667,7 +667,8 @@ export default function AdminPage() {
                                             console.log(e);
                                         }}
                                         sx={{
-                                            marginBottom: "0.25rem"
+                                            marginBottom: "0.25rem",
+                                            overflow: 'hidden'
                                         }}
                                     />
                                 )
@@ -713,7 +714,8 @@ export default function AdminPage() {
                                             return;
                                         }}
                                         sx={{
-                                            marginBottom: "0.25rem"
+                                            marginBottom: "0.25rem",
+                                            overflow: "hidden"
                                         }}
                                     />
                                 )
@@ -759,7 +761,8 @@ export default function AdminPage() {
                                             return;
                                         }}
                                         sx={{
-                                            marginBottom: "0.25rem"
+                                            marginBottom: "0.25rem",
+                                            overflow: "hidden"
                                         }}
                                     />
                                 )
@@ -805,7 +808,14 @@ export default function AdminPage() {
                                     key={category._id}
                                     label={category.name}
                                     sx={{
-                                        marginBottom: "0.25rem"
+                                        marginBottom: "0.25rem",
+                                        overflow: 'hidden'
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        params.api.setFilterModel({
+                                            items: [{ field: 'categories', operator: 'is', value: [category.name] }]
+                                        })
                                     }}
                                 />
                             )
@@ -817,7 +827,8 @@ export default function AdminPage() {
                             variant="outlined"
                             onClick={handleEditClick(params.id)}
                             sx={{
-                                marginBottom: "0.25rem"
+                                marginBottom: "0.25rem",
+                                overflow: 'hidden'
                             }}
                         />
                     </div>

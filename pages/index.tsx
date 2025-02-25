@@ -251,6 +251,7 @@ export default function Home(props: StripeAppProps) {
             }}>Explore All Ponchos</Typography>
             <Button
               variant="contained"
+              onClick={() => router.push('/ponchos')}
              >Shop Ponchos</Button>
           </CoverImage>
           <CoverImage
@@ -284,6 +285,7 @@ export default function Home(props: StripeAppProps) {
              }}>Explore All Jewelry</Typography>
              <Button
               variant="contained"
+              onClick={() => router.push('/jewelry')}
              >Shop Jewelry</Button>
           </CoverImage>
         </div>
