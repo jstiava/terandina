@@ -192,7 +192,7 @@ export default function CategoryPage(props: StripeAppProps & {
           </div>
         </div> */}
 
-        <div className={isSm ? 'flex compact' : 'flex between'} style={{
+        <div className={isSm ? 'flex compact top' : 'flex between top'} style={{
           flexWrap: 'wrap',
           color: theme.palette.text.primary,
           maxWidth: "80rem",

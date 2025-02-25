@@ -196,53 +196,56 @@ export default function ProductCard({
                     )}
                 </div>
             )}
-            <div className={isSm ? "column compact" : "flex between top"}
+            <div className={"flex between top"}
                 style={{
                     opacity: isHovering ? 0.85 : 1,
-                    transition: "0.25s ease-in-out"
+                    transition: "0.25s ease-in-out",
                 }}
             >
-                <div className="column compact" style={{
-                    maxWidth: isSm ? "100%" : "calc(100% - 5rem)",
+                <div className={isSm ? "column compact" : "flex between top"} style={{
+                    maxWidth: isSm ? "calc(100% - 4rem)" : "100%",
                 }}>
-                    <PriceSelector
-                        product={copyOfProduct}
-                        handleChangePrice={handleChangePrice}
-                    />
-                    <Typography variant="h5" sx={{
-                        width: "fit-content",
-                        lineHeight: "115%",
-                        textAlign: 'left',
-                        fontSize: "1rem",
-                        minHeight: '2rem',
-                        height: "fit-content"
+                    <div className="column compact">
+                        <PriceSelector
+                            product={copyOfProduct}
+                            handleChangePrice={handleChangePrice}
+                        />
+                        <Typography variant="h5" sx={{
+                            width: "fit-content",
+                            lineHeight: "115%",
+                            textAlign: 'left',
+                            fontSize: "1rem",
+                            minHeight: '2rem',
+                            height: isSm ? "3.5rem" : 'fit-content'
 
-                    }}>{product.name}</Typography>
+                        }}>{product.name}</Typography>
 
-                    {!isSm && (
-                        <div className="flex compact">
-                            {product && categories && categories.map(c => {
+                        {!isSm && (
+                            <div className="flex compact">
+                                {product && categories && categories.map(c => {
 
-                                if (c.type === 'variant') {
-                                    return (
-                                        <CategoryVariantSelector
-                                            key={c._id}
-                                            category={c}
-                                            product={product}
-                                            size='small'
-                                        />
-                                    )
-                                }
+                                    if (c.type === 'variant') {
+                                        return (
+                                            <CategoryVariantSelector
+                                                key={c._id}
+                                                category={c}
+                                                product={product}
+                                                size='small'
+                                            />
+                                        )
+                                    }
+                                    return null
+                                })}
+                            </div>
+                        )}
+                    </div>
 
-                                return null
-                            })}
-                        </div>
-                    )}
-                </div>
-                <div className={isSm ? "flex between" : "flex fit"}>
                     <DisplayPrice product={copyOfProduct} style={{
                         fontSize: '1rem'
                     }} />
+
+                </div>
+                <div className={"flex fit"}>
                     {isSm && product && categories ? (
                         <div className="flex fit">
                             {categories.map(c => {
@@ -270,6 +273,7 @@ export default function ProductCard({
                                 return null;
                             })}
                         </div>
+
                     ) : (
                         <></>
                     )}

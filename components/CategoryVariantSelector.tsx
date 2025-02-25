@@ -19,7 +19,9 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                     placement="top"
                     >
                        <ButtonBase 
-                        onClick={() => router.push(`/item/${p.id}`)}
+                        onClick={() => {
+                            router.replace(`/item/${p.id}`)
+                        }}
                        >
                        <CoverImage
                             url={p.images[0]}

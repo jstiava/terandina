@@ -168,6 +168,9 @@ export default function Header({ Cart, color, setColor }: {
         if (isSidebarOpen) {
             return;
         }
+
+        window.scrollBy({ top: 120, behavior: "smooth" });
+
         setIsSidebarOpen(true);
 
         anime({
