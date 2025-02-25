@@ -192,12 +192,13 @@ export default function CategoryPage(props: StripeAppProps & {
           </div>
         </div> */}
 
-        <div className={isSm ? 'flex compact top' : 'flex between top'} style={{
+        <div className={'flex between top'} style={{
           flexWrap: 'wrap',
           color: theme.palette.text.primary,
           maxWidth: "80rem",
           width: "100%",
-          minHeight: "100vh"
+          minHeight: "100vh",
+          padding: "1rem"
         }}>
           {props.static.products && props.static.products.map((product, index) => {
             const row = Math.floor(index / 3);
@@ -213,7 +214,8 @@ export default function CategoryPage(props: StripeAppProps & {
                 categories={props.categories}
                 style={{
                   animationDelay: `${delay}ms`,
-                  width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0.5rem)"
+                  width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0rem)",
+                  marginRight: isSm && index % 2 === 0 ? "1rem" : 0
                 }}
               />
             )

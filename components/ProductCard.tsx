@@ -159,7 +159,7 @@ export default function ProductCard({
             onClick={() => router.push(`/item/${product.id}`)}
             style={{
                 width: isSm ? "100%" : "25rem",
-                padding: isSm ? "1rem" : "2rem",
+                padding: isSm ? "0" : "2rem",
                 animation: `popIn 0.5s ease forwards`,
                 transform: "scale(0)",
                 opacity: 0,
