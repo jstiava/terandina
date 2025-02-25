@@ -69,11 +69,13 @@ export default function Home(props: StripeAppProps) {
                     marginTop: "6rem",
                     color: '#000000'
                 }}>
-                <div className={isSm ? 'flex compact' : 'flex between'} style={{
+                <div className={'flex between top'} style={{
                     flexWrap: 'wrap',
                     color: theme.palette.text.primary,
                     maxWidth: "80rem",
-                    width: "100%"
+                    width: "100%",
+                    minHeight: "100vh",
+                    padding: "1rem"
                 }}>
                     {products.map((product, index) => {
                         const row = Math.floor(index / 3);
@@ -88,7 +90,8 @@ export default function Home(props: StripeAppProps) {
                                 addToCart={props.Cart.add}
                                 style={{
                                     animationDelay: `${delay}ms`,
-                                    width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0.5rem)"
+                                    width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0rem)",
+                                    marginRight: isSm && index % 2 === 0 ? "1rem" : 0
                                 }}
                             />
                         )
