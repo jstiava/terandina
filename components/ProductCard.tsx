@@ -216,7 +216,8 @@ export default function ProductCard({
                             textAlign: 'left',
                             fontSize: "1rem",
                             minHeight: '2rem',
-                            height: isSm ? "3.5rem" : 'fit-content'
+                            height: isSm ? "3.5rem" : 'fit-content',
+                            overflow: 'hidden'
 
                         }}>{product.name}</Typography>
 
