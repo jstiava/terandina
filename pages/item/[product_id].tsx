@@ -13,6 +13,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import CategoryVariantSelector from "@/components/CategoryVariantSelector";
+import ScrollButton from "@/components/ScrollButton";
 
 
 export default function Home(props: StripeAppProps) {
@@ -24,6 +25,8 @@ export default function Home(props: StripeAppProps) {
     const swiperRef = useRef<any>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
+
+    const [products, setProducts] = useState<StripeProduct[] | null>(null);
 
     const [clientHeight, setClientHeight] = useState(0);
     const [scrollHeight, setScrollHeight] = useState(0);
@@ -98,6 +101,7 @@ export default function Home(props: StripeAppProps) {
                 })
                     .then(res => res.json())
                     .then(res => {
+
                         if (res.products) {
                             category.products = res.products;
                         }
@@ -130,9 +134,19 @@ export default function Home(props: StripeAppProps) {
 
     useEffect(() => {
 
-        if (!router || router.query.item_id === 'item_id') {
+        if (!router || router.query.product_id === 'product_id') {
             return;
         }
+
+        // Get related items
+        fetch(`/api/products?related_to=${router.query.product_id}`)
+            .then(res => res.json())
+            .then(res => {
+                setProducts(res.products);
+            })
+            .catch(err => {
+                return;
+            })
 
         getProduct();
 
@@ -148,6 +162,36 @@ export default function Home(props: StripeAppProps) {
     return (
         <>
 
+            {isSm && (
+                <ScrollButton
+                    scrollPercentage={0.5}
+                >
+                    <div className="flex between center"
+                        onClick={() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                        style={{
+                            position: 'fixed',
+                            zIndex: 5,
+                            top: '4rem',
+                            padding: `0 2rem`,
+                            height: "3.5rem",
+                            borderBottom: `1px solid ${theme.palette.divider}`,
+                            backgroundColor: theme.palette.background.paper,
+                            animation: 'fade 0.2s ease-in-out forwards'
+                        }}>
+                        <Typography variant="h5" sx={{
+                            fontSize: "1rem"
+                        }}>{product.name}</Typography>
+                        <DisplayPrice
+                            style={{
+                                fontSize: "1rem",
+                                marginLeft: "1rem"
+                            }} product={product}
+                        />
+                    </div>
+                </ScrollButton>
+            )}
             <div className="column center"
                 style={{
                     width: "100%",
@@ -336,7 +380,85 @@ export default function Home(props: StripeAppProps) {
                         )}
 
                     </div>
+
+
                 </div>
+
+                <div className="column compact left" style={{
+                    padding: isSm ? "2rem" : "2rem 0",
+                    width: "100%"
+                }}>
+                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>RELATED</Typography>
+
+                    <Swiper
+                        ref={swiperRef}
+                        direction="horizontal"
+                        slidesPerView={1}
+                        spaceBetween={10}
+                        navigation={!isSm}
+                        // slidesOffsetBefore={-30}
+                        style={{
+                            display: 'flex',
+                            width: "100%",
+                            height: "fit-content",
+                            padding: 0,
+                            "--swiper-theme-color": theme.palette.primary.main,
+                            "--swiper-pagination-color": theme.palette.primary.main,  // Active bullet color
+                            "--swiper-pagination-bullet-inactive-color": "gray", // Inactive bullet color
+                            "--swiper-pagination-bullet-inactive-opacity": "0.5",
+                            "--swiper-navigation-size": 64,
+                            "--swiper-navigation-top-offset": "calc(50% - 1rem)",
+                        } as CSSProperties}
+                        pagination={{
+                            clickable: true,
+                        }}
+                        modules={[Pagination, Navigation]}
+                        breakpoints={{
+                            300: {
+                                slidesPerView: 1,
+                                spaceBetween: 10,
+                            },
+                            500: {
+                                slidesPerView: 2,
+                                spaceBetween: 0
+                            },
+                            1200: {
+                                slidesPerView: 3,
+                                spaceBetween: 10
+                            },
+                            1400: {
+                                slidesPerView: 4,
+                                spaceBetween: 10,
+                            },
+                            1800: {
+                                slidesPerView: 5,
+                                spaceBetween: 10,
+                            },
+                        }}
+                        className="mySwiper"
+                    >
+                        {products && products.map(product => (
+
+                            <SwiperSlide className="slide" key={product.id}>
+                                <div className="flex center middle" style={{
+                                    padding: isSm ? "2rem 1rem" : 0
+                                }}>
+                                    <ProductCard
+                                        product={product}
+                                        addToCart={props.Cart.add}
+                                        style={{
+                                            animationDelay: `${0}ms`,
+                                            // width: "100%"
+                                        }}
+                                        categories={props.categories}
+                                    />
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
+
+
             </div >
         </>
     );

@@ -124,6 +124,18 @@ export async function getAllProducts(query : Partial<{
     const filter : Partial<{
       [key in keyof StripeProduct]: any
     }> = {};
+    
+
+    if (query.related_to != undefined) {
+  
+      const products = await mongo.clientPromise.db('products').collection('products').aggregate([{
+        $sample: { size: 5 }
+      }]).toArray();
+
+      console.log(products);
+
+      return products;
+    }
 
     if (query.is_featured != undefined) {
       filter.is_featured = new SafeString(query.is_featured).isTrue();
