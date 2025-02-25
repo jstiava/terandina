@@ -1,7 +1,8 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps } from "@/types";
-import { Button, TextField, Typography, useMediaQuery } from "@mui/material";
+import { DeleteOutline, OpenInNew, RefreshOutlined } from "@mui/icons-material";
+import { Button, IconButton, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridRenderCellParams } from "@mui/x-data-grid";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -13,6 +14,37 @@ export default function CategoryAdminPage(props: StripeAppProps) {
     const router = useRouter();
 
     const [categories, setCategories] = useState<Category[] | null>(null);
+
+
+    const handleRevalidate = (id: string) => async () => {
+        await fetch(`/api/categories?id=${id}&revalidate=${true}`, {
+            method: "PATCH"
+        })
+            .then(res => {
+                
+                return;
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    const handleDelete = (id: string) => async () => {
+        await fetch(`/api/categories?id=${id}`, {
+            method: "DELETE"
+        })
+            .then(res => {
+                setCategories(prev => {
+                    if (!prev) return null;
+                    const newList = prev.filter(c => c._id != id)
+                    return newList;
+                })
+                return;
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 
     const getCategories = async () => {
 
@@ -50,7 +82,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
             headerName: "Description",
             width: 300,
             editable: true,
-            renderEditCell: (params : GridRenderCellParams<Category, string | null>) => {
+            renderEditCell: (params: GridRenderCellParams<Category, string | null>) => {
                 return (
                     <div className="flex top" style={{
                         width: "100%",
@@ -106,6 +138,36 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                 )
             }
         },
+        {
+            field: "actions",
+            headerNmae: "Actions",
+            width: 200,
+            renderCell: (params: GridRenderCellParams<Category, null>) => {
+                return (
+                    <div className="flex fit" style={{
+                        height: "100%"
+                    }}>
+                        <IconButton
+                            onClick={handleDelete(params.id.toString())}
+                        >
+                            <DeleteOutline />
+                        </IconButton>
+                        <IconButton
+                            onClick={handleRevalidate(params.id.toString())}
+                        >
+                            <RefreshOutlined />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => {
+                                window.open(`/${params.row.slug}`, '_blank')
+                            }}
+                        >
+                            <OpenInNew />
+                        </IconButton>
+                    </div>
+                )
+            }
+        }
     ]
 
     return (
@@ -120,14 +182,14 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                 padding: "0.5rem",
                 width: "100%"
             }}>
-                   <div className="flex fit">
-                   <Button
-                    variant="outlined"
-                    onClick={e => {
-                        router.push('/admin')
-                    }}
+                <div className="flex fit">
+                    <Button
+                        variant="outlined"
+                        onClick={e => {
+                            router.push('/admin')
+                        }}
                     >Edit Products</Button>
-                   </div>
+                </div>
                 <div className="flex">
                     {categories && (
                         <DataGrid

@@ -205,6 +205,9 @@ export default function Home(props: StripeAppProps) {
             {products.map(product => (
 
               <SwiperSlide className="slide" key={product.id}>
+                <div className="flex center middle" style={{
+                  padding: isSm ? "1rem" : 0
+                }}>
                 <ProductCard
                   product={product}
                   addToCart={props.Cart.add}
@@ -212,7 +215,8 @@ export default function Home(props: StripeAppProps) {
                     animationDelay: `${0}ms`,
                     // width: "100%"
                   }}
-                />
+                  />
+                  </div>
               </SwiperSlide>
             ))}
           </Swiper>

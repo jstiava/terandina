@@ -1,10 +1,11 @@
 import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
-import { StripePrice, StripeProduct } from "@/types";
+import { Category, StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
+import { getAllProducts } from "./products";
 
 const sizeOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 
@@ -60,13 +61,51 @@ async function handlePostRequest(
     }
 
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Success",
       category: {
         ...newFile,
         _id: newCategory.insertedId,
       }
     })
+
+    try {
+      let affectedCategories = new Set<string>();
+      const theProducts = await mongo.clientPromise.db('products').collection('products').find({
+        categories: newCategory.insertedId
+      }).toArray();
+
+      const categories: WithId<any>[] = await mongo.clientPromise.db('products').collection('categories').find({}).toArray();
+
+      for (const theProduct of theProducts) {
+        try {
+          if (!theProduct.categories) {
+            continue;
+          }
+          theProduct.categories.forEach((c: string) => {
+            affectedCategories.add(c);
+          })
+        }
+        catch (err) {
+          console.log("theProduct.categories probably did not exist.")
+        }
+      }
+
+      let revalidations: Promise<any>[] = [];
+      affectedCategories.forEach((value) => {
+        const theCategory = categories.find(c => c._id.toString() === value);
+        revalidations.push(res.revalidate(`/${theCategory.slug}`));
+      })
+
+      await Promise.all(revalidations);
+    }
+    catch (err) {
+      console.log("Did not revalidate something it should have")
+      console.log(err);
+      return;
+    }
+
+    return;
 
   } catch (err) {
     console.log(err);
@@ -112,24 +151,47 @@ async function handleDeleteRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const products = req.body.products as string[];
+  const userAuth = verifySession(req);
+  if (!userAuth) return res.status(401).json({ message: 'Usage' });
+
+  const cat_id = req.query.id;
+
+  if (!cat_id) {
+    return res.status(400).json({ message: "No category provided." })
+  }
 
   try {
 
-    if (!products) {
-      throw Error("No products provided")
-    }
-    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
+    const mongo = await Mongo.getInstance();
 
-    for (const product_id of products) {
-      const result = await stripe.products.update(product_id, {
-        active: false
-      })
-      console.log(result);
+    const theCategory = await mongo.clientPromise.db('products').collection('categories').findOne({
+      _id: new ObjectId(String(cat_id))
+    })
+
+    
+    if (!theCategory || !theCategory._id) {
+      throw Error("No category in the database to delete.")
     }
+
+    await mongo.clientPromise
+        .db('products')
+        .collection('products')
+        .updateMany(
+          { },
+          {
+            $pull: { categories: theCategory._id as any }
+          }
+        );
+
+
+    await mongo.clientPromise.db('products').collection('categories').deleteOne({
+      _id: theCategory._id
+    })
+
+    res.revalidate(`/${theCategory.slug}`)
 
     return res.status(200).json({
-      message: "Updated products"
+      message: "Deleted category."
     })
   }
   catch (err) {
@@ -158,7 +220,7 @@ async function handleUpdateProduct(product_id: string, data: Partial<StripeProdu
 
     for (const key of allowedFields) {
       if (key in data) {
-          updateData[key] = data[key]!;
+        updateData[key] = data[key]!;
       }
     }
 
@@ -196,20 +258,28 @@ async function handlePatchRequest(
   const userAuth = verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
-  const product_id = req.query.id;
   const data = req.body;
+  const revalidate = req.query.revalidate ? new SafeString(req.query.revalidate).isTrue() : false;
 
-  try {
-    const product = await handleUpdateProduct(String(product_id), data)
-    if (!product) {
-      throw Error("No product found by that id.")
+  const mongo = await Mongo.getInstance();
+  if (revalidate) {
+    try {
+      console.log(String(req.query.id))
+      const theCategory = await mongo.clientPromise.db('products').collection('categories').findOne({
+        _id: new ObjectId(String(req.query.id))
+      });
+
+      if (!theCategory) {
+        throw Error("No category found.")
+      }
+
+      await res.revalidate(`/${theCategory.slug}`)
+      return res.status(200).json({ message: "Success"})
     }
-    return res.status(200).json({
-      message: "Success. Updated product.",
-    })
-  }
-  catch (err) {
-    return res.status(400).json({ message: "Failure" })
+    catch (err) {
+      console.log(err);
+      return res.status(400).json({ message: "Not revalidated." })
+    }
   }
 
   return res.status(400).json({ message: "Not implemented" })
@@ -227,11 +297,11 @@ export default async function handleRequest(
   }
 
   if (req.method === 'DELETE') {
-    // return handleDeleteRequest(req, res);
+    return handleDeleteRequest(req, res);
   }
 
   if (req.method === 'PATCH') {
-    // return handlePatchRequest(req, res);
+    return handlePatchRequest(req, res);
   }
 
   if (req.method != 'GET') {

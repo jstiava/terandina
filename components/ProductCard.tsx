@@ -202,9 +202,7 @@ export default function ProductCard({
                     transition: "0.25s ease-in-out",
                 }}
             >
-                <div className={isSm ? "column compact" : "flex between top"} style={{
-                    maxWidth: isSm ? "calc(100% - 4rem)" : "100%",
-                }}>
+                <div className={isSm ? "column compact" : "flex between top"} >
                     <div className="column compact">
                         <PriceSelector
                             product={copyOfProduct}
@@ -217,7 +215,12 @@ export default function ProductCard({
                             fontSize: "1rem",
                             minHeight: '2rem',
                             height: isSm ? "3.5rem" : 'fit-content',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            whiteSpace: 'wrap',
+                            textOverflow: 'ellipsis',
+                            lineClamp: 3,
+                            display: '-webkit-flex',
+                            WebkitLineClamp: 3
 
                         }}>{product.name}</Typography>
 

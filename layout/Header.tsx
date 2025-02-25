@@ -72,6 +72,13 @@ export default function Header({ Cart, color, setColor }: {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('placeholder');
 
+    const pleasePush: (...args: Parameters<typeof router.push>) => void = (
+        ...args
+    ) => {
+        setIsSidebarOpen(false);
+        router.push(...args);
+    };
+
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     // const isVerySmall = useMediaQuery("(max-width: 25rem)")
     const isVerySmall = false;
@@ -169,10 +176,9 @@ export default function Header({ Cart, color, setColor }: {
             return;
         }
 
-        window.scrollBy({ top: 120, behavior: "smooth" });
-
+        
         setIsSidebarOpen(true);
-
+        
         anime({
             targets: ".slide-in",
             translateX: ["-100%", "0%"],
@@ -183,7 +189,7 @@ export default function Header({ Cart, color, setColor }: {
                 console.log("Animation Complete!");
             }
         });
-
+        
         anime({
             targets: ".fade",
             opacity: [0, 1],
@@ -193,7 +199,6 @@ export default function Header({ Cart, color, setColor }: {
                 console.log("Animation Complete!");
             }
         });
-
     }
 
 
@@ -345,7 +350,7 @@ export default function Header({ Cart, color, setColor }: {
 
                                 <MenuItem
                                     key={'blankets'}
-                                    onClick={() => router.push('/blankets')}
+                                    onClick={() => pleasePush('/blankets')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Blankets</MenuItem>
 
@@ -369,7 +374,7 @@ export default function Header({ Cart, color, setColor }: {
                             }}>
                                 <MenuItem
                                     key={'all outerwear'}
-                                    onClick={() => router.push('outerwear')}
+                                    onClick={() => pleasePush('/outerwear')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Outerwear</MenuItem>
 
@@ -402,13 +407,13 @@ export default function Header({ Cart, color, setColor }: {
                                 <div className="column snug fit">
                                     <MenuItem
                                         key={'cardigans'}
-                                        onClick={() => router.push('outerwear')}
+                                        onClick={() => pleasePush('/outerwear')}
                                         icon={<ArrowForward fontSize="small" />}
                                     >Cardigans</MenuItem>
 
                                     <MenuItem
                                         key={'hoodies'}
-                                        onClick={() => router.push('outerwear')}
+                                        onClick={() => pleasePush('/outerwear')}
                                         icon={<ArrowForward fontSize="small" />}
                                     >Hoodies</MenuItem>
 
@@ -423,7 +428,7 @@ export default function Header({ Cart, color, setColor }: {
                             }}>
                                 <MenuItem
                                     key={'jewelry'}
-                                    onClick={() => router.push('jewelry')}
+                                    onClick={() => pleasePush('/jewelry')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Jewelry</MenuItem>
                                 <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
@@ -446,7 +451,7 @@ export default function Header({ Cart, color, setColor }: {
                                     className="flex between middle"
                                     disableRipple
                                     key={'test'}
-                                    onClick={() => router.push('/handcrafted')}
+                                    onClick={() => pleasePush('/handcrafted')}
                                     sx={{
                                         height: "3rem",
                                         padding: "0 2rem",
@@ -507,7 +512,7 @@ export default function Header({ Cart, color, setColor }: {
                                     key={'test'}
                                     onClick={() => {
                                         setIsSidebarOpen(prev => !prev);
-                                        router.push('/ponchos');
+                                        pleasePush('/ponchos');
                                     }}
                                     sx={{
                                         height: "3rem",
@@ -660,7 +665,7 @@ export default function Header({ Cart, color, setColor }: {
                     }}>
                         {theme.palette.getContrastText(color) === '#fff' ? (
                             <Image id="logo" src={TerandinaWhite} alt="Terandina"
-                                onClick={() => router.push('/')}
+                                onClick={() => pleasePush('/')}
                                 style={{
                                     width: "auto",
                                     height: "4rem",
@@ -668,7 +673,7 @@ export default function Header({ Cart, color, setColor }: {
                                 }} />
                         ) : (
                             <Image id="logo" src={TerandinaLogo} alt="Terandina"
-                                onClick={() => router.push('/')}
+                                onClick={() => pleasePush('/')}
                                 style={{
                                     width: "auto",
                                     height: "4rem",
@@ -724,7 +729,7 @@ export default function Header({ Cart, color, setColor }: {
                                             key="edit"
                                             onClick={e => {
                                                 e.stopPropagation();
-                                                router.push('/admin/categories')
+                                                pleasePush('/admin/categories')
                                             }}
                                             variant="outlined"
                                             startIcon={
@@ -744,7 +749,7 @@ export default function Header({ Cart, color, setColor }: {
                     </div>
                     <div className="flex fit">
                         {router.asPath === "/checkout" ? (
-                            <Button variant="contained" onClick={() => router.push('/')}>Continue Shopping</Button>
+                            <Button variant="contained" onClick={() => pleasePush('/')}>Continue Shopping</Button>
                         ) : (
                             <div className="flex snug fit">
                                 {/* <ColorPicker color={color} setColor={setColor} /> */}
@@ -775,7 +780,7 @@ export default function Header({ Cart, color, setColor }: {
                                         </Tooltip>
                                     </Badge>
                                 </div>
-                                {/* <ScrollButton variant="contained" onClick={() => router.push('/products')} sx={{
+                                {/* <ScrollButton variant="contained" onClick={() => pleasePush('/products')} sx={{
                                     height: "2.5rem",
                                     marginLeft: "1rem"
                                 }}>Shop All</ScrollButton> */}
