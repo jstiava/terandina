@@ -172,8 +172,11 @@ export default function Home(props: StripeAppProps) {
               if (!swiper.params.navigation) {
                 return;
               }
-              swiper.params.navigation.prevEl = prevRef.current;
-              swiper.params.navigation.nextEl = nextRef.current;
+
+              if (typeof swiper.params.navigation != 'boolean') {
+                swiper.params.navigation.prevEl = prevRef.current;
+                swiper.params.navigation.nextEl = nextRef.current;
+              }
               swiper.navigation.init();
               swiper.navigation.update();
             }}
