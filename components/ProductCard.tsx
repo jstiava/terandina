@@ -86,6 +86,7 @@ export default function ProductCard({
     const [copyOfProduct, setCopyOfProduct] = useState(product);
 
     const getCategories = async (pro: StripeProduct) => {
+        
         let theCats: Category[] = [];
 
         for (const cat_id of product.categories) {

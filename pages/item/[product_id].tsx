@@ -385,7 +385,7 @@ export default function Home(props: StripeAppProps) {
                 </div>
 
                 <div className="column compact left" style={{
-                    padding: isSm ? "2rem" : "2rem 0",
+                    padding: isSm ? "2rem 1rem" : "2rem 0",
                     width: "100%"
                 }}>
                     <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>RELATED</Typography>
@@ -414,24 +414,25 @@ export default function Home(props: StripeAppProps) {
                         }}
                         modules={[Pagination, Navigation]}
                         breakpoints={{
+                            
                             300: {
-                                slidesPerView: 1,
+                                slidesPerView: 1.4,
                                 spaceBetween: 10,
                             },
                             500: {
-                                slidesPerView: 2,
+                                slidesPerView: 2.4,
                                 spaceBetween: 0
                             },
                             1200: {
-                                slidesPerView: 3,
+                                slidesPerView: 3.4,
                                 spaceBetween: 10
                             },
                             1400: {
-                                slidesPerView: 4,
+                                slidesPerView: 4.4,
                                 spaceBetween: 10,
                             },
                             1800: {
-                                slidesPerView: 5,
+                                slidesPerView: 5.4,
                                 spaceBetween: 10,
                             },
                         }}

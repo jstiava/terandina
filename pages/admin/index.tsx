@@ -68,7 +68,7 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
 
     const theme = useTheme();
     const [open, setOpen] = useState(false);
-    const [name, setName] = useState("Name of Group");
+    const [name, setName] = useState("");
     const anchorRef = useRef<any>(null);
 
     const handleGroupRequest = (e: any) => {
@@ -158,6 +158,7 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
                     <TextField
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        placeholder="Name of Group Here"
                     />
                     <div className="flex compact">
                         <Button
@@ -1255,7 +1256,7 @@ export default function AdminPage() {
                 width: "100%"
             }}>
 
-                <TextField
+<TextField
                     label="Search"
                     value={searchValue}
                     onChange={(e) => {

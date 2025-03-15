@@ -1,3 +1,4 @@
+"use client"
 import { StripeAppProps } from "@/types";
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
@@ -13,7 +14,7 @@ import { formatPrice } from "@/components/ProductCard";
 import { Router, useRouter } from "next/router";
 
 
-const STRIPE_PUBLISHABLE_KEY = "pk_test_51QmLSsJrcLUH8C2zE5oCKsMmM7N1bATycweqAgVJWL5n1DjO7CdEmPliVKi9lAYQbEIUawdZurjGdQjz7xoCTXz400xuStJ6Eo"
+const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout(props: StripeAppProps) {
@@ -27,6 +28,7 @@ export default function Checkout(props: StripeAppProps) {
 
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
+        console.log("Create payment intent")
         fetch("/api/create-payment-intent", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -138,7 +140,7 @@ export default function Checkout(props: StripeAppProps) {
                             fontSize: "1.5rem"
                         }} />
                     </div>
-                    {clientSecret && (
+                    {clientSecret && stripePromise && (
                         <Elements options={options} stripe={stripePromise}>
                             {confirmed ? <StripeCompletePage /> : (
                                 <StripeCheckoutForm />

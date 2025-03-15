@@ -25,8 +25,7 @@ export default function PhotoItem({ id, upload, handleRemoveFile }: any) {
     return (
         <div className='column compact left'
             ref={setNodeRef}
-            {...attributes}
-            {...listeners}
+
             key={upload.url}
             style={{
                 width: "9rem",
@@ -35,7 +34,10 @@ export default function PhotoItem({ id, upload, handleRemoveFile }: any) {
                 cursor: isDragging ? 'grabbing' : 'grab',
                 ...style
             }}>
-            <div className="column compact">
+            <div className="column compact"
+                {...attributes}
+                {...listeners}
+            >
                 <div style={{
                     width: '9rem',
                     height: '9rem',
@@ -45,25 +47,27 @@ export default function PhotoItem({ id, upload, handleRemoveFile }: any) {
                     borderRadius: '0.5rem',
                     backgroundImage: upload ? `url(${upload.url})` : '',
                 }}>
-                    <IconButton sx={{
-                        position: "absolute",
-                        top: "-1rem",
-                        left: "-1rem",
-                        backgroundColor: theme.palette.background.paper,
-                        color: theme.palette.error.main,
-                        border: `1px solid ${theme.palette.divider}`,
-                        '&:hover': {
-                            backgroundColor: `${theme.palette.divider} !important`
-                        }
-                    }}>
-                        <DeleteOutline onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveFile(upload.url, upload.isLocal)
-                        }} />
-                    </IconButton>
 
                 </div>
             </div>
+            <IconButton
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveFile(upload.url, upload.isLocal)
+                }}
+                sx={{
+                    position: "absolute",
+                    top: "-1rem",
+                    left: "-1rem",
+                    backgroundColor: theme.palette.background.paper,
+                    color: theme.palette.error.main,
+                    border: `1px solid ${theme.palette.divider}`,
+                    '&:hover': {
+                        backgroundColor: `${theme.palette.divider} !important`
+                    },
+                }}>
+                <DeleteOutline />
+            </IconButton>
         </div>
     )
 }

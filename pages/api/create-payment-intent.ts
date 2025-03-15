@@ -55,12 +55,15 @@ export default async function handleRequest(
             },
         });
 
+        console.log(paymentIntent);
+
         return res.status(200).json({
             clientSecret: paymentIntent.client_secret,
             subtotal: subtotal
         })
     }
     catch (err) {
+        console.log(err);
         return res.status(400).json({ message: "Something went wrong." })
     }
 

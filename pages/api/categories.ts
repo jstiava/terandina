@@ -71,6 +71,7 @@ async function handlePostRequest(
 
     try {
       let affectedCategories = new Set<string>();
+
       const theProducts = await mongo.clientPromise.db('products').collection('products').find({
         categories: newCategory.insertedId
       }).toArray();
@@ -91,13 +92,17 @@ async function handlePostRequest(
         }
       }
 
-      let revalidations: Promise<any>[] = [];
-      affectedCategories.forEach((value) => {
-        const theCategory = categories.find(c => c._id.toString() === value);
-        revalidations.push(res.revalidate(`/${theCategory.slug}`));
-      })
-
-      await Promise.all(revalidations);
+      for (const category of affectedCategories) {
+        const theCategory = categories.find(c => c._id.toString() === category);
+        if (!theCategory) {
+          continue;
+        }
+        await res.revalidate(`/${theCategory.slug}`)
+        console.log({
+          message: "Revalidation complete",
+          category
+        })
+      }
     }
     catch (err) {
       console.log("Did not revalidate something it should have")

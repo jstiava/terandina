@@ -36,7 +36,8 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                                 height={size === "small" ? "2.25rem" : "3rem"}
                                 style={{
                                     borderRadius: "100%",
-                                    opacity: product.id === p.id ? 1 : action === 'hovering' ? 1 : 0.25,
+                                    opacity: 1,
+                                    border: product.id === p.id ? `0.25rem solid ${theme.palette.primary.main}` : '0.25rem solid transparent',
                                     backgroundSize: "250%"
                                 }}
                             ></CoverImage>

@@ -153,7 +153,7 @@ export default function Home(props: StripeAppProps) {
         </div>
         <Typography variant="h2">Best Sellers</Typography>
         <div className="flex" style={{
-          padding: isSm ? "0" : "0 2rem"
+          padding: isSm ? "0 0.5rem" : "0 2rem"
         }}>
           <Swiper
             ref={swiperRef}
@@ -161,6 +161,7 @@ export default function Home(props: StripeAppProps) {
             slidesPerView={1}
             spaceBetween={10}
             navigation={!isSm}
+            centeredSlides={false}
             // slidesOffsetBefore={-30}
             style={{
               display: 'flex',
@@ -180,23 +181,23 @@ export default function Home(props: StripeAppProps) {
             modules={[Pagination, Navigation]}
             breakpoints={{
               300: {
-                slidesPerView: 1,
-                spaceBetween: 10,
+                slidesPerView: 1.4,
+                spaceBetween: 5,
               },
               500: {
-                slidesPerView: 2,
+                slidesPerView: 2.4,
                 spaceBetween: 0
               },
               1200: {
-                slidesPerView: 3,
+                slidesPerView: 3.4,
                 spaceBetween: 10
               },
               1400: {
-                slidesPerView: 4,
+                slidesPerView: 4.4,
                 spaceBetween: 10,
               },
               1800: {
-                slidesPerView: 5,
+                slidesPerView: 5.4,
                 spaceBetween: 10,
               },
             }}
@@ -206,7 +207,7 @@ export default function Home(props: StripeAppProps) {
 
               <SwiperSlide className="slide" key={product.id}>
                 <div className="flex center middle" style={{
-                  padding: isSm ? "1rem" : 0
+                  padding: isSm ? "1rem 0.25rem" : 0
                 }}>
                 <ProductCard
                   product={product}

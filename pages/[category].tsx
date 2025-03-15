@@ -92,7 +92,7 @@ export const getStaticProps = (async (context: any) => {
               quantity: 1
             }
           })
-        }
+        },
       }
     }
   }
