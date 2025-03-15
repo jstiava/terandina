@@ -141,8 +141,25 @@ export default function Home(props: StripeAppProps) {
         // Get related items
         fetch(`/api/products?related_to=${router.query.product_id}`)
             .then(res => res.json())
-            .then(res => {
-                setProducts(res.products);
+            .then(response => {
+
+                let productList = [];
+                let i = 0;
+
+                for (i; i < response.products.length; i++) {
+                    const product = response.products[i];
+                    if (!product.prices || product.prices.length === 0) {
+                        continue;
+                    }
+                    productList.push({
+                        ...product,
+                        quantity: 1,
+                        images: product.images,
+                        selectedPrice: product.prices[0]
+                    })
+                }
+
+                setProducts(productList);
             })
             .catch(err => {
                 return;
@@ -414,7 +431,7 @@ export default function Home(props: StripeAppProps) {
                         }}
                         modules={[Pagination, Navigation]}
                         breakpoints={{
-                            
+
                             300: {
                                 slidesPerView: 1.4,
                                 spaceBetween: 10,

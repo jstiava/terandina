@@ -2,7 +2,7 @@ import CoverImage from "@/components/CoverImage";
 import ProductCard from "@/components/ProductCard";
 import { StripeAppProps, StripeProduct } from "@/types";
 import fetchAppServer from "@/utils/fetch";
-import { Button, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import anime from "animejs";
 import Head from "next/head";
 import Image from "next/image";
@@ -11,6 +11,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import HeroImage from '@/public/BSP_191_Cotopaxi+sunset.jpg'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import { ArrowLeft, ArrowLeftOutlined, ArrowRight, ArrowRightOutlined, ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 
 
@@ -24,11 +25,15 @@ export default function Home(props: StripeAppProps) {
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
 
   const getProducts = async () => {
 
     let productList = [];
     let i = 0;
+
 
     const productsFetch = await fetch('/api/products?is_featured=true');
 
@@ -46,6 +51,7 @@ export default function Home(props: StripeAppProps) {
       productList.push({
         ...product,
         quantity: 1,
+        images: product.images,
         selectedPrice: product.prices[0]
       })
     }
@@ -55,8 +61,6 @@ export default function Home(props: StripeAppProps) {
 
   useEffect(() => {
     getProducts();
-
-
   }, []);
 
 
@@ -153,14 +157,26 @@ export default function Home(props: StripeAppProps) {
         </div>
         <Typography variant="h2">Best Sellers</Typography>
         <div className="flex" style={{
-          padding: isSm ? "0 0.5rem" : "0 2rem"
+          padding: isSm ? "0 0.5rem" : "0 5rem"
         }}>
           <Swiper
             ref={swiperRef}
             direction="horizontal"
             slidesPerView={1}
             spaceBetween={10}
-            navigation={!isSm}
+            navigation={{
+              prevEl: prevRef.current,
+              nextEl: nextRef.current,
+            }}
+            onBeforeInit={(swiper) => {
+              if (!swiper.params.navigation) {
+                return;
+              }
+              swiper.params.navigation.prevEl = prevRef.current;
+              swiper.params.navigation.nextEl = nextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }}
             centeredSlides={false}
             // slidesOffsetBefore={-30}
             style={{
@@ -198,37 +214,52 @@ export default function Home(props: StripeAppProps) {
               },
               1800: {
                 slidesPerView: 5.4,
-                spaceBetween: 10,
+                spaceBetween: 0,
               },
             }}
             className="mySwiper"
           >
             {products.map(product => (
-
               <SwiperSlide className="slide" key={product.id}>
                 <div className="flex center middle" style={{
                   padding: isSm ? "1rem 0.25rem" : 0
                 }}>
-                <ProductCard
-                  product={product}
-                  addToCart={props.Cart.add}
-                  style={{
-                    animationDelay: `${0}ms`,
-                    // width: "100%"
-                  }}
+                  <ProductCard
+                    product={product}
+                    addToCart={props.Cart.add}
+                    style={{
+                      animationDelay: `${0}ms`,
+                      // width: "100%"
+                    }}
                   />
-                  </div>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
+         {!isSm && (
+          <>
+           <IconButton ref={prevRef} className="custom-prev" sx={{
+            position: 'absolute',
+            left: "1rem"
+          }}>
+            <ChevronLeft sx={{ fontSize: "3rem" }} />
+          </IconButton>
+          <IconButton ref={nextRef} className="custom-prev" sx={{
+            position: 'absolute',
+            right: "1rem"
+          }}>
+            <ChevronRight sx={{ fontSize: "3rem" }} />
+          </IconButton>
+          </>
+         )}
         </div>
-        <div className={isSm  ? 'column snug' : "flex snug"} style={{
+        <div className={isSm ? 'column snug' : "flex snug"} style={{
           width: "100%"
         }}>
           <CoverImage
-          className="column compact center middle"
+            className="column compact center middle"
             url="/poncho_cover.jpg"
-            width={ isSm ? "100%" : "50vw"}
+            width={isSm ? "100%" : "50vw"}
             height="auto"
             style={{
               aspectRatio: "1/1",
@@ -245,20 +276,20 @@ export default function Home(props: StripeAppProps) {
               zIndex: 0
             }}></div>
             <Typography variant="h2" sx={{
-               padding: "1.5rem",
+              padding: "1.5rem",
               //  border: "0.25rem solid white",
-                color: 'white',
-                zIndex: 1
+              color: 'white',
+              zIndex: 1
             }}>Explore All Ponchos</Typography>
             <Button
               variant="contained"
               onClick={() => router.push('/ponchos')}
-             >Shop Ponchos</Button>
+            >Shop Ponchos</Button>
           </CoverImage>
           <CoverImage
-          className="column compact center middle"
+            className="column compact center middle"
             url="/jewelry_cover.jpg"
-            width={ isSm ? "100%" : "50vw"}
+            width={isSm ? "100%" : "50vw"}
             height="auto"
             style={{
               aspectRatio: "1/1",
@@ -278,16 +309,16 @@ export default function Home(props: StripeAppProps) {
               backgroundImage: 'radial-gradient(#000000aa, #00000000)',
               zIndex: 0
             }}></div>
-             <Typography variant="h2" sx={{
-               padding: "1.5rem",
+            <Typography variant="h2" sx={{
+              padding: "1.5rem",
               //  border: "0.25rem solid white",
-               color: 'white',
-               zIndex: 1
-             }}>Explore All Jewelry</Typography>
-             <Button
+              color: 'white',
+              zIndex: 1
+            }}>Explore All Jewelry</Typography>
+            <Button
               variant="contained"
               onClick={() => router.push('/jewelry')}
-             >Shop Jewelry</Button>
+            >Shop Jewelry</Button>
           </CoverImage>
         </div>
       </div>
