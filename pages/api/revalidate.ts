@@ -12,7 +12,6 @@ export async function getProductByIdFromStripe(product_id: string): Promise<Part
         const mongo = await Mongo.getInstance();
         const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
 
-        console.log(product_id);
         const product = await stripe.products.retrieve(product_id);
         if (!product) {
             return null;
@@ -112,13 +111,25 @@ export default async function handleRequest(
                 }
             }
 
-            await mongo.clientPromise.db('products').collection('products').updateOne({
-                id: product.id
-              }, {
-                $set: sendFromStripeToDatabase
-              })
+            await mongo.clientPromise.db('products').collection('products').updateOne(
+                { id: product.id },
+                {
+                    $set: sendFromStripeToDatabase,
+                }
+            );
 
-            const theProduct = await getProductById(req.query.product_id.toString());
+            let theProduct = await getProductById(req.query.product_id.toString());
+
+            if (!theProduct) {
+                await mongo.clientPromise.db('products').collection('products').insertOne({
+                    ...product,
+                    prices: [],
+                    selectedPrice: null,
+                    quantity: 1
+                });
+                theProduct = await getProductById(req.query.product_id.toString());
+            }
+            
 
             return res.status(200).json({
                 message: "Success",

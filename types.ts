@@ -41,7 +41,7 @@ export interface Category {
     slug: string,
     parent_id: string,
     is_on_menu: boolean,
-    type: 'variant' | 'collection' | 'segment',
+    type: 'variant' | 'collection' | 'tag',
     products: StripeProduct[]
 
 }

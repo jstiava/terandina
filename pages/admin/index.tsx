@@ -63,7 +63,7 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
     selected: GridRowSelectionModel,
     setSelected: Dispatch<SetStateAction<GridRowSelectionModel>>,
     handleAdd: () => any,
-    handleGroup: (name: string, type: 'variant' | 'collection', selected: GridRowSelectionModel) => any
+    handleGroup: (name: string, type: 'variant' | 'collection' | 'tag', selected: GridRowSelectionModel) => any
 }) => {
 
     const theme = useTheme();
@@ -177,7 +177,7 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
                                 height: "2.5rem"
                             }}
                         >
-                            Group as Variants
+                            Variants
                         </Button>
                         <Button
                             variant="text"
@@ -195,7 +195,25 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
                                 height: "2.5rem"
                             }}
                         >
-                            Group as Collection
+                            Collection
+                        </Button>
+                        <Button
+                            variant="text"
+                            onClick={(e) => {
+                                try {
+                                    handleGroup(name, 'tag', selected);
+                                    setOpen(false)
+                                }
+                                catch (err) {
+                                    console.error(err)
+                                    return;
+                                }
+                            }}
+                            sx={{
+                                height: "2.5rem"
+                            }}
+                        >
+                            Tag
                         </Button>
                     </div>
                 </div>
@@ -686,7 +704,7 @@ export default function AdminPage() {
                         }}>
                             {categories && categories.map(category => {
 
-                                if (category.type === 'variant') {
+                                if (category.type != 'collection') {
                                     return null;
                                 }
 
@@ -733,7 +751,7 @@ export default function AdminPage() {
                         }}>
                             {categories && categories.map(category => {
 
-                                if (category.type === 'collection') {
+                                if (category.type != 'variant') {
                                     return null;
                                 }
 
@@ -758,6 +776,52 @@ export default function AdminPage() {
                                                 id: params.id,
                                                 field: params.field,
                                                 value: [...params.value, category.name]
+                                            })
+                                            return;
+                                        }}
+                                        sx={{
+                                            marginBottom: "0.25rem",
+                                            overflow: "hidden"
+                                        }}
+                                    />
+                                )
+                            })}
+                        </div>
+
+                        <Typography variant="h6" sx={{
+                            fontSize: "0.75rem",
+                            lineHeight: '100%',
+                            textTransform: "uppercase"
+                        }}>Tags</Typography>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {categories && categories.map(tag => {
+
+                                if (tag.type != 'tag') {
+                                    return null;
+                                }
+
+                                if (params.value?.some(c_name => c_name === tag.name)) {
+                                    return null;
+                                }
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        variant="outlined"
+                                        key={tag._id}
+                                        label={tag.name}
+                                        onClick={(e) => {
+
+                                            if (!params.value) {
+                                                return;
+                                            }
+
+                                            params.api.setEditCellValue({
+                                                id: params.id,
+                                                field: params.field,
+                                                value: [...params.value, tag.name]
                                             })
                                             return;
                                         }}
@@ -1093,7 +1157,7 @@ export default function AdminPage() {
     ];
 
 
-    const handleGroup = async (name: string, type: 'variant' | 'collection', selected: GridRowSelectionModel) => {
+    const handleGroup = async (name: string, type: 'variant' | 'collection' | 'tag', selected: GridRowSelectionModel) => {
 
 
         const catRequest = await fetch(`api/categories`, {

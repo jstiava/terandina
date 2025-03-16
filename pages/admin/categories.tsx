@@ -228,7 +228,20 @@ export default function CategoryAdminPage(props: StripeAppProps) {
             headerName: "Type",
             width: 100,
             renderCell: (params: GridRenderCellParams<Category, string>) => {
-                return params.value === 'variant' ? "Variant" : "Collection"
+                return params.value ? (
+                    <div className="flex left center" style={{
+                        height: "100%"
+                    }}>
+                        <Typography 
+                            variant="h6"
+                        sx={{
+                            textTransform: 'capitalize',
+                            fontSize: "1rem",
+                            width: "fit-content",
+                            textAlign: 'left'
+                        }}>{params.value}</Typography>
+                    </div>
+                ) : <></>
             }
         },
         {
@@ -239,7 +252,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
 
                 const category = params.value ? categories?.find(x => x._id === params.value) : null;
 
-                if (params.row.type === 'segment') {
+                if (params.row.type === 'tag') {
                     return null;
                 }
 

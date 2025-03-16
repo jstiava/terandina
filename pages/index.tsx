@@ -25,8 +25,10 @@ export default function Home(props: StripeAppProps) {
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [swiperInstance, setSwiperInstance] = useState<typeof Swiper | null>(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+
 
 
   const getProducts = async () => {
@@ -169,14 +171,13 @@ export default function Home(props: StripeAppProps) {
               nextEl: nextRef.current,
             }}
             onBeforeInit={(swiper) => {
-              if (!swiper.params.navigation) {
+              if (!swiper.params.navigation || !prevRef.current || !nextRef.current) {
                 return;
               }
-
-              if (typeof swiper.params.navigation != 'boolean') {
-                swiper.params.navigation.prevEl = prevRef.current;
-                swiper.params.navigation.nextEl = nextRef.current;
-              }
+              swiper.params.navigation = {
+                prevEl: prevRef.current,
+                nextEl: nextRef.current
+              };
               swiper.navigation.init();
               swiper.navigation.update();
             }}
