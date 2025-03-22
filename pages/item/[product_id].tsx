@@ -330,7 +330,7 @@ export default function Home(props: StripeAppProps) {
                             </div>
                         </>
                     )}
-                    <div className="column relaxed" style={{
+                    <div className="column" style={{
                         width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem' : '45%'})`,
                         maxWidth: "40rem",
                         padding: isSm ? "0 2rem" : "3rem",
