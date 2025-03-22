@@ -157,105 +157,111 @@ export default function Home(props: StripeAppProps) {
             </div>
           </CoverImage>
         </div>
-        <Typography variant="h2">Best Sellers</Typography>
-        <div className="flex" style={{
-          padding: isSm ? "0 0.5rem" : "0 5rem"
+
+        <div className="column center" style={{
+          padding: isSm ? "2rem 0rem" : "1rem 0",
+          width: "100%"
         }}>
-          <Swiper
-            ref={swiperRef}
-            direction="horizontal"
-            slidesPerView={1}
-            spaceBetween={10}
-            navigation={{
-              prevEl: prevRef.current,
-              nextEl: nextRef.current,
-            }}
-            onBeforeInit={(swiper) => {
-              if (!swiper.params.navigation || !prevRef.current || !nextRef.current) {
-                return;
-              }
-              swiper.params.navigation = {
+          <Typography variant="h6">Best Sellers</Typography>
+          <div className="flex" style={{
+            padding: isSm ? "0 1rem" : "0rem 0",
+          }}>
+            <Swiper
+              ref={swiperRef}
+              direction="horizontal"
+              slidesPerView={1}
+              spaceBetween={10}
+              navigation={{
                 prevEl: prevRef.current,
-                nextEl: nextRef.current
-              };
-              swiper.navigation.init();
-              swiper.navigation.update();
+                nextEl: nextRef.current,
+              }}
+              onBeforeInit={(swiper) => {
+                if (!swiper.params.navigation || !prevRef.current || !nextRef.current) {
+                  return;
+                }
+                swiper.params.navigation = {
+                  prevEl: prevRef.current,
+                  nextEl: nextRef.current
+                };
+                swiper.navigation.init();
+                swiper.navigation.update();
+              }}
+              centeredSlides={false}
+              // slidesOffsetBefore={-30}
+              style={{
+                display: 'flex',
+                width: "100%",
+                height: "fit-content",
+                padding: 0,
+                "--swiper-theme-color": theme.palette.primary.main,
+                "--swiper-pagination-color": theme.palette.primary.main,  // Active bullet color
+                "--swiper-pagination-bullet-inactive-color": "gray", // Inactive bullet color
+                "--swiper-pagination-bullet-inactive-opacity": "0.5",
+                "--swiper-navigation-size": 64,
+                "--swiper-navigation-top-offset": "calc(50% - 1rem)",
+              } as CSSProperties}
+              pagination={{
+                clickable: true,
+              }}
+              modules={[Pagination, Navigation]}
+              breakpoints={{
+                300: {
+                    slidesPerView: 1.4,
+                    spaceBetween: 10,
+                },
+                500: {
+                    slidesPerView: 2.4,
+                    spaceBetween: 0
+                },
+                1200: {
+                    slidesPerView: 3.4,
+                    spaceBetween: 10
+                },
+                1400: {
+                    slidesPerView: 4.4,
+                    spaceBetween: 10,
+                },
+                1800: {
+                    slidesPerView: 5.4,
+                    spaceBetween: 10,
+                },
             }}
-            centeredSlides={false}
-            // slidesOffsetBefore={-30}
-            style={{
-              display: 'flex',
-              width: "100%",
-              height: "fit-content",
-              padding: 0,
-              "--swiper-theme-color": theme.palette.primary.main,
-              "--swiper-pagination-color": theme.palette.primary.main,  // Active bullet color
-              "--swiper-pagination-bullet-inactive-color": "gray", // Inactive bullet color
-              "--swiper-pagination-bullet-inactive-opacity": "0.5",
-              "--swiper-navigation-size": 64,
-              "--swiper-navigation-top-offset": "calc(50% - 1rem)",
-            } as CSSProperties}
-            pagination={{
-              clickable: true,
-            }}
-            modules={[Pagination, Navigation]}
-            breakpoints={{
-              300: {
-                slidesPerView: 1.4,
-                spaceBetween: 5,
-              },
-              500: {
-                slidesPerView: 2.4,
-                spaceBetween: 0
-              },
-              1200: {
-                slidesPerView: 3.4,
-                spaceBetween: 10
-              },
-              1400: {
-                slidesPerView: 4.4,
-                spaceBetween: 10,
-              },
-              1800: {
-                slidesPerView: 5.4,
-                spaceBetween: 0,
-              },
-            }}
-            className="mySwiper"
-          >
-            {products.map(product => (
-              <SwiperSlide className="slide" key={product.id}>
-                <div className="flex center middle" style={{
-                  padding: isSm ? "1rem 0.25rem" : 0
+              className="mySwiper"
+            >
+              {products.map(product => (
+                <SwiperSlide className="slide" key={product.id}>
+                  <div className="flex center middle" style={{
+                      padding: isSm ? "1rem" : 0
+                  }}>
+                    <ProductCard
+                      product={product}
+                      // addToCart={props.Cart.add}
+                      style={{
+                        animationDelay: `${0}ms`,
+                        // width: "100%"
+                      }}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+            {!isSm && (
+              <>
+                <IconButton ref={prevRef} className="custom-prev" sx={{
+                  position: 'absolute',
+                  left: "1rem"
                 }}>
-                  <ProductCard
-                    product={product}
-                    addToCart={props.Cart.add}
-                    style={{
-                      animationDelay: `${0}ms`,
-                      // width: "100%"
-                    }}
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-         {!isSm && (
-          <>
-           <IconButton ref={prevRef} className="custom-prev" sx={{
-            position: 'absolute',
-            left: "1rem"
-          }}>
-            <ChevronLeft sx={{ fontSize: "3rem" }} />
-          </IconButton>
-          <IconButton ref={nextRef} className="custom-prev" sx={{
-            position: 'absolute',
-            right: "1rem"
-          }}>
-            <ChevronRight sx={{ fontSize: "3rem" }} />
-          </IconButton>
-          </>
-         )}
+                  <ChevronLeft sx={{ fontSize: "3rem" }} />
+                </IconButton>
+                <IconButton ref={nextRef} className="custom-prev" sx={{
+                  position: 'absolute',
+                  right: "1rem"
+                }}>
+                  <ChevronRight sx={{ fontSize: "3rem" }} />
+                </IconButton>
+              </>
+            )}
+          </div>
         </div>
         <div className={isSm ? 'column snug' : "flex snug"} style={{
           width: "100%"

@@ -210,7 +210,7 @@ export default function CategoryPage(props: StripeAppProps & {
               <ProductCard
                 key={product.id}
                 product={product}
-                addToCart={props.Cart.add}
+                // addToCart={props.Cart.add}
                 categories={props.categories}
                 style={{
                   animationDelay: `${delay}ms`,

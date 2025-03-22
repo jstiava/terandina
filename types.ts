@@ -13,6 +13,25 @@ export interface StripePrice extends Stripe.Price {
     currency: string;
     inventory?: number;
 }
+
+export interface SizeChart {
+    XXS?: boolean,
+    XS?: boolean,
+    S?: boolean,
+    M?: boolean,
+    L?: boolean,
+    XL?: boolean,
+    XXL?: boolean,
+    '8'?: boolean,
+    '9'?: boolean,
+    '10'?: boolean,
+    '11'?: boolean,
+    '12'?: boolean,
+    '13'?: boolean,
+}
+
+export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13'] as (keyof SizeChart)[]);
+
 export interface StripeProduct extends Stripe.Product {
     id: string,
     name: string,
@@ -23,8 +42,11 @@ export interface StripeProduct extends Stripe.Product {
     categories: string[], // category_ids
     related: string[], // product_ids
     details?: string,
-
+    sizes?: SizeChart,
+    default_size?: string,
+    
     // checkout
+    size?: string,
     selectedPrice: StripePrice | null,
     quantity: number,
 }

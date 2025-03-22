@@ -1,6 +1,6 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
-import { Category, StripePrice, StripeProduct } from "@/types";
+import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types";
 import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
 import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
@@ -339,34 +339,34 @@ export default function AdminPage() {
             })
     }
 
-    const handleRevalidateProduct = async (product_id : string) => {
+    const handleRevalidateProduct = async (product_id: string) => {
 
         return await fetch(`/api/revalidate?product_id=${product_id}`, {
             method: "GET",
         })
-        .then(res => res.json())
-        .then(res => {
-            if (!res.product) {
+            .then(res => res.json())
+            .then(res => {
+                if (!res.product) {
+                    setProducts(prev => {
+                        if (!prev) {
+                            return [res.product]
+                        }
+                        const theList = prev.filter(x => x.id != product_id);
+                        return theList;
+                    })
+                    return;
+                }
                 setProducts(prev => {
                     if (!prev) {
                         return [res.product]
                     }
-                    const theList = prev.filter(x => x.id != product_id);
-                    return theList;
+                    const theList = prev.filter(x => x.id != res.product.id);
+                    return [...theList, res.product]
                 })
-                return;
-            }
-            setProducts(prev => {
-                if (!prev) {
-                    return [res.product]
-                }
-                const theList = prev.filter(x => x.id != res.product.id);
-                return [...theList, res.product]
             })
-        })
-        .catch(err => {
-            return;
-        })
+            .catch(err => {
+                return;
+            })
 
     }
 
@@ -401,7 +401,7 @@ export default function AdminPage() {
             })
     }
 
-   
+
 
     const processRowUpdate = async (newRow: GridRowModel<StripeProduct>) => {
 
@@ -572,9 +572,9 @@ export default function AdminPage() {
                                     <OpenInNew fontSize="small" />
                                 }>View</Button>
                             <ButtonBase
-                            style={{
-                                borderRadius: "0.25rem"
-                            }}
+                                style={{
+                                    borderRadius: "0.25rem"
+                                }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleRevalidateProduct(params.id.toString());
@@ -593,7 +593,7 @@ export default function AdminPage() {
                                         backgroundPosition: "center",
                                         width: "1rem",
                                         height: "1rem",
-                                        
+
                                     }}></div>
                                     <Typography sx={{
                                         fontFamily: [zain_sans_font.style.fontFamily, 'sans-serif'].join(',')
@@ -896,6 +896,137 @@ export default function AdminPage() {
                                 overflow: 'hidden'
                             }}
                         />
+                    </div>
+                )
+            }
+        },
+
+        {
+            field: "sizes",
+            headerName: "Sizing",
+            width: 300,
+            editable: true,
+            renderEditCell: (params: GridRenderCellParams<StripeProduct, SizeChart | undefined>) => {
+
+
+                return (
+                    <div className="column compact" style={{
+                        padding: "0.5rem",
+                        height: "100%",
+                        overflowY: "scroll",
+                        width: "100%"
+                    }}>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {SIZING_OPTIONS.map(size => {
+
+                                const marking = params.value && typeof params.value === 'object' ? params.value[size] : null;
+
+                                const doesNotExist = marking === undefined || marking === null;
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        key={size}
+                                        label={size}
+                                        onDelete={undefined}
+                                        onClick={(e) => {
+                                            params.api.setEditCellValue({
+                                                id: params.id,
+                                                field: params.field,
+                                                value: params.value ? {
+                                                    ...params.value,
+                                                    [size]: doesNotExist ? true : marking ? false : undefined
+                                                } : {
+                                                    [size]: doesNotExist ? true : marking ? false : undefined
+                                                }
+                                            })
+                                            return;
+                                        }}
+                                        variant={doesNotExist ? 'outlined' : 'filled'}
+                                        color={doesNotExist ? 'error' : marking ? 'success' : 'error'}
+                                        sx={{
+                                            marginBottom: "0.25rem",
+                                            overflow: 'hidden'
+                                        }}
+                                    />
+                                )
+                            })}
+                        </div>
+                    </div>
+                )
+            },
+            renderCell: (params: GridRenderCellParams<StripeProduct, SizeChart | undefined>) => {
+
+                if (!params.value) {
+                    return (
+                        <div className="flex top" style={{
+                            flexWrap: 'wrap',
+                            padding: "0.5rem"
+                        }}>
+                            <Chip
+                                size="small"
+                                key="create"
+                                label="Add Sizing"
+                                variant="outlined"
+                                onClick={handleEditClick(params.id)}
+                                sx={{
+                                    marginBottom: "0.25rem",
+                                    overflow: 'hidden'
+                                }}
+                            />
+                        </div>
+                    )
+                }
+
+                return (
+                    <div className="column compact" style={{
+                        padding: "0.5rem",
+                        height: "100%",
+                        overflowY: "scroll",
+                        width: "100%"
+                    }}>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {SIZING_OPTIONS.map(size => {
+
+                                const marking = params.value && typeof params.value === 'object' ? params.value[size] : null;
+
+                                const doesNotExist = marking === undefined || marking === null;
+
+                                if (doesNotExist) {
+                                    return;
+                                }
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        key={size}
+                                        label={size}
+                                        onDelete={undefined}
+                                        disabled={!marking}
+                                        sx={{
+                                            marginBottom: "0.25rem",
+                                            overflow: 'hidden'
+                                        }}
+                                    />
+                                )
+                            })}
+
+                            <Chip
+                                size="small"
+                                key="create"
+                                label="Manage Sizing"
+                                variant="outlined"
+                                onClick={handleEditClick(params.id)}
+                                sx={{
+                                    marginBottom: "0.25rem",
+                                    overflow: 'hidden'
+                                }}
+                            />
+                        </div>
                     </div>
                 )
             }
@@ -1320,7 +1451,7 @@ export default function AdminPage() {
                 width: "100%"
             }}>
 
-<TextField
+                <TextField
                     label="Search"
                     value={searchValue}
                     onChange={(e) => {

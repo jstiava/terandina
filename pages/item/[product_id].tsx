@@ -3,7 +3,7 @@
 import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
-import { Category, StripeAppProps, StripePrice, StripeProduct } from "@/types";
+import { Category, SIZING_OPTIONS, StripeAppProps, StripePrice, StripeProduct } from "@/types";
 import fetchAppServer from "@/utils/fetch";
 import { Button, Chip, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
@@ -376,6 +376,48 @@ export default function Home(props: StripeAppProps) {
                             </>
                         )}
 
+                        {product.sizes && (
+                            <div className="flex compact2">
+                                {SIZING_OPTIONS.map(size => {
+                                    const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
+
+                                    const doesNotExist = marking === undefined || marking === null;
+
+                                    if (doesNotExist) {
+                                        return;
+                                    }
+
+                                    return (
+                                        <Chip
+                                            className={!marking ? 'crossed-out' : ''}
+                                            size="medium"
+                                            key={size}
+                                            label={size}
+                                            onDelete={undefined}
+                                            disabled={!marking}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setProduct(prev => {
+                                                    if (!prev) return null;
+                                                    return {
+                                                        ...prev,
+                                                        size
+                                                    }
+                                                })
+                                            }}
+                                            sx={{
+                                                marginBottom: "0.25rem",
+                                                overflow: 'hidden',
+                                                backgroundColor: size === product.size ? theme.palette.divider : 'transparent'
+                                            }}
+                                        />
+                                    )
+
+
+                                })}
+                            </div>
+                        )}
+
                         <Button variant="outlined"
                             onClick={handleAddToCart}
                             fullWidth
@@ -405,7 +447,7 @@ export default function Home(props: StripeAppProps) {
                     padding: isSm ? "2rem 1rem" : "2rem 0",
                     width: "100%"
                 }}>
-                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>RELATED</Typography>
+                    <Typography variant="h6" sx={{ fontSize: "1rem", whiteSpace: 'pre-wrap', marginLeft: "1rem" }}>RECOMMENDED</Typography>
 
                     <Swiper
                         ref={swiperRef}
@@ -431,7 +473,6 @@ export default function Home(props: StripeAppProps) {
                         }}
                         modules={[Pagination, Navigation]}
                         breakpoints={{
-
                             300: {
                                 slidesPerView: 1.4,
                                 spaceBetween: 10,
@@ -459,7 +500,7 @@ export default function Home(props: StripeAppProps) {
 
                             <SwiperSlide className="slide" key={product.id}>
                                 <div className="flex center middle" style={{
-                                    padding: isSm ? "2rem 1rem" : 0
+                                    padding: isSm ? "1rem" : 0
                                 }}>
                                     <ProductCard
                                         product={product}

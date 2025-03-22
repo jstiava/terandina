@@ -87,7 +87,7 @@ export default function Home(props: StripeAppProps) {
                             <ProductCard
                                 key={product.id}
                                 product={product}
-                                addToCart={props.Cart.add}
+                                // addToCart={props.Cart.add}
                                 style={{
                                     animationDelay: `${delay}ms`,
                                     width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0rem)",

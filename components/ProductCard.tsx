@@ -1,5 +1,5 @@
-import { Category, StripePrice, StripeProduct } from "@/types"
-import { Avatar, AvatarGroup, Button, ButtonBase, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
+import { Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
@@ -70,7 +70,7 @@ export default function ProductCard({
     ...props
 }: {
     product: StripeProduct,
-    addToCart: UseCart['add'],
+    addToCart?: UseCart['add'],
     style?: CSSProperties,
     categories?: Category[] | null
 }) {
@@ -86,7 +86,7 @@ export default function ProductCard({
     const [copyOfProduct, setCopyOfProduct] = useState(product);
 
     const getCategories = async (pro: StripeProduct) => {
-        
+
         let theCats: Category[] = [];
 
         for (const cat_id of product.categories) {
@@ -133,7 +133,9 @@ export default function ProductCard({
 
     const handleAddToCart = (e: any) => {
         e.stopPropagation();
-
+        if (!addToCart) {
+            return;
+        }
         if (!product || !product.prices) {
             alert("Could not get prices for this item.")
             return;
@@ -185,7 +187,7 @@ export default function ProductCard({
                             height: "auto",
                             overflow: 'hidden'
                         }} />
-                    {isHovering && (
+                    {isHovering && addToCart && (
                         <Button variant="contained"
                             onClick={handleAddToCart}
                             fullWidth
@@ -209,6 +211,8 @@ export default function ProductCard({
                             product={copyOfProduct}
                             handleChangePrice={handleChangePrice}
                         />
+
+
                         <Typography variant="h5" sx={{
                             width: "fit-content",
                             lineHeight: "115%",
@@ -225,8 +229,48 @@ export default function ProductCard({
 
                         }}>{product.name}</Typography>
 
+                        {!isSm && product.sizes && (
+                            <div className="flex compact2">
+                                {SIZING_OPTIONS.map(size => {
+                                    const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
+
+                                    const doesNotExist = marking === undefined || marking === null;
+
+                                    if (doesNotExist) {
+                                        return;
+                                    }
+
+                                    return (
+                                        <Chip
+                                            className={!marking ? 'crossed-out' : ''}
+                                            size="small"
+                                            key={size}
+                                            label={size}
+                                            onDelete={undefined}
+                                            disabled={!marking}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setCopyOfProduct(prev => ({
+                                                    ...prev,
+                                                    size
+                                                }))
+                                            }}
+                                            sx={{
+                                                marginBottom: "0.25rem",
+                                                overflow: 'hidden',
+                                                backgroundColor: size === copyOfProduct.size ? theme.palette.divider : 'transparent'
+                                            }}
+                                        />
+                                    )
+
+
+                                })}
+                            </div>
+                        )}
+
                         {!isSm && (
-                            <div className="flex compact">
+                           <div className="flex between">
+                             <div className="flex compact">
                                 {product && categories && categories.map(c => {
 
                                     if (c.type === 'variant') {
@@ -242,6 +286,8 @@ export default function ProductCard({
                                     return null
                                 })}
                             </div>
+
+                           </div>
                         )}
                     </div>
 
@@ -288,7 +334,7 @@ export default function ProductCard({
                 </div>
             </div>
             <div className="flex between">
-                {isSm && (
+                {isSm && addToCart && (
                     <Button variant="contained"
                         onClick={handleAddToCart}
                         fullWidth
