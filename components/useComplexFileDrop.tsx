@@ -2,20 +2,10 @@
 // import axios from '@/utils/axios';
 import {
   Button,
-  IconButton,
-  Tooltip,
-  Typography,
   styled,
   useTheme,
-  lighten,
   Modal,
   Paper,
-  ButtonBase,
-  InputLabel,
-  MenuItem,
-  Select,
-  FormControl,
-  SelectChangeEvent,
   CircularProgress,
 } from '@mui/material';
 import {
@@ -27,20 +17,10 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import {
-  horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import React, { useCallback, useRef, useState, useEffect, ChangeEvent, SetStateAction, MouseEvent, Dispatch } from 'react';
-import { Portrait, ImageOutlined, Remove, SwapHoriz, AddPhotoAlternate, Delete, Update } from '@mui/icons-material';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import CancelIcon from '@mui/icons-material/Cancel';
-import Image from 'next/image';
-import { v4 as uuidv4 } from 'uuid';
-import { VariantProductStub } from '@/types';
-import { useUploadThing } from '@/utils/uploadthing';
-import { isLocale } from 'validator';
+import React, { useState, useEffect, SetStateAction, Dispatch } from 'react';
 import UploadForm from './UploadForm';
 import PhotoItem from './PhotoItem';
 
@@ -70,6 +50,9 @@ interface FileUploadProps {
 
 export type UploadType = {
   url: string;
+  small?: string | null;
+  medium?: string | null;
+  large?: string | null;
   size?: number;
   isLocal: boolean;
 

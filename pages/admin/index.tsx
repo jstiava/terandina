@@ -1,20 +1,13 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types";
-import { OurFileRouter, useUploadThing } from "@/utils/uploadthing";
 import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
-import { v4 as uuidv4 } from 'uuid';
 import {
     GridColDef,
     GridRenderCellParams,
     DataGrid,
-    useGridApiRef,
     GridToolbarContainer,
-    GridToolbarColumnsButton,
-    GridToolbarFilterButton,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
     GridRowSelectionModel,
     GridRenderEditCellParams,
     GridComparatorFn,
@@ -30,14 +23,10 @@ import {
     GridFilterOperator,
     GridFilterInputValueProps,
 } from '@mui/x-data-grid';
-import CoverImage from "@/components/CoverImage";
-import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupOutlined, GroupWorkOutlined, MinimizeOutlined, OpenInNew, PanoramaSharp, PhotoAlbumOutlined, PhotoOutlined, PropaneTankSharp, RemoveOutlined, SaveOutlined, SearchOutlined } from "@mui/icons-material";
+import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupWorkOutlined, OpenInNew, RemoveOutlined, SaveOutlined } from "@mui/icons-material";
 import { formatPrice } from "@/components/ProductCard";
-import useComplexFileDrop, { UploadType } from "@/components/useComplexFileDrop";
+import { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
-import { Router } from "next/router";
-import Stripe from "stripe";
-import Image from "next/image";
 import { zain_sans_font } from "@/styles/theme";
 
 const MAX_IMAGES = 5;
@@ -1092,6 +1081,68 @@ export default function AdminPage() {
                 )
             }
         },
+
+        {
+            field: "details",
+            headerName: "Details",
+            width: 300,
+            editable: true,
+            renderEditCell: (params) => {
+                return (
+                    <div className="flex top" style={{
+                        width: "100%",
+                        height: "100%"
+                    }}>
+                        <TextField
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                overflowY: "scroll",
+                                '& .MuiInputBase-root': {
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    width: "100%",
+                                    height: "fit-content",
+                                    padding: "0.5rem 1rem",
+                                    minHeight: "100%"
+                                },
+                                '& textarea': {
+                                    whiteSpace: 'pre-wrap',
+                                    fontSize: "1rem",
+                                    lineHeight: "100%",
+                                    minHeight: "100%"
+                                }
+                            }}
+                            onChange={e => {
+                                if (e.target.value === null) {
+                                    return;
+                                }
+                                params.api.setEditCellValue({
+                                    id: params.id,
+                                    field: params.field,
+                                    value: e.target.value
+                                })
+                            }}
+                            value={params.value}
+                            multiline
+                        />
+                    </div>
+                )
+            },
+            renderCell: (params: GridRenderCellParams<StripeProduct, string>) => {
+                return (
+                    <Typography sx={{
+                        width: "100%",
+                        overflowWrap: 'break-word',
+                        whiteSpace: 'pre-wrap',
+                        lineHeight: "115%",
+                        height: "100%",
+                        overflowY: "scroll",
+                        padding: "0.5rem 1rem"
+                    }}>{params.value}</Typography>
+                )
+            }
+        },
         {
             field: "active",
             headerName: "Active",
@@ -1365,7 +1416,8 @@ export default function AdminPage() {
                 is_featured: false,
                 selectedPrice: null,
                 quantity: 1,
-                marketing_features: []
+                marketing_features: [],
+                media: []
             };
 
 

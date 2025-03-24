@@ -2,13 +2,14 @@ import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
 import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
+import LocalMongo from "@/utils/local_mongo";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
 const sizeOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 const sendToStripeFields: (keyof Stripe.Product)[] = ['name', 'description']
-const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'is_featured', 'categories', 'sizes', 'size'];
+const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'media', 'details', 'is_featured', 'categories', 'sizes', 'size'];
 
 async function handlePostRequest(
   req: NextApiRequest,
@@ -116,10 +117,10 @@ export async function getProductById(productId: string): Promise<any | null> {
 
 export async function getAllProducts(query : Partial<{
   [key: string]: string | string[];
-}>) {
+}>, isProd = true) {
   try {
 
-    const mongo = await Mongo.getInstance();
+    const mongo = await Mongo.getInstance()
 
     const filter : Partial<{
       [key in keyof StripeProduct]: any
@@ -193,6 +194,7 @@ async function handleDeleteRequest(
 
 export async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
   try {
+
     const mongo = await Mongo.getInstance();
     const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
 

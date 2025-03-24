@@ -1,6 +1,6 @@
 import { GridRenderCellParams } from "@mui/x-data-grid";
 import CoverImage from "./CoverImage";
-import { StripeProduct } from "@/types";
+import { StripeProduct, TerandinaImage } from "@/types";
 import useComplexFileDrop, { UploadType } from "./useComplexFileDrop";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ClientUploadedFileData } from "uploadthing/types";
@@ -11,13 +11,17 @@ import { AddAPhotoOutlined, AspectRatio } from "@mui/icons-material";
 
 export default function ManagePhotosField({ params, onChange }: {
     params: GridRenderCellParams<StripeProduct, string[]>,
-    onChange: (files: string[]) => any
+    onChange: (files: TerandinaImage[]) => any
 }) {
 
     const [uploads, setUploads] = useState<UploadType[] | null>(null);
 
     const handleUpdate = (files: UploadType[]) => {
-        const theImages = files.map(x => x.url);
+        const theImages = files.map(x => ({
+            small: x.small,
+            medium: x.medium,
+            large: x.large
+        } as TerandinaImage));
         onChange(theImages);
         console.log("Action")
         fetch(`/api/products?id=${params.id}`, {
@@ -26,17 +30,27 @@ export default function ManagePhotosField({ params, onChange }: {
                 'Content-Type': "application/json"
             },
             body: JSON.stringify({
-                images: theImages
+                media: theImages
             })
         })
     }
 
     useEffect(() => {
-        setUploads(params.row.images.map(image => ({
-            url: image,
-            size: 0,
-            isLocal: false
-        })))
+
+        const us = [];
+
+        for (const media of params.row.media) {
+            if (media.small) {
+                us.push({
+                    ...media,
+                    url: media.small,
+                    size: 0,
+                    isLocal: false
+                })
+            }
+        }
+
+        setUploads(us);
     }, [])
 
     const FileDrop = useComplexFileDrop(uploads, setUploads, {

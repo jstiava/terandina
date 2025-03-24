@@ -16,11 +16,14 @@ import { ObjectId, WithId } from "mongodb";
 
 interface StaticProps {
   notFound?: boolean;
+  tag: Category | null;
   category: Category;
   products?: StripeProduct[]
 }
 
-export const getStaticPaths = (async () => {
+export const getStaticPaths = (async (context: any) => {
+
+  console.log(context);
 
   const mongo = await Mongo.getInstance()
   const categories = await mongo.clientPromise.db('products').collection('categories').find().toArray();
@@ -28,7 +31,7 @@ export const getStaticPaths = (async () => {
   return {
     paths: categories.map(cat => ({
       params: {
-        category: cat.slug
+        category: cat.slug,
       }
     })),
     fallback: true
@@ -37,7 +40,7 @@ export const getStaticPaths = (async () => {
 
 export const getStaticProps = (async (context: any) => {
 
-  console.log(context);
+  let products = null;
   const slug = context.params?.category;
 
   if (!slug) {
@@ -50,14 +53,13 @@ export const getStaticProps = (async (context: any) => {
   const mongo = await Mongo.getInstance();
   const [category] = await mongo.clientPromise.db('products').collection('categories').find({ slug, type: 'collection' }).toArray();
 
-
   if (!category) {
     return {
       notFound: true
     }
   }
 
-  const products = await getAllProducts({
+  products = await getAllProducts({
     category: category._id.toString()
   })
 
@@ -66,6 +68,8 @@ export const getStaticProps = (async (context: any) => {
       notFound: true
     }
   }
+
+
 
   try {
 
@@ -76,12 +80,12 @@ export const getStaticProps = (async (context: any) => {
             ...category,
             _id: category._id.toString()
           },
-        products: products?.map(p => {
+          products: products?.map(p => {
             return {
               ...p,
               _id: p._id.toString(),
-              categories: p.categories ? p.categories.map((c : ObjectId) => c.toString()) : [],
-              prices: p.prices ? p.prices.map((price : WithId<StripePrice>) => ({
+              categories: p.categories ? p.categories.map((c: ObjectId) => c.toString()) : [],
+              prices: p.prices ? p.prices.map((price: WithId<StripePrice>) => ({
                 ...price,
                 _id: price._id ? price._id.toString() : price.id
               })) : [],
@@ -132,18 +136,18 @@ export default function CategoryPage(props: StripeAppProps & {
         <title>Terandina - Handcrafted Native Outerwear and Accessories</title>
         <link rel="icon" type="image/png" href="/Terandina_no_text.png" />
       </Head>
-        <div className="flex center" style={{
-          position: 'fixed',
-          zIndex: 1,
-          top: '4rem',
-          padding: `0 ${isSm ? '1rem' : '2rem'}`,
-          height: "3.5rem",
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.paper,
-          animation: 'fade 0.2s ease-in-out forwards'
-        }}>
-          <Typography variant="h5">{props.static.category.name}</Typography>
-        </div>
+      <div className="flex center" style={{
+        position: 'fixed',
+        zIndex: 1,
+        top: '4rem',
+        padding: `0 ${isSm ? '1rem' : '2rem'}`,
+        height: "3.5rem",
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme.palette.background.paper,
+        animation: 'fade 0.2s ease-in-out forwards'
+      }}>
+        <Typography variant="h5">{props.static.tag ? `${props.static.tag.name} ` : ''}{props.static.category.name}</Typography>
+      </div>
       <div className="column center" style={{
         width: "100%",
         padding: 0,
@@ -210,7 +214,7 @@ export default function CategoryPage(props: StripeAppProps & {
               <ProductCard
                 key={product.id}
                 product={product}
-                // addToCart={props.Cart.add}
+                addToCart={!isSm ? props.Cart.add : undefined}
                 categories={props.categories}
                 style={{
                   animationDelay: `${delay}ms`,

@@ -442,7 +442,13 @@ export default function Header({ Cart, color, setColor }: {
                                             pleasePush(`/spiritual`)
                                         }}
                                     ><Typography sx={{ textAlign: "center" }}>Spirtual</Typography></MenuItemCover>
-                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Pottery</Typography></MenuItemCover>
+
+                                    <MenuItemCover
+                                        src={'/Pottery.jpg'}
+                                        onClick={() => {
+                                            pleasePush(`/pottery`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Pottery</Typography></MenuItemCover>
                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Authentic Collectables</Typography></MenuItemCover>
                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Accessories</Typography></MenuItemCover>
 

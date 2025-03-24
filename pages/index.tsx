@@ -53,7 +53,6 @@ export default function Home(props: StripeAppProps) {
       productList.push({
         ...product,
         quantity: 1,
-        images: product.images,
         selectedPrice: product.prices[0]
       })
     }

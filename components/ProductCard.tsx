@@ -1,10 +1,10 @@
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
-import { Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
 import { UseCart } from "@/checkout/useCart";
-import { ArrowForward, ArrowRightOutlined, Preview } from "@mui/icons-material";
+import { ArrowForward, ArrowRightOutlined, ExpandMore, Preview } from "@mui/icons-material";
 import { Router, useRouter } from "next/router";
 import CategoryVariantSelector from "./CategoryVariantSelector";
 
@@ -77,7 +77,9 @@ export default function ProductCard({
 
     const router = useRouter();
     const theme = useTheme();
+    const [expanded, setExpanded] = useState(false);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMd = useMediaQuery(theme.breakpoints.down('md'));
     const [isHovering, setIsHovering] = useState(false);
     const [isVariantMenuOpen, setIsVariantMenuOpen] = useState(false);
 
@@ -169,7 +171,7 @@ export default function ProductCard({
                 marginBottom: "2rem",
                 ...style
             }}>
-            {product.images && (
+            {product.media && (
                 <div className="column snug center"
 
                     style={{
@@ -177,7 +179,7 @@ export default function ProductCard({
                         width: "100%"
                     }}>
                     <CoverImageCarousel
-                        images={product.images}
+                        images={product.media}
                         width="100%"
                         height={"100%"}
                         isHovering={isHovering}
@@ -205,7 +207,7 @@ export default function ProductCard({
                     transition: "0.25s ease-in-out",
                 }}
             >
-                <div className={isSm ? "column compact" : "flex between top"} >
+                <div className={isMd ? "column compact" : "flex between top"} >
                     <div className="column compact">
                         <PriceSelector
                             product={copyOfProduct}
@@ -269,25 +271,29 @@ export default function ProductCard({
                         )}
 
                         {!isSm && (
-                           <div className="flex between">
-                             <div className="flex compact">
-                                {product && categories && categories.map(c => {
+                            <div className="flex between">
+                                <div className="flex compact">
+                                    {product && categories && categories.map((c, i) => {
 
-                                    if (c.type === 'variant') {
-                                        return (
-                                            <CategoryVariantSelector
-                                                key={c._id}
-                                                category={c}
-                                                product={product}
-                                                size='small'
-                                            />
-                                        )
-                                    }
-                                    return null
-                                })}
+                                        if (c.type === 'variant') {
+
+                                            return (
+                                                <CategoryVariantSelector
+                                                    key={c._id}
+                                                    category={c}
+                                                    product={product}
+                                                    size='small'
+                                                    onMore={() => {
+                                                        setIsVariantMenuOpen(true);
+                                                    }}
+                                                />
+                                            )
+                                        }
+                                        return null
+                                    })}
+                                </div>
+
                             </div>
-
-                           </div>
                         )}
                     </div>
 
@@ -316,7 +322,7 @@ export default function ProductCard({
                                                 {c.products.map(p => {
 
                                                     return (
-                                                        <Avatar key={p.id} alt={p.name} src={p.images[0]} />
+                                                        <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
                                                     )
                                                 })}
                                             </AvatarGroup>
@@ -343,7 +349,7 @@ export default function ProductCard({
                         }}>Add to Cart</Button>
                 )}
             </div>
-            <Drawer anchor="bottom" open={isVariantMenuOpen}
+            <Drawer anchor={isMd ? 'bottom' : 'right'} open={isVariantMenuOpen}
                 onClose={(e: any, reason) => {
                     e.stopPropagation();
                     setIsVariantMenuOpen(false)
@@ -353,54 +359,140 @@ export default function ProductCard({
                 }}
             >
                 <div className="column" style={{
-                    padding: "2rem 1rem",
-                    backgroundColor: 'white'
+                    padding: "2rem 0",
+                    backgroundColor: 'white',
+                    width: isMd ? "100%" : "30rem",
+                    maxWidth: "100%",
+                    height: "100%"
                 }}>
-                    {categories && categories.map(c => {
 
-                        if (c.type === 'variant') {
+                    <div className="column" style={{
+                        padding: "0 1rem"
+                    }}>
 
-                            return (
-                                <Fragment key={c._id}>
+                        {categories && categories.map(c => {
+
+                            if (c.type === 'variant') {
+
+                                return (
+                                    <Fragment key={c._id}>
+                                        <Typography variant="h6" sx={{
+                                            textTransform: "uppercase",
+                                            opacity: 0.75,
+                                            fontSize: "1rem"
+                                        }}>{c.name}</Typography>
+                                        <div className="column snug">
+                                            {c.products.map((p: any) => {
+                                                return (
+                                                    <ButtonBase
+                                                        key={p.id}
+                                                        className="flex between"
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            router.push(`/item/${p.id}`)
+                                                        }}
+                                                        style={{
+                                                            padding: "0.5rem 0.75rem 0.5rem 0.5rem",
+                                                            backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
+                                                            borderRadius: "0.25rem"
+                                                        }}>
+                                                        <div className="flex compact">
+                                                            <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
+                                                            <Typography sx={{
+                                                                fontSize: "1rem"
+                                                            }}>{p.name}</Typography>
+                                                        </div>
+                                                        <ArrowForward fontSize="small" sx={{
+                                                            opacity: 0.75
+                                                        }} />
+                                                    </ButtonBase>
+                                                )
+                                            })}
+                                        </div>
+                                    </Fragment>
+                                )
+                            }
+
+                            return null;
+                        })}
+                    </div>
+                    <div className="column">
+                        <Accordion
+                            expanded={expanded}
+                            onChange={(e) => setExpanded(prev => !prev)}
+                            disableGutters
+                            elevation={0}
+                            square
+                            sx={{
+                                backgroundColor: "white"
+                            }}
+                        >
+                            <AccordionSummary
+                                {...props}
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel1-content"
+                                id="panel1-header"
+                                sx={{
+                                    '& .MuiAccordionSummary-content': {
+                                        width: "calc(100% - 5rem)",
+                                        backgroundColor: 'transparent'
+                                    }
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: '0.25rem 0.25rem 0.25rem 0',
+                                        height: '2rem',
+                                        width: "100%",
+                                    }}
+                                >
                                     <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        opacity: 0.75,
-                                        fontSize: "1rem"
-                                    }}>{c.name}</Typography>
-                                    <div className="column snug">
-                                        {c.products.map((p: any) => {
-                                            return (
-                                                <ButtonBase
-                                                    key={p.id}
-                                                    className="flex between"
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        router.push(`/item/${p.id}`)
-                                                    }}
-                                                    style={{
-                                                        padding: "0.5rem 0.75rem 0.5rem 0.5rem",
-                                                        backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
-                                                        borderRadius: "0.25rem"
-                                                    }}>
-                                                    <div className="flex compact">
-                                                        <Avatar key={p.id} alt={p.name} src={p.images[0]} />
-                                                        <Typography sx={{
-                                                            fontSize: "1rem"
-                                                        }}>{p.name}</Typography>
-                                                    </div>
-                                                    <ArrowForward fontSize="small" sx={{
-                                                        opacity: 0.75
-                                                    }} />
-                                                </ButtonBase>
-                                            )
-                                        })}
-                                    </div>
-                                </Fragment>
-                            )
-                        }
+                                            textTransform: "uppercase",
+                                            opacity: 0.75,
+                                            fontSize: "1rem"
+                                        }}>Related</Typography>
 
-                        return null;
-                    })}
+                                </div>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <div className="column" >
+                                    {categories && categories.map((c, i) => {
+
+                                        if (c.type === 'variant') {
+                                            return null;
+                                        }
+
+                                        return (
+                                            <ButtonBase
+                                                key={c._id}
+                                                className="flex between"
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    router.push(`/${c.slug}`);
+                                                    setIsVariantMenuOpen(false);
+                                                }}
+                                                style={{
+                                                    padding: "0.5rem 0.75rem 0.5rem 0.5rem",
+
+                                                    borderRadius: "0.25rem"
+                                                }}>
+                                                <div className="flex compact">
+                                                    <Typography sx={{
+                                                        fontSize: "1rem"
+                                                    }}>{c.name}</Typography>
+                                                </div>
+                                                <ArrowForward fontSize="small" sx={{
+                                                    opacity: 0.75
+                                                }} />
+                                            </ButtonBase>
+                                        )
+                                    })}
+                                </div>
+                            </AccordionDetails>
+                        </Accordion>
+                    </div>
                 </div>
             </Drawer>
         </ButtonBase>

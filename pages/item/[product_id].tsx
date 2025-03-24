@@ -36,12 +36,9 @@ export default function Home(props: StripeAppProps) {
             const scrollY = window.scrollY || document.documentElement.scrollTop;
             setScrollHeight(scrollY)
         };
-
         setClientHeight(document.documentElement.clientHeight);
-
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -117,7 +114,7 @@ export default function Home(props: StripeAppProps) {
         setProduct({
             ...response.product,
             quantity: 1,
-            images: response.product.images,
+            media: response.product.media,
             selectedPrice: response.product.prices[0]
         });
     }
@@ -154,7 +151,7 @@ export default function Home(props: StripeAppProps) {
                     productList.push({
                         ...product,
                         quantity: 1,
-                        images: product.images,
+                        media: product.media,
                         selectedPrice: product.prices[0]
                     })
                 }
@@ -178,7 +175,6 @@ export default function Home(props: StripeAppProps) {
 
     return (
         <>
-
             {isSm && (
                 <ScrollButton
                     scrollPercentage={0.5}
@@ -258,10 +254,10 @@ export default function Home(props: StripeAppProps) {
                                 }}
                                 className="mySwiper"
                             >
-                                {product.images.map((image, index) => (
-                                    <SwiperSlide className="slide" key={`${image}_${index}`}>
+                                {product.media.map((image, index) => (
+                                    <SwiperSlide className="slide" key={`${image.small || ''}_${index}`}>
                                         <CoverImage
-                                            url={image}
+                                            url={image.large || ''}
                                             width="100vw"
                                             height="auto"
                                             style={{
@@ -273,37 +269,35 @@ export default function Home(props: StripeAppProps) {
                             </Swiper>
                         </div>
                     ) : (
-
                         <>
-
                             <div className="column" style={{
                                 position: 'relative',
                                 width: isSm ? "100%" : isMd ? '25rem' : '45%',
                                 height: "fit-content"
                             }}>
-                                {product.images && product.images.length > 0 && (
+                                {product.media && product.media.length > 0 && (
                                     <>
                                         <div className="column compact" style={{
                                             position: "sticky",
-                                            top: `calc(100vh - ${product.images.length * 32}px)`,
+                                            top: `calc(100vh - ${product.media.length * 42}px)`,
                                             left: "3.5rem",
                                             zIndex: 1,
                                             width: "fit-content",
                                             padding: "1rem 0"
                                         }}>
-                                            {product.images && product.images.map((image, index) => {
+                                            {product.media && product.media.map((image, index) => {
 
                                                 const top = (index * (clientHeight - 90 + 8));
                                                 return (
                                                     <div
                                                         onClick={() => window.scrollTo({ top, behavior: 'smooth' })}
-                                                        key={`${image}_${index}`}
+                                                        key={`${image.small || 'small'}_${index}`}
                                                         style={{
-                                                            width: "0.75rem",
-                                                            height: "0.75rem",
+                                                            width: "0.7rem",
+                                                            height: "0.7rem",
                                                             borderRadius: "100%",
-                                                            border: "0.15rem solid black",
-                                                            backgroundColor: scrollHeight >= (top - ((clientHeight - 90) / 2)) && scrollHeight <= (top + ((clientHeight - 90) / 2)) ? 'black' : 'white',
+                                                            // border: `0.1rem solid ${theme.palette.primary.main}`,
+                                                            backgroundColor: scrollHeight >= (top - ((clientHeight - 90) / 2)) && scrollHeight <= (top + ((clientHeight - 90) / 2)) ? theme.palette.primary.main : 'white',
 
                                                         }}></div>
                                                 )
@@ -316,12 +310,12 @@ export default function Home(props: StripeAppProps) {
                                 )}
                                 <div className="column" style={{
                                     width: "100%",
-                                    marginTop: `calc(-1 * ${(product.images.length * 32) + 16}px)`,
+                                    marginTop: `calc(-1 * ${(product.media.length * 32) + 16}px)`,
                                 }}>
-                                    {product.images && product.images.map(image => (
+                                    {product.media && product.media.map(image => (
                                         <CoverImage
-                                            key={image}
-                                            url={image}
+                                            key={image.large || ''}
+                                            url={image.large || ''}
                                             width="100%"
                                             height="calc(100vh - 90px)"
                                         />
@@ -330,7 +324,7 @@ export default function Home(props: StripeAppProps) {
                             </div>
                         </>
                     )}
-                    <div className="column" style={{
+                    <div className="column relaxed" style={{
                         width: isSm ? "100%" : `calc(100% - ${isMd ? '25rem' : '45%'})`,
                         maxWidth: "40rem",
                         padding: isSm ? "0 2rem" : "3rem",
@@ -349,23 +343,22 @@ export default function Home(props: StripeAppProps) {
                             />
                         </div>
 
-                        <div className="flex compact">
-                            {product && categories && categories.map(c => {
+                        {product && categories && categories.some(c => c.type === 'variant') && categories.map(c => {
 
-                                if (c.type === 'variant') {
-                                    return (
-                                        <CategoryVariantSelector
-                                            key={c._id}
-                                            category={c}
-                                            product={product}
-                                        />
-                                    )
-                                }
+                            if (c.type != 'variant') {
+                                return null;
+                            }
 
-                                return null
-                            })}
-                        </div>
-                        {/* <Divider sx={{ width: "100%" }}></Divider> */}
+                            return (
+                                <div className="flex compact" key={c._id.toString() }>
+                                    <CategoryVariantSelector
+                                        key={c._id}
+                                        category={c}
+                                        product={product}
+                                    />
+                                </div>
+                            )
+                        })}
                         {product.prices && product.prices.length > 1 && (
                             <>
                                 <PriceSelector
@@ -375,7 +368,6 @@ export default function Home(props: StripeAppProps) {
                                 />
                             </>
                         )}
-
                         {product.sizes && (
                             <div className="flex compact2">
                                 {SIZING_OPTIONS.map(size => {
@@ -412,8 +404,6 @@ export default function Home(props: StripeAppProps) {
                                             }}
                                         />
                                     )
-
-
                                 })}
                             </div>
                         )}
@@ -424,6 +414,8 @@ export default function Home(props: StripeAppProps) {
                             sx={{
                                 width: "100%"
                             }}>Add to Cart</Button>
+
+
                         {product.description && (
                             <div className="column compact">
                                 <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DESCRIPTION</Typography>

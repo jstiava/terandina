@@ -1,4 +1,4 @@
-import { ourFileRouter } from "@/utils/uploadthing";
+import { ourFileRouter } from "@/utils/utapi";
 import { createRouteHandler } from "uploadthing/next-legacy";
 
 

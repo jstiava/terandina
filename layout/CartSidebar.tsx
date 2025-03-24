@@ -77,10 +77,10 @@ export default function CartSidebar({
             }}>
                 <div className="flex fit compact">
                     <Typography variant="h5" component="h3" sx={{
-                        fontSize: "2.5rem"
+                        fontSize: "1.5rem"
                     }}>Your Cart</Typography>
                     <ShoppingBagOutlined sx={{
-                        fontSize: "1.5rem"
+                        fontSize: "1rem"
                     }} />
                 </div>
                 <Divider style={{

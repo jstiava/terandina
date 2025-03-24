@@ -2,31 +2,13 @@
 // import axios from '@/utils/axios';
 import {
   Button,
-  IconButton,
-  Tooltip,
   Typography,
   styled,
   useTheme,
-  lighten,
-  Modal,
-  Paper,
-  ButtonBase,
-  InputLabel,
-  MenuItem,
-  Select,
-  FormControl,
-  SelectChangeEvent,
-  CircularProgress,
 } from '@mui/material';
-import React, { useCallback, useRef, useState, useEffect, ChangeEvent, SetStateAction, MouseEvent, Dispatch } from 'react';
-import { Portrait, ImageOutlined, Remove, SwapHoriz, AddPhotoAlternate, Delete, Update, DeleteOutlined, DeleteOutline } from '@mui/icons-material';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import CancelIcon from '@mui/icons-material/Cancel';
-import Image from 'next/image';
-import { v4 as uuidv4 } from 'uuid';
-import { VariantProductStub } from '@/types';
+import React, { useState } from 'react';
 import { useUploadThing } from '@/utils/uploadthing';
-import { isLocale } from 'validator';
+import { UploadType } from './useComplexFileDrop';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -45,13 +27,6 @@ interface FileUploadProps {
   instructions: string;
 }
 
-export type UploadType = {
-  url: string;
-  size?: number;
-  isLocal: boolean;
-
-}
-
 export default function UploadForm({onAdd} : {onAdd : (newImages : UploadType[]) => any}) {
   const theme = useTheme();
   const [isDragOver, setIsDragOver] = useState(false);
@@ -62,9 +37,15 @@ export default function UploadForm({onAdd} : {onAdd : (newImages : UploadType[])
     onClientUploadComplete: (res) => {
       if (res) {
 
+        console.log({
+          message: "Upload complete",
+          res
+        })
+
         try {
           const uploadedFiles = res.map(file => ({
-            url: file.ufsUrl,
+            ...file.serverData,
+            url: file.serverData.small,
             size: file.size,
             isLocal: false
           }))

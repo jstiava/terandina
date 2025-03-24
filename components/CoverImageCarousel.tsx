@@ -3,9 +3,10 @@ import { IconButton, useTheme } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import CoverImage from './CoverImage';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { TerandinaImage } from '@/types';
 
 interface CoverImageCarouselProps {
-  images: string[];
+  images: TerandinaImage[];
   height: string;
   width: string;
   isHovering: boolean;
@@ -67,7 +68,7 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
       </>
      )}
        {(images && images.length >= active) && (
-         <CoverImage key={images[active]} url={images[active]} width={width} height={height} />
+         <CoverImage key={images[active].medium} url={images[active].medium || ''} width={width} height={height} />
        )}
     </div>
   );

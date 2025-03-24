@@ -11,6 +11,7 @@ class Mongo {
   private constructor() {
     if (process.env.NODE_ENV === 'development') {
       if (!(global as any)._mongoClientPromise) {
+        console.log("MONGO")
         this.client = new MongoClient(uri, {
           readPreference: 'primary',
           serverApi: {
@@ -19,6 +20,8 @@ class Mongo {
             deprecationErrors: true,
           },
           ssl: true,
+          // ssl: false,
+          // tls: false,
           connectTimeoutMS: 50000,
         });
       }

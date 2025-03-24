@@ -1,5 +1,5 @@
-import { StripePrice, StripeProduct } from "@/types"
-import { Button, ButtonBase, IconButton, Typography, useTheme } from "@mui/material"
+import { SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
+import { Button, ButtonBase, Chip, IconButton, Typography, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { useEffect, useState } from "react";
 import CoverImage from "./CoverImage";
@@ -74,9 +74,9 @@ export default function ProductInBagCard({
                 width: "100%",
                 padding: "0.25rem"
             }}>
-            {product.images && (
+            {product.media && (
                 <CoverImage
-                    url={product.images[0]}
+                    url={product.media[0].medium || ''}
                     width="5rem"
                     height="5rem"
                     style={{
@@ -84,44 +84,53 @@ export default function ProductInBagCard({
                         overflow: 'hidden'
                     }} />
             )}
-            <div className="flex between top"
-                style={{ width: "calc(100% - 6rem)" }}
-            >
-                <div className="column compact left">
-                    {swap && (
-                        <PriceSelector product={product} handleChangePrice={handleChangePrice} />
-                    )}
-                    <Typography variant="h5" sx={{
-                        textAlign: 'left',
-                        lineHeight: "115%"
-                    }}>{product.name}</Typography>
+            <div className="column compact left" style={{
+                width: "calc(100% - 6rem)"
+            }}>
+                    <div className="flex between top">
+
+                        <div className="flex fit">
+                            <Typography variant="h5" sx={{
+                                fontSize: "1rem",
+                                textAlign: 'left',
+                                lineHeight: "115%"
+                            }}>{product.name}</Typography>
+                        </div>
+                        {product.selectedPrice && product.quantity && (
+                            <DisplayPrice product={product} style={{
+                                fontSize: '1rem'
+                            }} />
+                        )}
+                    </div>
                     {!swap && (
                         <Typography sx={{
                             textTransform: 'uppercase'
                         }}>{product.selectedPrice?.lookup_key}</Typography>
                     )}
-                    <Typography>Quantity: {product.quantity}</Typography>
-                </div>
-                <div className="column snug right fit"
-                >
-                    {product.selectedPrice && product.quantity && (
-                        <DisplayPrice product={product} />
-                    )}
-                    {swap && removeFromCart && (
-                        <div className="flex snug">
-                            <IconButton onClick={handleRemoveFromCart}>
-                                <DeleteOutlined fontSize="small" />
-                            </IconButton>
+                    <div className="flex between">
+                        <div className="flex compact fit">
                             <IconButton onClick={() => handleQuantityChange(-1)}>
                                 <RemoveOutlined fontSize="small" />
                             </IconButton>
+                            <Typography>{product.quantity}</Typography>
                             <IconButton onClick={() => handleQuantityChange(1)}>
                                 <AddOutlined fontSize="small" />
                             </IconButton>
+                    {product.sizes && (
+                        <div className="flex compact2 fit middle">
+                            {/* TODO - Size */}
                         </div>
                     )}
+                        </div>
+                        {swap && removeFromCart && (
+                            <div className="flex snug fit">
+                                <IconButton onClick={handleRemoveFromCart}>
+                                    <DeleteOutlined fontSize="small" color="error" />
+                                </IconButton>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
         </ButtonBase>
     )
 }
