@@ -6,7 +6,7 @@ import { useState } from "react";
 import { AddOutlined, MoreHorizOutlined, MoreOutlined } from "@mui/icons-material";
 
 
-export default function CategoryVariantSelector({ product, category, size = 'medium', onMore }: { product: StripeProduct, category: Category, size?: 'small' | 'medium' | 'large', onMore? : () => any }) {
+export default function CategoryVariantSelector({ product, category, size = 'medium', onMore, onClose }: { product: StripeProduct, category: Category, size?: 'small' | 'medium' | 'large', onMore? : () => any, onClose: any }) {
 
     const theme = useTheme();
     const router = useRouter();
@@ -39,7 +39,8 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                     >
                         <ButtonBase
                             onClick={() => {
-                                router.replace(`/item/${p.id}`)
+                                onClose();
+                                router.replace(`/item/${p.id}`);
                             }}
                         >
                             <CoverImage

@@ -286,6 +286,9 @@ export default function ProductCard({
                                                     onMore={() => {
                                                         setIsVariantMenuOpen(true);
                                                     }}
+                                                    onClose={() => {
+                                                        setIsVariantMenuOpen(false);
+                                                    }}
                                                 />
                                             )
                                         }
@@ -389,6 +392,7 @@ export default function ProductCard({
                                                         className="flex between"
                                                         onClick={e => {
                                                             e.stopPropagation();
+                                                            setIsVariantMenuOpen(false);
                                                             router.push(`/item/${p.id}`)
                                                         }}
                                                         style={{

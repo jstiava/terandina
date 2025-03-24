@@ -175,6 +175,9 @@ export default function Home(props: StripeAppProps) {
 
     return (
         <>
+            <Head>
+                <title>{product.name} - Terandina - Handcrafted Native Outerwear and Accessories</title>
+            </Head>
             {isSm && (
                 <ScrollButton
                     scrollPercentage={0.5}
@@ -350,11 +353,14 @@ export default function Home(props: StripeAppProps) {
                             }
 
                             return (
-                                <div className="flex compact" key={c._id.toString() }>
+                                <div className="flex compact" key={c._id.toString()}>
                                     <CategoryVariantSelector
                                         key={c._id}
                                         category={c}
                                         product={product}
+                                        onClose={() => {
+                                            return;
+                                        }}
                                     />
                                 </div>
                             )

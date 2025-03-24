@@ -134,7 +134,6 @@ export default function CategoryPage(props: StripeAppProps & {
     <>
       <Head>
         <title>Terandina - Handcrafted Native Outerwear and Accessories</title>
-        <link rel="icon" type="image/png" href="/Terandina_no_text.png" />
       </Head>
       <div className="flex center" style={{
         position: 'fixed',

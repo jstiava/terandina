@@ -60,7 +60,6 @@ export default function Home(props: StripeAppProps) {
         <>
             <Head>
                 <title>Terandina - Shop All</title>
-                <link rel="icon" type="image/png" href="/Terandina_no_text.png" />
             </Head>
             <div className="column center"
                 style={{
@@ -88,6 +87,7 @@ export default function Home(props: StripeAppProps) {
                                 key={product.id}
                                 product={product}
                                 // addToCart={props.Cart.add}
+                                addToCart={!isSm ? props.Cart.add : undefined}
                                 style={{
                                     animationDelay: `${delay}ms`,
                                     width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0rem)",

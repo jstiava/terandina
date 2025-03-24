@@ -74,7 +74,6 @@ export default function Home(props: StripeAppProps) {
     <>
       <Head>
         <title>Terandina - Handcrafted Native Outerwear and Accessories</title>
-        <link rel="icon" type="image/png" href="/Terandina_no_text.png" />
       </Head>
       <div className="column center"
         style={{
@@ -90,7 +89,7 @@ export default function Home(props: StripeAppProps) {
             url="/no_license_landscape.jpg"
             height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
             width={"100%"}
-            className={isSm ? 'column center middle' : 'flex between bottom'}
+            className={isSm ? 'column center bottom' : 'flex between bottom'}
             style={{
               position: 'relative',
               backgroundImage: 'url(/no_license_landscape.jpg)',
@@ -111,7 +110,8 @@ export default function Home(props: StripeAppProps) {
               zIndex: 0
             }}></div>
             <div className="flex fit" style={{
-              zIndex: 1
+              zIndex: 1,
+              marginBottom: isSm ? "5rem" : "0rem"
             }}>
               {isSm ? (
                 <Typography sx={{
@@ -119,12 +119,12 @@ export default function Home(props: StripeAppProps) {
                   color: '#ffffff',
                   textAlign: isSm ? 'center' : 'left',
                   padding: "1.5rem",
-                  border: "0.25rem solid white",
+                  // border: "0.25rem solid white",
                   marginBottom: "1rem",
-                  fontSize: isSm ? "1.85rem" : "2rem"
+                  fontSize: "1.5rem"
                 }}
                   variant="h1"
-                >Crafted<br /> in the Andes<br />Rooted in <br />Tradition</Typography>
+                >Crafted in the Andes<br />Rooted in Tradition</Typography>
               ) : (
                 <Typography sx={{
                   lineHeight: "115%",
@@ -147,7 +147,7 @@ export default function Home(props: StripeAppProps) {
               <Button fullWidth={isSm} variant="contained" onClick={() => {
                 router.push('/products')
               }}>Shop All</Button>
-              <Button fullWidth={isSm} variant="text" onClick={() => router.push('/values')} sx={{
+              <Button fullWidth={isSm} variant="text" onClick={() => router.push('/our-values')} sx={{
                 color: '#ffffff',
                 borderColor: "#ffffff"
               }}>
@@ -234,7 +234,7 @@ export default function Home(props: StripeAppProps) {
                   }}>
                     <ProductCard
                       product={product}
-                      // addToCart={props.Cart.add}
+                      addToCart={!isSm ? props.Cart.add : undefined}
                       style={{
                         animationDelay: `${0}ms`,
                         // width: "100%"
