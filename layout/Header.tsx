@@ -118,9 +118,14 @@ export default function Header({ Cart, color, setColor }: {
             }
         });
 
-        setTimeout(() => {
+        if (key === 'menu') {
             setActiveMenu(key);
-        }, 300);
+        }
+        else {
+            setTimeout(() => {
+                setActiveMenu(key);
+            }, 300);
+        }
 
         setTimeout(() => {
             anime({
