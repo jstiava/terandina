@@ -4,29 +4,144 @@ import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
 import { Category, SIZING_OPTIONS, StripeAppProps, StripePrice, StripeProduct } from "@/types";
-import fetchAppServer from "@/utils/fetch";
-import { Button, Chip, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import CategoryVariantSelector from "@/components/CategoryVariantSelector";
 import ScrollButton from "@/components/ScrollButton";
+import Mongo from "@/utils/mongo";
+import { getAllProducts } from "../api/products";
+import { ObjectId, WithId } from "mongodb";
+import { getAllCategories } from "../api/categories";
+
+interface StaticProps {
+    notFound?: boolean;
+    product: StripeProduct;
+    products: StripeProduct[];
+    categories: Category[];
+}
+
+export const getStaticPaths = (async (context: any) => {
+
+    const mongo = await Mongo.getInstance()
+    const products = await mongo.clientPromise.db('products').collection('products').find().toArray();
+
+    return {
+        paths: products.map(p => ({
+            params: {
+                product_id: p.id,
+            }
+        })),
+        fallback: true
+    }
+});
+
+export const getStaticProps = (async (context: any) => {
+
+    let products = null;
+    const p_id = context.params.product_id;
+
+    if (!p_id) {
+        console.log("No product id.")
+        return {
+            notFound: true
+        }
+    }
+
+    const mongo = await Mongo.getInstance();
+    const [product] = await mongo.clientPromise.db('products').collection('products').find({ id: p_id }).toArray();
+
+    if (!product) {
+        return {
+            notFound: true
+        }
+    }
+
+    products = await getAllProducts({
+        related_to: product._id.toString()
+    });
+
+    const categories = await getAllCategories({
+        cat_ids: product.categories.map((c: ObjectId) => c.toString()),
+    }, {
+        getProductsIfVariant: true
+    });
+
+    if (!products) {
+        return {
+            notFound: true
+        }
+    }
+
+    if (!categories) {
+        return {
+            notFound: true
+        }
+    }
+
+    for (const c of categories) {
+
+        if (!c.products) {
+            continue;
+        }
+        console.log(c.products.map((p: any) => {
+            return
+        }))
+    }
+
+    for (const p of products) {
+        if (!p.categories) {
+            continue;
+        }
+
+        const cats = await getAllCategories({
+            cat_ids: p.categories.map((c: ObjectId) => c.toString())
+        }, {
+            getProductsIfVariant: true
+        });
+
+        p.categories = cats;
+    }
 
 
-export default function Home(props: StripeAppProps) {
+    const theStatic = {
+        product: JSON.parse(JSON.stringify(product)),
+        products: JSON.parse(JSON.stringify(products)),
+        categories: JSON.parse(JSON.stringify(categories))
+    }
+
+    try {
+        return {
+            props: {
+                static: theStatic,
+            }
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
+
+
+export default function Home(props: StripeAppProps & {
+    static: StaticProps
+}) {
 
     const theme = useTheme();
     const router = useRouter();
-    const [product, setProduct] = useState<StripeProduct | null>(null);
-    const [categories, setCategories] = useState<Category[] | null>(null);
+
+    const product = props.static.product;
+    const categories = props.static.categories;
+    const products = props.static.products;
+
     const swiperRef = useRef<any>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const [products, setProducts] = useState<StripeProduct[] | null>(null);
 
     const [clientHeight, setClientHeight] = useState(0);
     const [scrollHeight, setScrollHeight] = useState(0);
@@ -43,81 +158,19 @@ export default function Home(props: StripeAppProps) {
     }, []);
 
 
-    const handleChangePrice = (newPrice: StripePrice) => {
+    // const handleChangePrice = (newPrice: StripePrice) => {
 
-        if (!product) {
-            return;
-        }
-        setProduct(prev => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                selectedPrice: newPrice
-            }
-        })
-    }
-
-    const getProduct = async () => {
-
-        const item_id = router.query.product_id;
-
-        if (!item_id) {
-            console.log("There was no product_id provided.")
-        }
-
-        const productFetch = await fetch(`/api/products?id=${item_id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!productFetch.ok) {
-            return;
-        }
-
-        const response = await productFetch.json();
-
-
-        if (response.product.categories) {
-
-            let theCats: Category[] = [];
-
-            for (const cat_id of response.product.categories) {
-                const category = props.categories?.find(c => c._id === cat_id);
-
-                if (!category) {
-                    continue;
-                }
-
-                await fetch(`/api/products?category=${cat_id}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                    .then(res => res.json())
-                    .then(res => {
-
-                        if (res.products) {
-                            category.products = res.products;
-                        }
-                        theCats.push(category);
-                    })
-
-            }
-
-            setCategories(theCats)
-        }
-
-
-        setProduct({
-            ...response.product,
-            quantity: 1,
-            media: response.product.media,
-            selectedPrice: response.product.prices[0]
-        });
-    }
+    //     if (!product) {
+    //         return;
+    //     }
+    //     setProduct(prev => {
+    //         if (!prev) return null;
+    //         return {
+    //             ...prev,
+    //             selectedPrice: newPrice
+    //         }
+    //     })
+    // }
 
     const handleAddToCart = (e: any) => {
         e.stopPropagation();
@@ -130,46 +183,17 @@ export default function Home(props: StripeAppProps) {
     }
 
     useEffect(() => {
-
-        if (!router || router.query.product_id === 'product_id') {
-            return;
+        if (props && props.static) {
+            if (props.static.notFound) {
+                router.back();
+            }
         }
 
-        // Get related items
-        fetch(`/api/products?related_to=${router.query.product_id}`)
-            .then(res => res.json())
-            .then(response => {
-
-                let productList = [];
-                let i = 0;
-
-                for (i; i < response.products.length; i++) {
-                    const product = response.products[i];
-                    if (!product.prices || product.prices.length === 0) {
-                        continue;
-                    }
-                    productList.push({
-                        ...product,
-                        quantity: 1,
-                        media: product.media,
-                        selectedPrice: product.prices[0]
-                    })
-                }
-
-                setProducts(productList);
-            })
-            .catch(err => {
-                return;
-            })
-
-        getProduct();
-
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [router]);
+    }, [props]);
 
 
-    if (!product) {
+    if (!props || !props.static || !props.static.product) {
         return <></>
     }
 
@@ -370,7 +394,9 @@ export default function Home(props: StripeAppProps) {
                                 <PriceSelector
                                     size="small"
                                     product={product}
-                                    handleChangePrice={handleChangePrice}
+                                    handleChangePrice={(newPrice) => {
+                                        return;
+                                    }}
                                 />
                             </>
                         )}
@@ -395,13 +421,13 @@ export default function Home(props: StripeAppProps) {
                                             disabled={!marking}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                setProduct(prev => {
-                                                    if (!prev) return null;
-                                                    return {
-                                                        ...prev,
-                                                        size
-                                                    }
-                                                })
+                                                // setProduct(prev => {
+                                                //     if (!prev) return null;
+                                                //     return {
+                                                //         ...prev,
+                                                //         size
+                                                //     }
+                                                // })
                                             }}
                                             sx={{
                                                 marginBottom: "0.25rem",

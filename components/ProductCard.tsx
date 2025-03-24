@@ -82,48 +82,13 @@ export default function ProductCard({
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
     const [isHovering, setIsHovering] = useState(false);
     const [isVariantMenuOpen, setIsVariantMenuOpen] = useState(false);
-
-    const [categories, setCategories] = useState<Category[] | null>(null);
+    const categories = ((product.categories && (Array.isArray(product.categories) && product.categories.length > 0)) && typeof product.categories[0] === 'object') ? product.categories as Category[] : [];
 
     const [copyOfProduct, setCopyOfProduct] = useState(product);
-
-    const getCategories = async (pro: StripeProduct) => {
-
-        let theCats: Category[] = [];
-
-        for (const cat_id of product.categories) {
-            const category = props.categories?.find(c => c._id === cat_id);
-
-            if (!category) {
-                continue;
-            }
-
-            await fetch(`/api/products?category=${cat_id}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(res => res.json())
-                .then(res => {
-                    if (res.products) {
-                        category.products = res.products;
-                    }
-                    theCats.push(category);
-                })
-
-        }
-
-        setCategories(theCats)
-    }
 
     useEffect(() => {
         if (!product.prices || product.prices.length === 0) {
             return;
-        }
-
-        if (props.categories && product.categories) {
-            getCategories(product)
         }
 
         setCopyOfProduct({

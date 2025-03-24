@@ -211,6 +211,10 @@ export async function handleUpdateProduct(product_id: string, data: Partial<Stri
       if (key in data) {
         if (key === 'categories') {
           const ids = data[key]?.map(id => {
+
+            if (typeof id != 'string') {
+              return new ObjectId(id._id);
+            }
             return new ObjectId(id);
           })
           updateData[key] = ids;

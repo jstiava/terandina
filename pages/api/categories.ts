@@ -138,13 +138,42 @@ async function getProductById(productId: string): Promise<any | null> {
   }
 }
 
-async function getAllCategories() {
+export async function getAllCategories(query : Partial<{
+  [key: string]: string | string[];
+}>, select = {
+  getProductsIfVariant: false
+}) 
+{
+
+  console.log({query, select})
   try {
     const mongo = await Mongo.getInstance();
+
+    if (query.cat_ids && Array.isArray(query.cat_ids)) {
+  
+      const categories = await mongo.clientPromise.db('products').collection('categories').find({
+        _id: { $in: query.cat_ids.map(id => new ObjectId(id))}
+      }).toArray();
+
+      if (select.getProductsIfVariant) {
+        for (const cat of categories) {
+          if (cat.type != 'variant') {
+            continue;
+          }
+          const products = await getAllProducts({
+            category: cat._id.toString()
+          })
+          cat.products = products;
+        }
+      }
+
+      return categories;
+    }
 
     const categories = await mongo.clientPromise.db('products').collection('categories').find().toArray()
 
     return categories;
+
   } catch (error) {
     console.error('Error retrieving categories:', error);
   }
@@ -328,7 +357,7 @@ export default async function handleRequest(
   //   }
 
   try {
-    const categories = await getAllCategories();
+    const categories = await getAllCategories(req.query);
 
     if (!categories) {
       throw Error("No categories.")

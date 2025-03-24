@@ -45,7 +45,7 @@ export interface StripeProduct extends Stripe.Product {
     media: TerandinaImage[],
     prices: StripePrice[],
     is_featured: boolean,
-    categories: string[], // category_ids
+    categories: string[] | Category[], // category_ids
     related: string[], // product_ids
     details?: string,
     sizes?: SizeChart,

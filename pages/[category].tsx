@@ -10,8 +10,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getAllProducts } from "./api/products";
-import { notFound } from "next/navigation";
 import { ObjectId, WithId } from "mongodb";
+import { getAllCategories } from "./api/categories";
 
 
 interface StaticProps {
@@ -69,7 +69,19 @@ export const getStaticProps = (async (context: any) => {
     }
   }
 
+  for (const p of products) {
+    if (!p.categories) {
+      continue;
+    }
+    
+    const cats = await getAllCategories({
+      cat_ids: p.categories.map((c: ObjectId) => c.toString())
+    }, {
+      getProductsIfVariant: true
+    });
 
+    p.categories = cats
+  }
 
   try {
 
@@ -80,22 +92,7 @@ export const getStaticProps = (async (context: any) => {
             ...category,
             _id: category._id.toString()
           },
-          products: products?.map(p => {
-            return {
-              ...p,
-              _id: p._id.toString(),
-              categories: p.categories ? p.categories.map((c: ObjectId) => c.toString()) : [],
-              prices: p.prices ? p.prices.map((price: WithId<StripePrice>) => ({
-                ...price,
-                _id: price._id ? price._id.toString() : price.id
-              })) : [],
-              selectedPrice: p.prices && p.prices.length > 0 ? {
-                ...p.prices[0],
-                _id: p.prices[0]._id ? p.prices[0]._id.toString() : p.prices[0].id
-              } : null,
-              quantity: 1
-            }
-          })
+          products: JSON.parse(JSON.stringify(products))
         },
       }
     }
