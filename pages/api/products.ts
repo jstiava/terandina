@@ -192,6 +192,21 @@ async function handleDeleteRequest(
 
 
 
+export async function revalidateByProductId(product_id : string, res : NextApiResponse) {
+
+  let paths = [];
+  const product = await getProductById(product_id);
+
+  paths = product.categories.map((c : any) => `/${c._id.toString()}`);
+  paths.push(`/item/${product_id}`);
+
+  for (const path of paths) {
+    await res.revalidate(paths)
+  }
+}
+
+
+
 export async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
   try {
 
@@ -263,10 +278,12 @@ async function handlePatchRequest(
   const data = req.body;
 
   try {
-    const product = await handleUpdateProduct(String(product_id), data)
+    const product = await handleUpdateProduct(String(product_id), data);
     if (!product) {
       throw Error("No product found by that id.")
     }
+
+    await revalidateByProductId(String(product_id), res);
     return res.status(200).json({
       message: "Success. Updated product.",
     })
