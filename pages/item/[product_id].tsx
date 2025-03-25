@@ -103,12 +103,18 @@ export const getStaticProps = (async (context: any) => {
             getProductsIfVariant: true
         });
 
+        p.quantity = 1;
+        p.selectedPrice = p.prices ? p.prices[0] : null;
         p.categories = cats;
     }
 
 
     const theStatic = {
-        product: JSON.parse(JSON.stringify(product)),
+        product: JSON.parse(JSON.stringify({
+            ...product,
+            quantity: 1,
+            selectedPrice: product.prices ? product.prices[0] : null
+        })),
         products: JSON.parse(JSON.stringify(products)),
         categories: JSON.parse(JSON.stringify(categories))
     }

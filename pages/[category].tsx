@@ -73,14 +73,16 @@ export const getStaticProps = (async (context: any) => {
     if (!p.categories) {
       continue;
     }
-    
+
     const cats = await getAllCategories({
       cat_ids: p.categories.map((c: ObjectId) => c.toString())
     }, {
       getProductsIfVariant: true
     });
 
-    p.categories = cats
+    p.quantity = 1;
+    p.selectedPrice = p.prices ? p.prices[0] : null;
+      p.categories = cats;
   }
 
   try {
