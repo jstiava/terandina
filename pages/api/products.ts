@@ -201,7 +201,7 @@ export async function revalidateByProductId(product_id : string, res : NextApiRe
   paths.push(`/item/${product_id}`);
 
   for (const path of paths) {
-    await res.revalidate(paths)
+    await res.revalidate(path)
   }
 }
 
