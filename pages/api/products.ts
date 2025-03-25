@@ -197,11 +197,19 @@ export async function revalidateByProductId(product_id : string, res : NextApiRe
   let paths = [];
   const product = await getProductById(product_id);
 
-  paths = product.categories.map((c : any) => `/${c._id.toString()}`);
+  paths = product.categories.map((c : any) => `/${c.slug}`);
   paths.push(`/item/${product_id}`);
 
   for (const path of paths) {
-    await res.revalidate(path)
+    try {
+      await res.revalidate(path)
+    }
+    catch (err) {
+      console.log({
+        message: `Could not revalidate: ${path}`,
+        err
+      }); 
+    }
   }
 }
 
