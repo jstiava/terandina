@@ -6,7 +6,7 @@ import { useState } from "react";
 import { AddOutlined, MoreHorizOutlined, MoreOutlined } from "@mui/icons-material";
 
 
-export default function CategoryVariantSelector({ product, category, size = 'medium', onMore, onClose, limit = 30 }: { product: StripeProduct, category: Category, size?: 'small' | 'medium' | 'large', onMore? : () => any, onClose: any, limit : number }) {
+export default function CategoryVariantSelector({ product, category, size = 'medium', onMore, onClose, limit = 30 }: { product: StripeProduct, category: Category, size?: 'small' | 'medium' | 'large', onMore? : () => any, onClose: any, limit? : number }) {
 
     const theme = useTheme();
     const router = useRouter();
