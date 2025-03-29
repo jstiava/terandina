@@ -513,7 +513,8 @@ export default function AdminPage() {
             headerName: "Images",
             sortable: false,
             width: 100,
-            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField key={params.id} params={params} onChange={(uploads) => {
+            renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField
+            type="products" key={params.id} params={params} onChange={(uploads) => {
                 const row = products?.find(x => params.id);
                 if (!row) {
                     return;

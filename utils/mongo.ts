@@ -1,7 +1,9 @@
 // lib/mongodb.js
 import { Db, MongoClient, ServerApiVersion } from 'mongodb';
+import LocalMongo from './local_mongo';
 
-const uri = String(process.env.MONGODB_URI);
+// const uri = String(process.env.MONGODB_URI);
+const uri = String(process.env.LOCAL_MONGODB_URI);
 
 class Mongo {
   private static instance: Mongo | null;
@@ -16,14 +18,25 @@ class Mongo {
           readPreference: 'primary',
           serverApi: {
             version: ServerApiVersion.v1,
-            strict: true,
+            // strict: true,
             deprecationErrors: true,
           },
-          ssl: true,
-          // ssl: false,
-          // tls: false,
+          ssl: false,
+          tls: false,
           connectTimeoutMS: 50000,
         });
+        // this.client = new MongoClient(uri, {
+        //   readPreference: 'primary',
+        //   serverApi: {
+        //     version: ServerApiVersion.v1,
+        //     strict: true,
+        //     deprecationErrors: true,
+        //   },
+        //   ssl: true,
+        //   // ssl: false,
+        //   // tls: false,
+        //   connectTimeoutMS: 50000,
+        // });
       }
       else {
         this.client = (global as any)._mongoClientPromise;

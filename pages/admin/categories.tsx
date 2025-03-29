@@ -1,9 +1,10 @@
 "use client"
+import ManagePhotosField from "@/components/ManagePhotosField";
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps, StripeProduct } from "@/types";
-import { AddOutlined, CloseOutlined, DeleteOutline, EditOutlined, OpenInNew, RefreshOutlined, TurnLeftOutlined } from "@mui/icons-material";
+import { AddOutlined, CancelOutlined, CloseOutlined, DeleteOutline, EditOutlined, OpenInNew, RefreshOutlined, SaveOutlined, TurnLeftOutlined } from "@mui/icons-material";
 import { Button, Chip, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { DataGrid, GridFilterModel, GridRenderCellParams, GridRowSelectionModel, GridToolbarContainer } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridEventListener, GridFilterModel, GridRenderCellParams, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowSelectionModel, GridToolbarContainer } from "@mui/x-data-grid";
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
@@ -90,8 +91,107 @@ export default function CategoryAdminPage(props: StripeAppProps) {
     const [filterModel, setFilterModel] = useState<GridFilterModel>({
         items: [],
     });
-
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+
+    const handleUpdate = async (newRow: Category) => {
+        await fetch(`/api/categories?id=${newRow._id}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(newRow)
+        })
+            .catch(err => {
+                console.log("Error while updating.")
+            })
+    }
+
+    const handleCreate = async (newRow: Category): Promise<Category | null> => {
+
+        return null;
+        // return await fetch(`/api/products`, {
+        //     method: "POST",
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         product: newRow
+        //     })
+        // })
+        //     .then(res => res.json())
+        //     .then(res => {
+        //         if (!res.product.prices || res.product.prices.length === 0) {
+        //             return {
+        //                 ...res.product,
+        //                 quantity: 1,
+        //                 selectedPrice: null
+        //             }
+        //         }
+        //         return {
+        //             ...res.product,
+        //             quantity: 1,
+        //             selectedPrice: res.product.prices[0]
+        //         };
+        //     })
+        //     .catch(err => {
+        //         console.log(err)
+        //         return null;
+        //     })
+    }
+
+    const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+
+        event.defaultMuiPrevented = true
+
+        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            event.defaultMuiPrevented = true;
+        }
+    };
+
+    const processRowUpdate = async (newRow: GridRowModel<Category>) => {
+
+        if (newRow._id === 'new') {
+            const newProduct = await handleCreate(newRow);
+            if (!newProduct) {
+                setCategories((prev) => {
+                    if (!prev) return null;
+                    const newList = prev.filter(x => x._id != 'new');
+                    return newList;
+                });
+            } else {
+                setCategories((prev) => {
+                    if (!prev) return null;
+                    const newList = prev.filter(x => x._id != 'new');
+                    newList.push(newProduct);
+                    return newList;
+                });
+            }
+            return newRow;
+        }
+
+        // if (categories && newRow.categories) {
+        //     const cat_ids = newRow.categories.map(cat_name => {
+        //         const category = categories.find(c => c.name === cat_name);
+        //         if (!category) {
+        //             return null;
+        //         }
+        //         return category._id;
+        //     })
+        //     newRow.categories = cat_ids.filter(x => x != null);
+        // }
+
+        await handleUpdate(newRow);
+        setCategories((prev) => {
+            if (!prev) return null;
+            const newList = prev.map((row) => (row._id === newRow._id ? newRow : row));
+            return newList;
+        });
+        return newRow;
+    };
+
+
+
 
 
     const handleSearch = (value: string) => {
@@ -117,6 +217,27 @@ export default function CategoryAdminPage(props: StripeAppProps) {
         setFilterModel((prev) => {
             const items = prev.items.filter((i) => i.field !== item.field); // Remove existing filter on the same field
             return { ...prev, items: [...items, item] }; // Add new filter
+        });
+    };
+
+    const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+        setRowModesModel(newRowModesModel);
+    };
+
+    const handleEditClick = (id: GridRowId) => () => {
+        console.log(id);
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    };
+
+    const handleSaveClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    };
+
+
+    const handleCancelClick = (id: GridRowId) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: { mode: GridRowModes.View, ignoreModifications: true },
         });
     };
 
@@ -168,6 +289,23 @@ export default function CategoryAdminPage(props: StripeAppProps) {
     }, []);
 
     const columns = [
+        {
+            field: "images",
+            headerName: "Images",
+            sortable: false,
+            width: 100,
+            renderCell: (params: GridRenderCellParams<Category, string[]>) => <ManagePhotosField key={params.id} params={params} type="categories" onChange={(uploads) => {
+                const row = categories?.find(x => params.id);
+                if (!row) {
+                    return;
+                }
+                console.log(row);
+                // processRowUpdate({
+                //     ...row,
+                //     images: uploads
+                // })
+            }} />
+        },
         {
             field: "name",
             headerName: "Name",
@@ -232,61 +370,16 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                     <div className="flex left center" style={{
                         height: "100%"
                     }}>
-                        <Typography 
+                        <Typography
                             variant="h6"
-                        sx={{
-                            textTransform: 'capitalize',
-                            fontSize: "1rem",
-                            width: "fit-content",
-                            textAlign: 'left'
-                        }}>{params.value}</Typography>
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontSize: "1rem",
+                                width: "fit-content",
+                                textAlign: 'left'
+                            }}>{params.value}</Typography>
                     </div>
                 ) : <></>
-            }
-        },
-        {
-            field: "parent_id",
-            headerName: "Parent",
-            width: 150,
-            renderCell: (params: GridRenderCellParams<Category, string>) => {
-
-                const category = params.value ? categories?.find(x => x._id === params.value) : null;
-
-                if (params.row.type === 'tag') {
-                    return null;
-                }
-
-                if (!category) {
-                    return (
-                        <Chip
-                            avatar={<AddOutlined fontSize="small" />}
-                            size="small"
-                            key={'add'}
-                            label={"Link to page"}
-                            sx={{
-                                marginBottom: "0.25rem",
-                                overflow: 'hidden'
-                            }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                return;
-                            }}
-                        />
-                    )
-                }
-
-                return (
-                    <Chip
-                        avatar={<TurnLeftOutlined fontSize="small" />}
-                        size="small"
-                        key={category?._id}
-                        label={category.name}
-                        sx={{
-                            marginBottom: "0.25rem",
-                            overflow: 'hidden'
-                        }}
-                    />
-                )
             }
         },
         {
@@ -350,6 +443,46 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                 )
             }
         },
+        {
+            field: "actions",
+            type: "actions",
+            headerName: "Actions",
+            width: 100,
+            getActions: ({ _id } : {_id : string}) => {
+                const isInEditMode = rowModesModel[_id]?.mode === GridRowModes.Edit;
+
+                if (isInEditMode) {
+                    return [
+                        <GridActionsCellItem
+                            key="save"
+                            icon={<SaveOutlined />}
+                            label="Save"
+                            color="primary"
+                            onClick={handleSaveClick(_id)}
+                        />,
+                        <GridActionsCellItem
+                            key="cancel"
+                            icon={<CancelOutlined />}
+                            label="Cancel"
+                            className="textPrimary"
+                            onClick={handleCancelClick(_id)}
+                            color="inherit"
+                        />,
+                    ];
+                }
+
+                return [
+                    <GridActionsCellItem
+                        key="edit"
+                        icon={<EditOutlined />}
+                        label="Edit"
+                        className="textPrimary"
+                        onClick={handleEditClick(_id)}
+                        color="inherit"
+                    />
+                ];
+            },
+        },
     ]
 
     return (
@@ -389,19 +522,19 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                                 return 100;
                             }}
                             rows={categories}
-                            columns={columns}
+                            columns={columns as any}
                             editMode="row"
                             checkboxSelection
                             filterModel={filterModel}
                             onFilterModelChange={setFilterModel}
-                            // rowModesModel={rowModesModel}
-                            // onRowModesModelChange={handleRowModesModelChange}
-                            // onRowEditStop={handleRowEditStop}
-                            // processRowUpdate={processRowUpdate}
-                            // onRowSelectionModelChange={newRowSelectionModel => {
-                            //     setRowSelectionModel(newRowSelectionModel);
-                            // }}
-                            // rowSelectionModel={rowSelectionModel}
+                            rowModesModel={rowModesModel}
+                            onRowModesModelChange={handleRowModesModelChange}
+                            onRowEditStop={handleRowEditStop}
+                            processRowUpdate={processRowUpdate}
+                            onRowSelectionModelChange={newRowSelectionModel => {
+                                setRowSelectionModel(newRowSelectionModel);
+                            }}
+                            rowSelectionModel={rowSelectionModel}
                             slots={{
                                 toolbar: () => (
                                     <EditToolbar

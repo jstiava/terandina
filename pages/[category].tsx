@@ -151,48 +151,6 @@ export default function CategoryPage(props: StripeAppProps & {
         padding: 0,
         marginTop: "8rem"
       }}>
-        {/* <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
-          padding: isMd ? "1.5rem 2rem 3rem 2rem" : "5rem 1rem",
-          width: '100%',
-          backgroundColor: TerandinaGreen,
-          color: theme.palette.getContrastText(TerandinaGreen)
-        }}>
-          <CoverImage
-            delay={0.5}
-            url="https://65bog6nsnm.ufs.sh/f/zzMJdtYlsE1VqNu8SvcT2iIUmRWwShujze9OlD4aBKokpLVn"
-            height={"50vh"}
-            width={"auto"}
-            className={isSm ? 'column center middle' : 'flex between bottom'}
-            style={{
-              position: 'relative',
-              backgroundImage: 'url(https://65bog6nsnm.ufs.sh/f/zzMJdtYlsE1VqNu8SvcT2iIUmRWwShujze9OlD4aBKokpLVn)',
-              overflow: "hidden",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              padding: "2rem",
-              aspectRatio: "1 / 1",
-              maxHeight: "90vw",
-              maxWidth: "30rem",
-              border: "0.5rem solid white"
-            }}
-          ></CoverImage>
-          <div className="column snug center middle" style={{
-            minHeight: "20vh",
-            height: "fit-content",
-          }}>
-            <div className="column center middle">
-              <Typography variant="h1" sx={{
-                fontSize: isMd ? '3rem' : "4rem",
-              }}>{props.static.category.name}</Typography>
-              <Typography sx={{
-                width: '100%',
-                maxWidth: "30rem",
-                textAlign: 'justify',
-                fontSize: '1.25rem'
-              }}>Native American ponchos from Ecuador, particularly those crafted by Indigenous Andean communities like the Otavalo, are vibrant, handwoven garments made from wool or alpaca. Featuring intricate geometric patterns and bold colors, these ponchos offer warmth, cultural significance, and a connection to ancestral traditions. Often used for protection against the Andean climate, they symbolize heritage, craftsmanship, and Indigenous identity.</Typography>
-            </div>
-          </div>
-        </div> */}
 
         <div className={'flex between top'} style={{
           flexWrap: 'wrap',
@@ -202,6 +160,27 @@ export default function CategoryPage(props: StripeAppProps & {
           minHeight: "100vh",
           padding: "1rem"
         }}>
+          <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
+            padding: isMd ? "1.5rem 2rem 3rem 2rem" : "5rem 1rem",
+            width: '100%',
+            margin: isMd ? isSm ? "0rem 0rem 2rem 0rem" : "1rem 2rem" : "1rem 2rem",
+            backgroundColor: TerandinaGreen,
+            color: theme.palette.getContrastText(TerandinaGreen),
+            backgroundImage: props.static.category.media && props.static.category.media.length > 0 ? `url(${props.static.category.media[0].large})` : `url(./ecuador-landscape-sunrise-morning-preview.jpg)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
+            <div className="column snug center middle" style={{
+              minHeight: "20vh",
+              height: "fit-content",
+            }}>
+              <div className="column center middle">
+                <Typography variant="h1" sx={{
+                  fontSize: isMd ? '3rem' : "4rem",
+                }}>{props.static.category.name}</Typography>
+              </div>
+            </div>
+          </div>
           {props.static.products && props.static.products.map((product, index) => {
             const row = Math.floor(index / 3);
             const col = index % 3;
@@ -217,7 +196,8 @@ export default function CategoryPage(props: StripeAppProps & {
                 style={{
                   animationDelay: `${delay}ms`,
                   width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0rem)",
-                  marginRight: isSm && index % 2 === 0 ? "1rem" : 0
+                  marginRight: isSm && index % 2 === 0 ? "1rem" : 0,
+                  marginBottom: isSm ? "1rem" : "0rem"
                 }}
               />
             )

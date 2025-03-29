@@ -261,7 +261,7 @@ export default function ProductCard({
                             </div>
                         )}
 
-                        {!isSm && (
+                        {!isSm && categories && categories.some(c => c.type === 'variant') && (
                             <div className="flex between">
                                 <div className="flex compact">
                                     {product && categories && categories.map((c, i) => {

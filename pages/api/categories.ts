@@ -138,21 +138,20 @@ async function getProductById(productId: string): Promise<any | null> {
   }
 }
 
-export async function getAllCategories(query : Partial<{
+export async function getAllCategories(query: Partial<{
   [key: string]: string | string[];
 }>, select = {
   getProductsIfVariant: false
-}) 
-{
+}) {
 
-  console.log({query, select})
+  console.log({ query, select })
   try {
     const mongo = await Mongo.getInstance();
 
     if (query.cat_ids && Array.isArray(query.cat_ids)) {
-  
+
       const categories = await mongo.clientPromise.db('products').collection('categories').find({
-        _id: { $in: query.cat_ids.map(id => new ObjectId(id))}
+        _id: { $in: query.cat_ids.map(id => new ObjectId(id)) }
       }).toArray();
 
       if (select.getProductsIfVariant) {
@@ -202,20 +201,20 @@ async function handleDeleteRequest(
       _id: new ObjectId(String(cat_id))
     })
 
-    
+
     if (!theCategory || !theCategory._id) {
       throw Error("No category in the database to delete.")
     }
 
     await mongo.clientPromise
-        .db('products')
-        .collection('products')
-        .updateMany(
-          { },
-          {
-            $pull: { categories: theCategory._id as any }
-          }
-        );
+      .db('products')
+      .collection('products')
+      .updateMany(
+        {},
+        {
+          $pull: { categories: theCategory._id as any }
+        }
+      );
 
 
     await mongo.clientPromise.db('products').collection('categories').deleteOne({
@@ -234,55 +233,7 @@ async function handleDeleteRequest(
   }
 }
 
-
-const sendToStripeFields: (keyof Stripe.Product)[] = ['name', 'description']
-const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description'];
-
-async function handleUpdateProduct(product_id: string, data: Partial<StripeProduct>) {
-  try {
-    const mongo = await Mongo.getInstance();
-    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
-
-    const sendToStripeFirst: Record<string, any> = {};
-    const updateData: Record<string, any> = {};
-
-    for (const key of sendToStripeFields) {
-      if (key in data) {
-        sendToStripeFirst[key] = data[key];
-      }
-    }
-
-    for (const key of allowedFields) {
-      if (key in data) {
-        updateData[key] = data[key]!;
-      }
-    }
-
-    if (Object.keys(updateData).length != 0) {
-      await mongo.clientPromise.db('products').collection('products').updateOne({
-        id: product_id
-      }, {
-        $set: updateData
-      })
-    }
-
-    if (Object.keys(sendToStripeFirst).length != 0) {
-      await stripe.products.update(product_id, sendToStripeFirst)
-        .then(res => {
-          console.log(res)
-        })
-        .catch(err => {
-          console.log(err);
-        })
-    }
-
-    return true;
-
-  } catch (error) {
-    console.error('Error updating product:', error);
-  }
-  return false;
-}
+const allowedFields: (keyof Category)[] = ['media', 'name', 'description'];
 
 async function handlePatchRequest(
   req: NextApiRequest,
@@ -292,15 +243,18 @@ async function handlePatchRequest(
   const userAuth = verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
-  const data = req.body;
+  const data: Category = req.body;
   const revalidate = req.query.revalidate ? new SafeString(req.query.revalidate).isTrue() : false;
+  const cat_id = String(req.query.id);
 
   const mongo = await Mongo.getInstance();
+
+  
   if (revalidate) {
     try {
-      console.log(String(req.query.id))
+      console.log(cat_id)
       const theCategory = await mongo.clientPromise.db('products').collection('categories').findOne({
-        _id: new ObjectId(String(req.query.id))
+        _id: new ObjectId(cat_id)
       });
 
       if (!theCategory) {
@@ -308,7 +262,7 @@ async function handlePatchRequest(
       }
 
       await res.revalidate(`/${theCategory.slug}`)
-      return res.status(200).json({ message: "Success"})
+      return res.status(200).json({ message: "Success" })
     }
     catch (err) {
       console.log(err);
@@ -316,7 +270,41 @@ async function handlePatchRequest(
     }
   }
 
-  return res.status(400).json({ message: "Not implemented" })
+  try {
+    const updateData: Record<string, any> = {};
+
+    for (const key of allowedFields) {
+      if (key in data) {
+        if (key === 'categories') {
+          const ids = data[key]?.map(id => {
+
+            if (typeof id != 'string') {
+              return new ObjectId(id._id);
+            }
+            return new ObjectId(id);
+          })
+          updateData[key] = ids;
+        }
+        else {
+          updateData[key] = data[key]!;
+        }
+      }
+    }
+
+    if (Object.keys(updateData).length != 0) {
+      await mongo.clientPromise.db('products').collection('categories').updateOne({
+        _id: new ObjectId(String(cat_id))
+      }, {
+        $set: updateData
+      })
+    }
+
+    return res.status(200).json({ message: "Success" })
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(400).json({ message: "Could not update" })
+  }
 }
 
 

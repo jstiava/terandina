@@ -1,6 +1,6 @@
 import { GridRenderCellParams } from "@mui/x-data-grid";
 import CoverImage from "./CoverImage";
-import { StripeProduct, TerandinaImage } from "@/types";
+import { Category, StripeProduct, TerandinaImage } from "@/types";
 import useComplexFileDrop, { UploadType } from "./useComplexFileDrop";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ClientUploadedFileData } from "uploadthing/types";
@@ -9,9 +9,10 @@ import { useUploadThing } from "@/utils/uploadthing";
 import { AddAPhotoOutlined, AspectRatio } from "@mui/icons-material";
 
 
-export default function ManagePhotosField({ params, onChange }: {
-    params: GridRenderCellParams<StripeProduct, string[]>,
-    onChange: (files: TerandinaImage[]) => any
+export default function ManagePhotosField({ params, onChange, type }: {
+    params: GridRenderCellParams<StripeProduct | Category, string[]>,
+    onChange: (files: TerandinaImage[]) => any,
+    type: 'categories' | 'products'
 }) {
 
     const [uploads, setUploads] = useState<UploadType[] | null>(null);
@@ -24,7 +25,7 @@ export default function ManagePhotosField({ params, onChange }: {
         } as TerandinaImage));
         onChange(theImages);
         console.log("Action")
-        fetch(`/api/products?id=${params.id}`, {
+        fetch(`/api/${type}?id=${params.id}`, {
             method: "PATCH",
             headers: {
                 'Content-Type': "application/json"

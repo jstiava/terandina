@@ -70,6 +70,9 @@ export interface Category {
     parent_id: string,
     is_on_menu: boolean,
     type: 'variant' | 'collection' | 'tag',
-    products: StripeProduct[]
+    products: StripeProduct[],
+    media: TerandinaImage[],
+    categories: string[] | Category[],
+    description?: string | null
 
 }
