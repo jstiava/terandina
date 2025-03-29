@@ -245,7 +245,7 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
             <div className="column">
                 <Alert severity="warning">
                     <AlertTitle component="h6">The image quality.</AlertTitle>
-                    These previews will look like shit. Don't worry...the real page looks better.
+                    These previews will look like shit. Don&apos;t worry...the real page looks better.
                 </Alert>
             </div>
             {isOpen && (
