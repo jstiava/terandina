@@ -6,7 +6,7 @@ import { useState } from "react";
 import { AddOutlined, MoreHorizOutlined, MoreOutlined } from "@mui/icons-material";
 
 
-export default function CategoryVariantSelector({ product, category, size = 'medium', onMore, onClose }: { product: StripeProduct, category: Category, size?: 'small' | 'medium' | 'large', onMore? : () => any, onClose: any }) {
+export default function CategoryVariantSelector({ product, category, size = 'medium', onMore, onClose, limit = 30 }: { product: StripeProduct, category: Category, size?: 'small' | 'medium' | 'large', onMore? : () => any, onClose: any, limit : number }) {
 
     const theme = useTheme();
     const router = useRouter();
@@ -15,6 +15,10 @@ export default function CategoryVariantSelector({ product, category, size = 'med
 
     return (
         <div className="flex compact"
+        style={{
+            flexWrap: "wrap",
+            marginBottom: "-0.5rem"
+        }}
             onMouseEnter={() => setAction('hovering')}
             onMouseLeave={() => setAction(null)}
         >
@@ -23,10 +27,10 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                 const isChosen = product.id === p.id;
                 const isMediaExisting = (p.media && p.media.length > 0) && p.media[0];
 
-                if (i > 4) {
+                if (i > limit-1) {
                     return null;
                 }
-                else if (i === 4 && category.products.length <= 5) {
+                else if (i === limit - 1 && category.products.length <= limit) {
                     // Do nothing
                 }
 
@@ -35,7 +39,9 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                         key={p.id}
                         title={p.name}
                         placement="top"
-
+                        sx={{
+                            marginBottom: "0.5rem"
+                        }}
                     >
                         <ButtonBase
                             onClick={() => {

@@ -1,5 +1,5 @@
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, lighten, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, lighten, Popover, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
@@ -83,6 +83,8 @@ export default function ProductCard({
     const [isHovering, setIsHovering] = useState(false);
     const [isVariantMenuOpen, setIsVariantMenuOpen] = useState(false);
     const categories = ((product.categories && (Array.isArray(product.categories) && product.categories.length > 0)) && typeof product.categories[0] === 'object') ? product.categories as Category[] : [];
+    const [startY, setStartY] = useState(0);
+    const [endY, setEndY] = useState(0);
 
     const [copyOfProduct, setCopyOfProduct] = useState(product);
 
@@ -116,6 +118,30 @@ export default function ProductCard({
             selectedPrice: newPrice
         }))
     }
+
+    
+
+  const handleTouchStart = (event: React.TouchEvent) => {
+    setStartY(event.touches[0].clientY); // Store initial touch position
+  };
+
+  const handleTouchMove = (event: React.TouchEvent) => {
+    // Optionally, handle drag during movement (e.g., updating UI)
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    setEndY(event.changedTouches[0].clientY); // Store final touch position
+
+    // Check if the drag was upwards
+    if (startY - endY > 50) {
+      setExpanded(true) // Toggle variable on "drag up";
+      return;
+    }
+
+    else if (startY - endY < -50) {
+        setExpanded(false) // Toggle variable on "drag up"
+      }
+  };
 
     return (
         <ButtonBase className="column left top"
@@ -254,6 +280,7 @@ export default function ProductCard({
                                                     onClose={() => {
                                                         setIsVariantMenuOpen(false);
                                                     }}
+                                                    limit={5}
                                                 />
                                             )
                                         }
@@ -318,6 +345,8 @@ export default function ProductCard({
                 )}
             </div>
             <Drawer anchor={isMd ? 'bottom' : 'right'} open={isVariantMenuOpen}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
                 onClose={(e: any, reason) => {
                     e.stopPropagation();
                     setIsVariantMenuOpen(false)
@@ -418,10 +447,10 @@ export default function ProductCard({
                                     }}
                                 >
                                     <Typography variant="h6" sx={{
-                                            textTransform: "uppercase",
-                                            opacity: 0.75,
-                                            fontSize: "1rem"
-                                        }}>Related</Typography>
+                                        textTransform: "uppercase",
+                                        opacity: 0.75,
+                                        fontSize: "1rem"
+                                    }}>Related</Typography>
 
                                 </div>
                             </AccordionSummary>

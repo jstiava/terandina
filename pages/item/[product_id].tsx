@@ -4,7 +4,7 @@ import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
 import { Category, SIZING_OPTIONS, StripeAppProps, StripePrice, StripeProduct } from "@/types";
-import { Button, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Chip, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -207,6 +207,11 @@ export default function Home(props: StripeAppProps & {
         <>
             <Head>
                 <title>{product.name} - Terandina - Handcrafted Native Outerwear and Accessories</title>
+                <meta property="og:title" content={`${product.name} - Terandina - Handcrafted Native Outerwear and Accessories`} />
+                <meta property="og:description" content={product.description || ""} />
+                <meta property="og:image" content={product.media && product.media.length > 0 ? product.media[0].medium || '' : ''} />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
             </Head>
             {isSm && (
                 <ScrollButton
@@ -308,7 +313,7 @@ export default function Home(props: StripeAppProps & {
                                 width: isSm ? "100%" : isMd ? '25rem' : '45%',
                                 height: "fit-content"
                             }}>
-                                {product.media && product.media.length > 0 && (
+                                {product.media && product.media.length > 1 && (
                                     <>
                                         <div className="column compact" style={{
                                             position: "sticky",
@@ -418,6 +423,7 @@ export default function Home(props: StripeAppProps & {
                                     }
 
                                     return (
+
                                         <Chip
                                             className={!marking ? 'crossed-out' : ''}
                                             size="medium"
@@ -455,17 +461,23 @@ export default function Home(props: StripeAppProps & {
 
 
                         {product.description && (
-                            <div className="column compact">
-                                <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DESCRIPTION</Typography>
-                                <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.description}</Typography>
-                            </div>
+                            <>
+                                <div className="column compact">
+                                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DESCRIPTION</Typography>
+                                    <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.description}</Typography>
+                                </div>
+                                <Divider />
+                            </>
                         )}
 
                         {product.details && (
-                            <div className="column compact">
-                                <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
-                                <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
-                            </div>
+                            <>
+                                <div className="column compact">
+                                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
+                                    <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
+                                </div>
+                                <Divider />
+                            </>
                         )}
 
                     </div>
