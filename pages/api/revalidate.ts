@@ -4,7 +4,8 @@ import Mongo from "@/utils/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getProductById, handleUpdateProduct } from "./products";
 import Stripe from "stripe";
-import { StripePrice, StripeProduct } from "@/types";
+import { StripeProduct } from "@/types";
+import { uploadAllVersionsByBuffer } from "@/utils/utapi";
 
 
 export async function getProductByIdFromStripe(product_id: string): Promise<Partial<StripeProduct> | null> {
@@ -111,6 +112,27 @@ export default async function handleRequest(
                 }
             }
 
+            const ourCopy = await getProductById(req.query.product_id.toString());
+
+            try {
+                if (ourCopy) {
+                    if (product.images && (!ourCopy.media || ourCopy.media.length === 0)) {
+                        const allMedia: any = [];
+                        for (const image of product.images) {
+                            const firstFile = await fetch(image);
+                            const buffer = await firstFile.arrayBuffer();
+                            const mediaValue = await uploadAllVersionsByBuffer(ourCopy.name, buffer);
+                            allMedia.push(mediaValue);
+                        }
+                        sendFromStripeToDatabase.media = allMedia;
+                        sendFromStripeToDatabase.images = [];
+                    }
+                }
+            }
+            catch (err) {
+                console.error(err);
+            }
+
             await mongo.clientPromise.db('products').collection('products').updateOne(
                 { id: product.id },
                 {
@@ -129,7 +151,7 @@ export default async function handleRequest(
                 });
                 theProduct = await getProductById(req.query.product_id.toString());
             }
-            
+
 
             return res.status(200).json({
                 message: "Success",

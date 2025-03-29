@@ -7,6 +7,8 @@ import {
   Modal,
   Paper,
   CircularProgress,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 import {
   DndContext,
@@ -239,6 +241,12 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
                   </div>
                 )}
               </>
+            </div>
+            <div className="column">
+                <Alert severity="warning">
+                    <AlertTitle component="h6">The image quality.</AlertTitle>
+                    These previews will look like shit. Don't worry...the real page looks better.
+                </Alert>
             </div>
             {isOpen && (
               <UploadForm

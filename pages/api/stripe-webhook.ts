@@ -5,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { unique } from "next/dist/build/utils";
 import Stripe from "stripe";
 import { buffer } from 'micro';
+import { uploadAllVersionsByBuffer } from "@/utils/utapi";
 
 export const config = {
   api: {
@@ -44,15 +45,33 @@ export default async function handleRequest(
     if (event.type === "product.created") {
       console.log("Create Product")
       const product = event.data.object as Stripe.Product;
-      
+
+      try {
+        if (product.images) {
+          const allMedia: any = [];
+          for (const image of product.images) {
+            const firstFile = await fetch(image);
+            const buffer = await firstFile.arrayBuffer();
+            const mediaValue = await uploadAllVersionsByBuffer(product.name, buffer);
+            allMedia.push(mediaValue);
+          }
+          (product as any).media = allMedia;
+          product.images = [];
+        }
+      }
+      catch (err) {
+        console.error(err);
+      }
+
+
       await mongo.clientPromise.db('products').collection('products').insertOne({
         ...product,
         prices: [],
         selectedPrice: null,
         quantity: 1
       });
-      
-      
+
+
       return;
     }
 
@@ -165,7 +184,7 @@ const handlePriceCreatedEvent = async (price: Stripe.Price, retry: number = 0) =
     product: price.product as string
   });
 
-  
+
   const result = await mongo.clientPromise.db('products').collection('products').updateOne({
     id: theProduct.id
   }, {

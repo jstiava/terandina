@@ -4,7 +4,7 @@ import { StripeProduct, TerandinaImage } from "@/types";
 import useComplexFileDrop, { UploadType } from "./useComplexFileDrop";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ClientUploadedFileData } from "uploadthing/types";
-import { CircularProgress, IconButton } from "@mui/material";
+import { Alert, AlertTitle, CircularProgress, IconButton } from "@mui/material";
 import { useUploadThing } from "@/utils/uploadthing";
 import { AddAPhotoOutlined, AspectRatio } from "@mui/icons-material";
 
@@ -37,7 +37,12 @@ export default function ManagePhotosField({ params, onChange }: {
 
     useEffect(() => {
 
-        const us = [];
+        const us : any[] = [];
+
+        if (!params.row.media) {
+            setUploads(us);
+            return;
+        }
 
         for (const media of params.row.media) {
             if (media.small) {
@@ -51,7 +56,7 @@ export default function ManagePhotosField({ params, onChange }: {
         }
 
         setUploads(us);
-    }, [])
+    }, [params, params.value])
 
     const FileDrop = useComplexFileDrop(uploads, setUploads, {
         onChange: (files) => {

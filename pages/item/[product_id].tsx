@@ -64,11 +64,11 @@ export const getStaticProps = (async (context: any) => {
         related_to: product._id.toString()
     });
 
-    const categories = await getAllCategories({
+    const categories = product.categories ? await getAllCategories({
         cat_ids: product.categories.map((c: ObjectId) => c.toString()),
     }, {
         getProductsIfVariant: true
-    });
+    }) : [];
 
     if (!products) {
         return {
@@ -97,11 +97,11 @@ export const getStaticProps = (async (context: any) => {
             continue;
         }
 
-        const cats = await getAllCategories({
+        const cats = p.categories ? await getAllCategories({
             cat_ids: p.categories.map((c: ObjectId) => c.toString())
         }, {
             getProductsIfVariant: true
-        });
+        }) : [];
 
         p.quantity = 1;
         p.selectedPrice = p.prices ? p.prices[0] : null;
