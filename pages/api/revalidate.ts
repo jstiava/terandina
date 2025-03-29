@@ -2,7 +2,7 @@ import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
 import Mongo from "@/utils/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getProductById, handleUpdateProduct } from "./products";
+import { getProductById, handleUpdateProduct, revalidateByProductId } from "./products";
 import Stripe from "stripe";
 import { StripeProduct } from "@/types";
 import { uploadAllVersionsByBuffer } from "@/utils/utapi";
@@ -151,6 +151,8 @@ export default async function handleRequest(
                 });
                 theProduct = await getProductById(req.query.product_id.toString());
             }
+
+            await revalidateByProductId(String(product.id), res);
 
 
             return res.status(200).json({
