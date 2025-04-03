@@ -28,6 +28,8 @@ export interface SizeChart {
     '11'?: boolean,
     '12'?: boolean,
     '13'?: boolean,
+    OSFA?: boolean,
+    adjustable?: boolean,
 }
 
 export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13'] as (keyof SizeChart)[]);

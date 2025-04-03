@@ -1,10 +1,10 @@
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, lighten, Popover, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, IconButton, lighten, Popover, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
 import { UseCart } from "@/checkout/useCart";
-import { ArrowForward, ArrowRightOutlined, ExpandMore, Preview } from "@mui/icons-material";
+import { ArrowForward, ArrowRightOutlined, CloseOutlined, ExpandMore, Preview } from "@mui/icons-material";
 import { Router, useRouter } from "next/router";
 import CategoryVariantSelector from "./CategoryVariantSelector";
 
@@ -328,6 +328,19 @@ export default function ProductCard({
                     e.stopPropagation();
                 }}
             >
+
+                <IconButton 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIsVariantMenuOpen(false);
+                }}
+                sx={{
+                    position: "absolute",
+                    top: "0.5rem",
+                    right: "0.5rem"
+                }}>
+                    <CloseOutlined fontSize="small" />
+                </IconButton>
                 <div className="column" style={{
                     padding: "2rem 0",
                     backgroundColor: 'white',

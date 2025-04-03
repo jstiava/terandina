@@ -39,12 +39,16 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
 
         const uploadResponseSmall = await uploadImage(new File([compressedBufferSmall], `small-${name}.webp`, { type: "image/webp" }));
         if (!uploadResponseSmall.data) {
+            console.log(uploadResponseSmall)
             throw Error("Small image did not upload")
         }
         mediaValue.small = String(uploadResponseSmall.data.ufsUrl);
     }
     catch (err) {
-        console.log("Error with small image")
+        console.log({
+            message: "Small image error",
+            err
+        })
     }
 
     try {
@@ -55,12 +59,16 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
 
         const uploadResponseMedium = await uploadImage(new File([compressedBufferMedium], `medium-${name}.webp`, { type: "image/webp" }));
         if (!uploadResponseMedium.data) {
+            console.log(uploadResponseMedium)
             throw Error("Medium image did not upload")
         }
         mediaValue.medium = String(uploadResponseMedium.data.ufsUrl);
     }
     catch (err) {
-        console.log("Error with medium image")
+        console.log({
+            message: "Medium image error",
+            err
+        })
     }
 
 
@@ -72,14 +80,19 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
 
         const uploadResponseLarge = await uploadImage(new File([compressedBufferLarge], `large-${name}.webp`, { type: "image/webp" }));
         if (!uploadResponseLarge.data) {
+            console.log(uploadResponseLarge)
             throw Error("Large image did not upload")
         }
         mediaValue.large = String(uploadResponseLarge.data.ufsUrl);
     }
     catch (err) {
-        console.log("Error with large image")
+        console.log({
+            message: "Medium image error",
+            err
+        })
     }
 
+    console.log(mediaValue)
     return mediaValue;
 }
 
@@ -102,8 +115,6 @@ export const ourFileRouter = {
         })
         .onUploadComplete(async ({ metadata, file }) => {
             console.log("Upload complete for userId:", metadata.userId);
-            console.log("file url", file.url);
-
             const firstFile = await fetch(file.ufsUrl);
             const buffer = await firstFile.arrayBuffer();
             const mediaValue = await uploadAllVersionsByBuffer(file.name, buffer);
