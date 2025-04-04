@@ -118,6 +118,10 @@ export default function ProductCard({
     }
 
 
+    try {
+
+  
+
     return (
         <ButtonBase className="column left top"
             disableRipple
@@ -329,16 +333,16 @@ export default function ProductCard({
                 }}
             >
 
-                <IconButton 
-                onClick={(e) => {
-                    e.stopPropagation();
-                    setIsVariantMenuOpen(false);
-                }}
-                sx={{
-                    position: "absolute",
-                    top: "0.5rem",
-                    right: "0.5rem"
-                }}>
+                <IconButton
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsVariantMenuOpen(false);
+                    }}
+                    sx={{
+                        position: "absolute",
+                        top: "0.5rem",
+                        right: "0.5rem"
+                    }}>
                     <CloseOutlined fontSize="small" />
                 </IconButton>
                 <div className="column" style={{
@@ -481,4 +485,13 @@ export default function ProductCard({
             </Drawer>
         </ButtonBase>
     )
+
+}
+catch (err) {
+    console.log({
+        message: `Error when viewing product ${product.id}`,
+        err
+    })
+    return null;
+}
 }
