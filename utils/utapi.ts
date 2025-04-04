@@ -29,71 +29,48 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
         medium: null,
         large: null
     }
-
-
+    
+    
     try {
+
         const compressedBufferSmall = await sharp(Buffer.from(buffer))
             .resize(70)
             .webp()
             .toBuffer();
 
-        const uploadResponseSmall = await uploadImage(new File([compressedBufferSmall], `small-${name}.webp`, { type: "image/webp" }));
-        if (!uploadResponseSmall.data) {
-            console.log(uploadResponseSmall)
-            throw Error("Small image did not upload")
-        }
-        mediaValue.small = String(uploadResponseSmall.data.ufsUrl);
-    }
-    catch (err) {
-        console.log({
-            message: "Small image error",
-            err
-        })
-    }
-
-    try {
         const compressedBufferMedium = await sharp(Buffer.from(buffer))
-            .resize(500)
-            .webp()
-            .toBuffer();
-
-        const uploadResponseMedium = await uploadImage(new File([compressedBufferMedium], `medium-${name}.webp`, { type: "image/webp" }));
-        if (!uploadResponseMedium.data) {
-            console.log(uploadResponseMedium)
-            throw Error("Medium image did not upload")
-        }
-        mediaValue.medium = String(uploadResponseMedium.data.ufsUrl);
-    }
-    catch (err) {
-        console.log({
-            message: "Medium image error",
-            err
-        })
-    }
+        .resize(500)
+        .webp()
+        .toBuffer();
 
 
-    try {
         const compressedBufferLarge = await sharp(Buffer.from(buffer))
-            .resize(1000)
-            .webp()
-            .toBuffer();
+        .resize(1000)
+        .webp()
+        .toBuffer();    
 
-        const uploadResponseLarge = await uploadImage(new File([compressedBufferLarge], `large-${name}.webp`, { type: "image/webp" }));
-        if (!uploadResponseLarge.data) {
-            console.log(uploadResponseLarge)
-            throw Error("Large image did not upload")
+
+        const uploaded = await uploadImage([
+            new File([compressedBufferSmall], `small-${name}.webp`, { type: "image/webp" }),
+            new File([compressedBufferMedium], `medium-${name}.webp`, { type: "image/webp" }),
+            new File([compressedBufferLarge], `large-${name}.webp`, { type: "image/webp" }),
+        ]);
+
+        if (uploaded && uploaded.length === 3) {
+
+            return {
+                small: uploaded[0].data?.ufsUrl,
+                medium: uploaded[1].data?.ufsUrl,
+                large: uploaded[2].data?.ufsUrl,
+            }
         }
-        mediaValue.large = String(uploadResponseLarge.data.ufsUrl);
+        throw Error("Did not work.")
+          
     }
     catch (err) {
-        console.log({
-            message: "Medium image error",
-            err
-        })
+        console.log(err);
+        throw Error("Failure")
     }
-
-    console.log(mediaValue)
-    return mediaValue;
 }
 
 
@@ -133,8 +110,8 @@ export const getListOfUploadedThings = async () => {
     return await utapi.listFiles();
 }
 
-export const uploadImage = async (file: File) => {
-    return await utapi.uploadFiles(file)
+export const uploadImage = async (files: File[]) => {
+    return await utapi.uploadFiles(files)
 }
 
 export const deleteFiles = async (keys: string[]) => {
