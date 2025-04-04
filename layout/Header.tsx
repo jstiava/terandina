@@ -388,13 +388,13 @@ export default function Header({ Cart, color, setColor }: {
                                 <div className="column snug fit">
                                     <MenuItem
                                         key={'cardigans'}
-                                        onClick={() => pleasePush('/outerwear')}
+                                        onClick={() => pleasePush('/cardigans')}
                                         icon={<ArrowForward fontSize="small" />}
                                     >Cardigans</MenuItem>
 
                                     <MenuItem
                                         key={'hoodies'}
-                                        onClick={() => pleasePush('/outerwear')}
+                                        onClick={() => pleasePush('/hoodies')}
                                         icon={<ArrowForward fontSize="small" />}
                                     >Hoodies</MenuItem>
 
