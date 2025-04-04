@@ -19,57 +19,66 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
 
   const theme = useTheme();
 
-  return (
-    <div
-      style={{
-        position: 'relative',
-        width: width,
-        height: height,
-        ...style
-      }}
-      
-    >
-     {isHovering && images.length > 1 && (
-      <>
-       <IconButton 
-       onClick={(e) => {
-        e.stopPropagation();
-        setActive(prev => {
-          const newIndex = prev - 1;
-          return newIndex === -1 ? 0 : newIndex
-        })
-       }}
-       sx={{
-        position: 'absolute',
-        right: "4rem",
-        top: "1rem",
-        border: `1px solid ${theme.palette.text.primary}`,
-        zIndex: 10
-      }}>
-        <ChevronLeft />
-      </IconButton>
-      <IconButton 
-        onClick={(e) => {
-          e.stopPropagation();
-          setActive(prev => {
-            const newIndex = prev + 1;
-            return newIndex === images.length ? 0 : newIndex
-          })
+
+  try {
+
+
+    return (
+      <div
+        style={{
+          position: 'relative',
+          width: width,
+          height: height,
+          ...style
         }}
-      sx={{
-        position: 'absolute',
-        right: "1rem",
-        top: "1rem",
-        border: `1px solid ${theme.palette.text.primary}`,
-        zIndex: 10
-      }}>
-        <ChevronRight />
-      </IconButton>
-      </>
-     )}
-       {(images && images.length >= active) && (
-         <CoverImage key={images[active].medium} url={images[active].medium || ''} width={width} height={height} />
-       )}
-    </div>
-  );
+
+      >
+        {isHovering && images.length > 1 && (
+          <>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                setActive(prev => {
+                  const newIndex = prev - 1;
+                  return newIndex === -1 ? 0 : newIndex
+                })
+              }}
+              sx={{
+                position: 'absolute',
+                right: "4rem",
+                top: "1rem",
+                border: `1px solid ${theme.palette.text.primary}`,
+                zIndex: 10
+              }}>
+              <ChevronLeft />
+            </IconButton>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                setActive(prev => {
+                  const newIndex = prev + 1;
+                  return newIndex === images.length ? 0 : newIndex
+                })
+              }}
+              sx={{
+                position: 'absolute',
+                right: "1rem",
+                top: "1rem",
+                border: `1px solid ${theme.palette.text.primary}`,
+                zIndex: 10
+              }}>
+              <ChevronRight />
+            </IconButton>
+          </>
+        )}
+        {(images && images.length >= active + 1) && (
+          <CoverImage key={images[active].medium} url={images[active].medium || ''} width={width} height={height} />
+        )}
+      </div>
+    );
+
+  }
+  catch (err) {
+    return null;
+  }
 }
