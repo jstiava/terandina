@@ -41,19 +41,12 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
         const compressedBufferMedium = await sharp(Buffer.from(buffer))
         .resize(500)
         .webp()
-        .toBuffer();
-
-
-        const compressedBufferLarge = await sharp(Buffer.from(buffer))
-        .resize(1000)
-        .webp()
-        .toBuffer();    
-
+        .toBuffer(); 
 
         const uploaded = await uploadImage([
             new File([compressedBufferSmall], `small-${name}.webp`, { type: "image/webp" }),
             new File([compressedBufferMedium], `medium-${name}.webp`, { type: "image/webp" }),
-            new File([compressedBufferLarge], `large-${name}.webp`, { type: "image/webp" }),
+            new File([Buffer.from(buffer)], `large-${name}.webp`, { type: "image/webp" }),
         ]);
 
         if (uploaded && uploaded.length === 3) {
