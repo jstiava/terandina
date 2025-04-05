@@ -20,12 +20,12 @@ export default async function handleRequest(
   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
   let event: Stripe.Event;
+  const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
 
   try {
 
     const sig = req.headers["stripe-signature"] as string;
     const buf = await buffer(req);
-    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
     event = stripe.webhooks.constructEvent(
       buf.toString(),
@@ -45,28 +45,17 @@ export default async function handleRequest(
     if (event.type === "product.created") {
       console.log("Create Product")
       const product = event.data.object as Stripe.Product;
+      (product as any).media = [];
+      product.images = [];
 
-      try {
-        if (product.images) {
-          const allMedia: any = [];
-          for (const image of product.images) {
-            const firstFile = await fetch(image);
-            const buffer = await firstFile.arrayBuffer();
-            const mediaValue = await uploadAllVersionsByBuffer(product.name, buffer);
-            allMedia.push(mediaValue);
-          }
-          (product as any).media = allMedia;
-          product.images = [];
-        }
-      }
-      catch (err) {
-        console.error(err);
-      }
+      const prices = await stripe.prices.list({
+        product: product.id
+      });
 
 
       await mongo.clientPromise.db('products').collection('products').insertOne({
         ...product,
-        prices: [],
+        prices: prices.data,
         selectedPrice: null,
         quantity: 1
       });
