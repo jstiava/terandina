@@ -36,7 +36,7 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
         {isHovering && images.length > 1 && (
           <>
             <IconButton
-              href={undefined}
+              href={""}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -55,7 +55,7 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
               <ChevronLeft />
             </IconButton>
             <IconButton
-              href={undefined}
+              href={""}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

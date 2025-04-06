@@ -79,7 +79,7 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                         }}
                     >
                         <IconButton
-                            href={undefined}
+                            href={""}
                             onClick={e => {
                                 e.preventDefault();
                                 e.stopPropagation();
