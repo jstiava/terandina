@@ -83,6 +83,7 @@ export default function ProductCard({
     const [isHovering, setIsHovering] = useState(false);
     const [isVariantMenuOpen, setIsVariantMenuOpen] = useState(false);
     const categories = ((product.categories && (Array.isArray(product.categories) && product.categories.length > 0)) && typeof product.categories[0] === 'object') ? product.categories as Category[] : [];
+    const [sizing, setSizing] = useState<(keyof SizeChart)[] | null>(null);
 
     const [copyOfProduct, setCopyOfProduct] = useState(product);
 
@@ -90,6 +91,17 @@ export default function ProductCard({
         if (!product.prices || product.prices.length === 0) {
             return;
         }
+
+        const theSizing: any = [];
+        for (const size of SIZING_OPTIONS) {
+            const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
+            const doesNotExist = marking === undefined || marking === null;
+            if (doesNotExist) {
+                continue;
+            }
+            theSizing.push(size);
+        }
+        setSizing(theSizing);
 
         setCopyOfProduct({
             ...product,
@@ -119,8 +131,6 @@ export default function ProductCard({
 
 
     try {
-
-
 
         return (
             <ButtonBase
@@ -247,7 +257,7 @@ export default function ProductCard({
                     <div className="flex between">
                         {product.sizes && (
                             <div className="flex compact2 fit">
-                                {SIZING_OPTIONS.length < 3 ? SIZING_OPTIONS.map(size => {
+                                {( (sizing && sizing.length < 3) || (sizing && categories.some(x => x.type != 'variant')) ) ? sizing.map((size) => {
                                     const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
                                     const doesNotExist = marking === undefined || marking === null;
@@ -295,10 +305,19 @@ export default function ProductCard({
                                                 }
                                             }}
                                         >
-                                            <MenuItem value={"XS"}>XS</MenuItem>
-                                            <MenuItem value={"S"}>S</MenuItem>
-                                            <MenuItem value={"L"}>L</MenuItem>
-                                            <MenuItem value={"XL"}>XL</MenuItem>
+                                            {sizing && sizing.map((size : keyof SizeChart) => {
+                                                const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
+
+                                                const doesNotExist = marking === undefined || marking === null;
+
+                                                if (doesNotExist) {
+                                                    return;
+                                                }
+
+                                                return (
+                                                    <MenuItem key={size} value={size} disabled={!marking}>{size}</MenuItem>
+                                                )
+                                            })}
                                         </Select>
                                     </FormControl>
                                 )}

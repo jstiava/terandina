@@ -4,7 +4,7 @@ import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
 import { Category, SIZING_OPTIONS, StripeAppProps, StripePrice, StripeProduct } from "@/types";
-import { Button, Chip, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Chip, Divider, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -16,6 +16,7 @@ import Mongo from "@/utils/mongo";
 import { getAllProducts } from "../api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "../api/categories";
+import { KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined } from "@mui/icons-material";
 
 interface StaticProps {
     notFound?: boolean;
@@ -147,6 +148,7 @@ export default function Home(props: StripeAppProps & {
     const swiperRef = useRef<any>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
+    const [isDetailsShown, setIsDetailsShown] = useState(true);
 
 
     const [clientHeight, setClientHeight] = useState(0);
@@ -381,76 +383,80 @@ export default function Home(props: StripeAppProps & {
                             />
                         </div>
 
-                        {product && categories && categories.some(c => c.type === 'variant') && categories.map(c => {
 
-                            if (c.type != 'variant') {
-                                return null;
-                            }
+                        <div className="column compact">
 
-                            return (
-                                <div className="flex compact" key={c._id.toString()}>
-                                    <CategoryVariantSelector
-                                        key={c._id}
-                                        category={c}
-                                        product={product}
-                                        onClose={() => {
-                                            return;
-                                        }}
-                                    />
-                                </div>
-                            )
-                        })}
-                        {product.prices && product.prices.length > 1 && (
-                            <>
-                                <PriceSelector
-                                    size="small"
-                                    product={product}
-                                    handleChangePrice={(newPrice) => {
-                                        return;
-                                    }}
-                                />
-                            </>
-                        )}
-                        {product.sizes && (
-                            <div className="flex compact2">
-                                {SIZING_OPTIONS.map(size => {
-                                    const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
-                                    const doesNotExist = marking === undefined || marking === null;
+                            {product && categories && categories.some(c => c.type === 'variant') && categories.map(c => {
 
-                                    if (doesNotExist) {
-                                        return;
-                                    }
+                                if (c.type != 'variant') {
+                                    return null;
+                                }
 
-                                    return (
-
-                                        <Chip
-                                            className={!marking ? 'crossed-out' : ''}
-                                            size="medium"
-                                            key={size}
-                                            label={size}
-                                            onDelete={undefined}
-                                            disabled={!marking}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // setProduct(prev => {
-                                                //     if (!prev) return null;
-                                                //     return {
-                                                //         ...prev,
-                                                //         size
-                                                //     }
-                                                // })
+                                return (
+                                    <div className="flex compact" key={c._id.toString()} style={{
+                                        width: "calc(100% - 2rem)"
+                                    }}>
+                                        <CategoryVariantSelector
+                                            key={c._id}
+                                            category={c}
+                                            product={product}
+                                            onClose={() => {
+                                                return;
                                             }}
-                                            sx={{
-                                                marginBottom: "0.25rem",
-                                                overflow: 'hidden',
-                                                backgroundColor: size === product.size ? theme.palette.divider : 'transparent'
-                                            }}
+                                            limit={c.products.length}
                                         />
-                                    )
-                                })}
-                            </div>
-                        )}
+                                    </div>
+                                )
+                            })}
+                            {product.sizes && (
+                                <div className="column right fit snug" style={{
+                                    marginTop: "0.5rem"
+                                }}>
+                                    <div className="flex compact2">
+                                        {SIZING_OPTIONS.map(size => {
+                                            const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
+
+                                            const doesNotExist = marking === undefined || marking === null;
+
+                                            if (doesNotExist) {
+                                                return;
+                                            }
+
+                                            return (
+
+                                                <Chip
+                                                    className={!marking ? 'crossed-out' : ''}
+                                                    size="medium"
+                                                    key={size}
+                                                    label={size}
+                                                    variant={size === 'L' ? 'outlined' : 'filled'}
+                                                    onDelete={undefined}
+                                                    disabled={!marking}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // setProduct(prev => {
+                                                        //     if (!prev) return null;
+                                                        //     return {
+                                                        //         ...prev,
+                                                        //         size
+                                                        //     }
+                                                        // })
+                                                    }}
+                                                    sx={{
+                                                        marginBottom: "0.25rem",
+                                                        overflow: 'hidden',
+                                                        backgroundColor: size === product.size ? theme.palette.divider : 'transparent'
+                                                    }}
+                                                />
+                                            )
+                                        })}
+                                    </div>
+                                    <Link>Size Guide</Link>
+                                </div>
+                            )}
+
+                        </div>
 
                         <Button variant="outlined"
                             onClick={handleAddToCart}
@@ -472,13 +478,78 @@ export default function Home(props: StripeAppProps & {
 
                         {product.details && (
                             <>
-                                <div className="column compact">
-                                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
-                                    <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
+                                <div className="column compact"
+                                    onClick={() => { setIsDetailsShown(prev => !prev); }}
+                                >
+                                    <div className="flex between">
+                                        <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
+                                        {isDetailsShown ? (
+                                            <KeyboardArrowUp sx={{
+                                                fontSize: "1rem"
+                                            }} />
+                                        ) : (
+                                            <KeyboardArrowDown sx={{
+                                                fontSize: "1rem"
+                                            }} />
+                                        )}
+                                    </div>
+                                    {isDetailsShown && (
+                                        <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
+                                    )}
                                 </div>
                                 <Divider />
                             </>
                         )}
+
+                        {product.dimensions && (
+                            <>
+                                <div className="column compact"
+                                    onClick={() => { setIsDetailsShown(prev => !prev); }}
+                                >
+                                    <div className="flex between">
+                                        <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
+                                        {isDetailsShown ? (
+                                            <KeyboardArrowUp sx={{
+                                                fontSize: "1rem"
+                                            }} />
+                                        ) : (
+                                            <KeyboardArrowDown sx={{
+                                                fontSize: "1rem"
+                                            }} />
+                                        )}
+                                    </div>
+                                    {isDetailsShown && (
+                                        <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
+                                    )}
+                                </div>
+                                <Divider />
+                            </>
+                        )}
+
+                        <>
+                            <div className="flex"
+                            >
+                                <div className="column fit compact center">
+                                    <RecyclingOutlined />
+                                    <Typography sx={{
+                                        fontSize: "1rem",
+                                        textAlign: 'center',
+                                        width: "9rem",
+                                        lineHeight: "115%"
+                                    }}>Ethical & Sustainable, Limited Quantities</Typography>
+                                </div>
+                                <div className="column fit compact center">
+                                    <LocalShippingOutlined />
+                                    <Typography sx={{
+                                        fontSize: "1rem",
+                                        textAlign: 'center',
+                                        width: "10rem",
+                                        lineHeight: "115%"
+                                    }}>30-day Hassle-Free Returns and Exchanges</Typography>
+                                </div>
+                            </div>
+                            <Divider />
+                        </>
 
                     </div>
 
