@@ -67,12 +67,14 @@ export default function ProductCard({
     product,
     addToCart,
     style = {},
+    disableSizing = false,
     ...props
 }: {
     product: StripeProduct,
     addToCart?: UseCart['add'],
     style?: CSSProperties,
-    categories?: Category[] | null
+    categories?: Category[] | null,
+    disableSizing?: boolean
 }) {
 
     const router = useRouter();
@@ -255,7 +257,7 @@ export default function ProductCard({
 
                 {!isSm && (
                     <div className="flex between">
-                        {product.sizes && (
+                        {!disableSizing && product.sizes && (
                             <div className="flex compact2 fit">
                                 {( (sizing && sizing.length < 3) || (sizing && categories.some(x => x.type != 'variant')) ) ? sizing.map((size) => {
                                     const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;

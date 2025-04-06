@@ -115,10 +115,12 @@ export async function getProductById(productId: string): Promise<any | null> {
   }
 }
 
-export async function getAllProducts(query : Partial<{
+export async function getAllProducts(query? : Partial<{
   [key: string]: string | string[];
 }>, isProd = true) {
   try {
+
+    query = query || {};
 
     const mongo = await Mongo.getInstance()
 
@@ -194,11 +196,15 @@ async function handleDeleteRequest(
 
 export async function revalidateByProductId(product_id : string, res : NextApiResponse) {
 
-  let paths = [];
+  let paths = ['/products'];
   const product = await getProductById(product_id);
 
-  paths = product.categories.map((c : any) => `/${c.slug}`);
-  paths.push(`/item/${product_id}`);
+
+  if (product.categories) {
+    paths = product.categories.map((c : any) => `/${c.slug}`);
+    paths.push(`/item/${product_id}`);
+  }
+  
 
   for (const path of paths) {
     try {
@@ -297,6 +303,11 @@ async function handlePatchRequest(
     })
   }
   catch (err) {
+    console.log({
+      err,
+      product_id,
+      data
+    });
     return res.status(400).json({ message: "Failure" })
   }
 
