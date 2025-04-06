@@ -21,7 +21,7 @@ export default function CategorySection({category, products, ...props}: {
     
     return (
         <div 
-        className="column center" 
+        className="column center categorySection" 
         id={category.slug}
         style={{
             width: "100%",

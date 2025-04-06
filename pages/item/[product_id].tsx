@@ -191,6 +191,7 @@ export default function Home(props: StripeAppProps & {
     // }
 
     const handleAddToCart = (e: any) => {
+        e.preventDefault();
         e.stopPropagation();
 
         if (!product || !product.prices) {
@@ -465,7 +466,7 @@ export default function Home(props: StripeAppProps & {
 
                                     {product.sizeGuide && (
                                         <>
-                                            <Link href="" onClick={(e) => {
+                                            <Link href={undefined} onClick={(e) => {
                                                 e.preventDefault();
                                                 setIsSizeGuideShown(true);
                                             }}>Size Guide</Link>
@@ -522,7 +523,9 @@ export default function Home(props: StripeAppProps & {
 
                         </div>
 
-                        <Button variant="outlined"
+                        <Button
+                            href={undefined}
+                            variant="outlined"
                             onClick={handleAddToCart}
                             fullWidth
                             sx={{

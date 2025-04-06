@@ -113,6 +113,7 @@ export default function ProductCard({
 
 
     const handleAddToCart = (e: any) => {
+        e.preventDefault();
         e.stopPropagation();
         if (!addToCart) {
             return;
@@ -173,7 +174,7 @@ export default function ProductCard({
                                 height: "auto",
                                 overflow: 'hidden'
                             }} />
-                            <Chip
+                        <Chip
                             sx={{
                                 position: 'absolute',
                                 top: "0.5rem",
@@ -181,9 +182,11 @@ export default function ProductCard({
                             }}
                             key="out_of_stock"
                             label="Out of Stock"
-                            />
+                        />
                         {isHovering && addToCart && (
-                            <Button variant="contained"
+                            <Button
+                                href={undefined}
+                                variant="contained"
                                 onClick={handleAddToCart}
                                 fullWidth
                                 sx={{
@@ -234,25 +237,25 @@ export default function ProductCard({
                                     if (c.type === 'variant') {
                                         return (
                                             <Fragment key={c._id}>
-                                                <Link href="">
-                                                <AvatarGroup spacing={36} max={2} total={2}
-                                                    onClick={e => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        setIsVariantMenuOpen(true);
-                                                    }}
-                                                    sx={{
-                                                        marginLeft: "0.5rem"
-                                                    }}
-                                                >
-                                                    {c.products.map(p => {
+                                                <Link href={undefined}>
+                                                    <AvatarGroup spacing={36} max={2} total={2}
+                                                        onClick={e => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            setIsVariantMenuOpen(true);
+                                                        }}
+                                                        sx={{
+                                                            marginLeft: "0.5rem"
+                                                        }}
+                                                    >
+                                                        {c.products.map(p => {
 
-                                                        return (
-                                                            <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
-                                                        )
-                                                    })}
-                                                </AvatarGroup>
-                                                        </Link>
+                                                            return (
+                                                                <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
+                                                            )
+                                                        })}
+                                                    </AvatarGroup>
+                                                </Link>
                                             </Fragment>
                                         )
                                     }
@@ -271,7 +274,7 @@ export default function ProductCard({
                     <div className="flex between">
                         {!disableSizing && product.sizes && (
                             <div className="flex compact2 fit">
-                                {( (sizing && sizing.length < 3) || (sizing && categories.some(x => x.type != 'variant')) ) ? sizing.map((size) => {
+                                {((sizing && sizing.length < 3) || (sizing && categories.some(x => x.type != 'variant'))) ? sizing.map((size) => {
                                     const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
                                     const doesNotExist = marking === undefined || marking === null;
@@ -319,7 +322,7 @@ export default function ProductCard({
                                                 }
                                             }}
                                         >
-                                            {sizing && sizing.map((size : keyof SizeChart) => {
+                                            {sizing && sizing.map((size: keyof SizeChart) => {
                                                 const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
                                                 const doesNotExist = marking === undefined || marking === null;
@@ -375,7 +378,9 @@ export default function ProductCard({
 
                 <div className="flex between">
                     {isSm && addToCart && (
-                        <Button variant="contained"
+                        <Button
+                            href={undefined}
+                            variant="contained"
                             onClick={handleAddToCart}
                             fullWidth
                             sx={{

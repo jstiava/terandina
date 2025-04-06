@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import ScrollButton from "@/components/ScrollButton";
 import { Category, StripeAppProps, StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
-import { ButtonBase, IconButton, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, ButtonBase, IconButton, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { GetStaticPaths } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -142,9 +142,9 @@ export default function CategoryPage(props: StripeAppProps & {
   const router = useRouter();
   const isSm = useMediaQuery("(max-width: 45rem)");
   const isMd = useMediaQuery("(max-width: 70rem)");
+  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 
   useEffect(() => {
-
     anime({
       targets: ".subSectionButton",
       opacity: [0, 1],
@@ -152,7 +152,50 @@ export default function CategoryPage(props: StripeAppProps & {
       easing: "easeInOutQuad",
       delay: (el, i) => (100 * i) + 100,
     });
-  }, [isSm])
+  }, [isSm]);
+
+  useEffect(() => {
+    anime({
+      targets: ".actionButton",
+      opacity: [0, 1],
+      duration: 300,
+      easing: "easeInOutQuad",
+      delay: (el, i) => (100 * i) + 100,
+    });
+  }, [isSm, currentCategory]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Get the current scroll position
+      const scrollY = window.scrollY;
+
+      // Get all elements with the class "Category Section"
+      const categories = Array.from(document.querySelectorAll('.categorySection')) as HTMLElement[];
+
+      console.log(categories);
+
+
+      // Find the category currently visible in the viewport
+      for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+        const categoryTop = category.getBoundingClientRect().top + scrollY; // Get Y-coordinate relative to the page
+
+        // Check if the category is within the viewport
+        if (scrollY >= categoryTop - window.innerHeight / 2 && scrollY < categoryTop + category.offsetHeight - window.innerHeight / 2) {
+          setCurrentCategory(category.id); // Or any other identifier for the category
+          break;
+        }
+      }
+    };
+
+    // Attach the scroll event listener
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup on component unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (props && props.static) {
@@ -180,7 +223,8 @@ export default function CategoryPage(props: StripeAppProps & {
         padding: `0 ${isSm ? '1rem' : '2rem'}`,
         height: "3.5rem",
         borderBottom: `1px solid ${theme.palette.divider}`,
-        backgroundColor: theme.palette.background.paper,
+        // backgroundColor: theme.palette.background.paper,
+        backgroundColor: alpha('#f4f4f4', 0.9),
         animation: 'fade 0.2s ease-in-out forwards'
       }}>
         <Typography variant="h5">{props.static.tag ? `${props.static.tag.name} ` : ''}{props.static.category.name}</Typography>
@@ -190,11 +234,55 @@ export default function CategoryPage(props: StripeAppProps & {
           {props.static.categories && (
             <>
               {isSm ? (
-                <IconButton key="small">
-                  <SortOutlined sx={{
-                    fontSize: '1.25rem'
-                  }} />
-                </IconButton>
+                <div className="flex compact fit" key="small">
+                  {currentCategory && props.static.categories.map((cat) => {
+
+                    if (currentCategory != cat.slug) {
+                      return null;
+                    }
+
+                    return (
+                      <ButtonBase
+                        disableRipple
+                        key={cat._id}
+                        href={`#${cat.slug}`}
+                        //  onClick={() => {
+                        //      !isSidebarOpen && setActiveMenu(item.value);
+                        //      handleSwitchTab(item.value)
+                        //      handleOpenSidebar();
+                        //  }}
+                        className="actionButton"
+                        sx={{
+                          display: 'inline',
+                          textDecoration: `none`,
+                          transition: `background-size .3s`,
+                          cursor: "pointer",
+                          whiteSpace: "pre-line",
+                          fontWeight: 800,
+                          textAlign: 'left',
+                          height: "fit-content",
+                          '&:hover': {
+                            backgroundSize: "0 0.1rem, 100% 0.1rem",
+                          },
+                          opacity: 0,
+                          color: theme.palette.text.primary
+                        }}>
+                        <Typography variant="h6"
+                          sx={{
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05rem",
+                            fontSize: "0.875rem",
+                          }}>{cat.name}</Typography>
+                      </ButtonBase>
+                    )
+                  })}
+
+                  <IconButton key="outline">
+                    <SortOutlined sx={{
+                      fontSize: '1.25rem'
+                    }} />
+                  </IconButton>
+                </div>
               ) : (
                 <>
                   {props.static.categories.map((cat) => (
@@ -212,7 +300,7 @@ export default function CategoryPage(props: StripeAppProps & {
                         display: 'inline',
                         backgroundImage: `linear-gradient(#00000000, #00000000), linear-gradient(#000000, #000000)`,
                         textDecoration: `none`,
-                        backgroundSize: `100% 0.1rem, 0 0.1rem`,
+                        backgroundSize: currentCategory === cat.slug ? "0 0.1rem, 100% 0.1rem" : `100% 0.1rem, 0 0.1rem`,
                         backgroundPosition: `100% 1.25rem, 0 1.25rem`,
                         backgroundRepeat: `no-repeat`,
                         transition: `background-size .3s`,
@@ -227,11 +315,12 @@ export default function CategoryPage(props: StripeAppProps & {
                         opacity: 0,
                         color: theme.palette.text.primary
                       }}>
-                      <Typography variant="h6" sx={{
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05rem",
-                        fontSize: "0.875rem"
-                      }}>{cat.name}</Typography>
+                      <Typography variant="h6"
+                        sx={{
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05rem",
+                          fontSize: "0.875rem",
+                        }}>{cat.name}</Typography>
                     </ButtonBase>
                   ))}
                 </>
