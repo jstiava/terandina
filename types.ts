@@ -15,24 +15,24 @@ export interface StripePrice extends Stripe.Price {
 }
 
 export interface SizeChart {
-    XXS?: boolean,
-    XS?: boolean,
-    S?: boolean,
-    M?: boolean,
-    L?: boolean,
-    XL?: boolean,
-    XXL?: boolean,
-    '8'?: boolean,
-    '9'?: boolean,
-    '10'?: boolean,
-    '11'?: boolean,
-    '12'?: boolean,
-    '13'?: boolean,
-    OSFA?: boolean,
-    adjustable?: boolean,
+    XXS?: boolean | number,
+    XS?: boolean | number,
+    S?: boolean | number,
+    M?: boolean | number,
+    L?: boolean | number,
+    XL?: boolean | number,
+    XXL?: boolean | number,
+    '8'?: boolean | number,
+    '9'?: boolean | number,
+    '10'?: boolean | number,
+    '11'?: boolean | number,
+    '12'?:boolean | number,
+    '13'?: boolean | number,
+    'One-Size'?: boolean | number,
+    'Adjustable'?: boolean | number,
 }
 
-export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13'] as (keyof SizeChart)[]);
+export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13', 'One-Size', 'Adjustable'] as (keyof SizeChart)[]);
 
 
 export interface TerandinaImage {
@@ -53,6 +53,7 @@ export interface StripeProduct extends Stripe.Product {
     sizes?: SizeChart,
     default_size?: string,
     dimensions?: string | null;
+    sizeGuide?: string[][]
     
     // checkout
     size?: string,
@@ -77,6 +78,4 @@ export interface Category {
     media: TerandinaImage[],
     categories: string[] | Category[],
     description?: string | null;
-   
-
 }

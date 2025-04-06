@@ -3,7 +3,7 @@ import verifySession from "@/middleware/session/verifySession";
 import { StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
 import LocalMongo from "@/utils/local_mongo";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
@@ -117,7 +117,7 @@ export async function getProductById(productId: string): Promise<any | null> {
 
 export async function getAllProducts(query? : Partial<{
   [key: string]: string | string[];
-}>, isProd = true) {
+}>, isProd = true) : Promise<WithId<StripeProduct>[]> {
   try {
 
     query = query || {};
@@ -131,13 +131,13 @@ export async function getAllProducts(query? : Partial<{
 
     if (query.related_to != undefined) {
   
-      const products = await mongo.clientPromise.db('products').collection('products').aggregate([{
+      const products = await mongo.clientPromise.db('products').collection<WithId<StripeProduct>>('products').aggregate([{
         $sample: { size: 5 }
-      }]).toArray();
+      }]).toArray() as any;
 
       console.log(products);
 
-      return products;
+      return products || [];
     }
 
     if (query.is_featured != undefined) {
@@ -148,11 +148,12 @@ export async function getAllProducts(query? : Partial<{
       filter.categories = cat_id;
     }
 
-    const products = await mongo.clientPromise.db('products').collection('products').find(filter).toArray()
+    const products = await mongo.clientPromise.db('products').collection<WithId<StripeProduct>>('products').find(filter).toArray()
 
-    return products;
+    return products || [];
   } catch (error) {
     console.error('Error retrieving products:', error);
+    return [];
   }
 }
 

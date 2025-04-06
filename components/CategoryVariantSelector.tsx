@@ -16,6 +16,10 @@ export default function CategoryVariantSelector({ product, category, size = 'med
     return (
 
         <div className="flex compact top"
+        style={{
+            maxWidth: "100%",
+            flexWrap: 'wrap'
+        }}
             onMouseEnter={() => setAction('hovering')}
             onMouseLeave={() => setAction(null)}
         >

@@ -4,7 +4,7 @@ import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
 import { Category, SIZING_OPTIONS, StripeAppProps, StripePrice, StripeProduct } from "@/types";
-import { Button, Chip, Divider, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Chip, Dialog, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -17,6 +17,7 @@ import { getAllProducts } from "../api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "../api/categories";
 import { KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined } from "@mui/icons-material";
+import SIZE_GUIDES from "@/SIZE_GUIDES";
 
 interface StaticProps {
     notFound?: boolean;
@@ -65,7 +66,7 @@ export const getStaticProps = (async (context: any) => {
         related_to: product._id.toString()
     });
 
-    const categories = product.categories ? await getAllCategories({
+    const categories: WithId<Category>[] = product.categories ? await getAllCategories({
         cat_ids: product.categories.map((c: ObjectId) => c.toString()),
     }, {
         getProductsIfVariant: true
@@ -83,8 +84,16 @@ export const getStaticProps = (async (context: any) => {
         }
     }
 
+
+    // SIZE GUIDE
     for (const c of categories) {
 
+        if (c.slug) {
+            const sizeGuide = SIZE_GUIDES[c.slug as keyof typeof SIZE_GUIDES];
+            if (sizeGuide) {
+                product.sizeGuide = sizeGuide;
+            }
+        }
         if (!c.products) {
             continue;
         }
@@ -99,7 +108,7 @@ export const getStaticProps = (async (context: any) => {
         }
 
         const cats = p.categories ? await getAllCategories({
-            cat_ids: p.categories.map((c: ObjectId) => c.toString())
+            cat_ids: (p.categories as any).map((c: ObjectId) => c.toString())
         }, {
             getProductsIfVariant: true
         }) : [];
@@ -148,6 +157,7 @@ export default function Home(props: StripeAppProps & {
     const swiperRef = useRef<any>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
+    const [isSizeGuideShown, setIsSizeGuideShown] = useState(false);
     const [isDetailsShown, setIsDetailsShown] = useState(true);
 
 
@@ -452,7 +462,61 @@ export default function Home(props: StripeAppProps & {
                                             )
                                         })}
                                     </div>
-                                    <Link>Size Guide</Link>
+
+                                    {product.sizeGuide && (
+                                        <>
+                                            <Link href="" onClick={(e) => {
+                                                e.preventDefault();
+                                                setIsSizeGuideShown(true);
+                                            }}>Size Guide</Link>
+                                            <Dialog
+                                                open={isSizeGuideShown}
+                                                onClose={() => {
+                                                    setIsSizeGuideShown(false)
+                                                }}
+                                                sx={{
+                                                    padding: "0.5rem"
+                                                }}
+                                            >
+                                                <Paper sx={{
+                                                    padding: isSm ? "0.5rem" : "2rem",
+                                                    width: "100%",
+                                                    maxWidth: "40rem",
+                                                }}>
+                                                    <TableContainer>
+                                                        <Table sx={{
+                                                            width: "30rem"
+                                                        }}>
+                                                            {product.sizeGuide[0] && (
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        {product.sizeGuide[0].map(value => (
+                                                                            <TableCell key={value}>{value}</TableCell>
+                                                                        ))}
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                            )}
+                                                            <TableBody>
+                                                                {product.sizeGuide.map((row, index) => {
+                                                                    if (index === 0) {
+                                                                        return null;
+                                                                    }
+                                                                    return (
+                                                                        <TableRow key={index}>
+                                                                            {row.map(value => (
+                                                                                <TableCell key={value}>{value}</TableCell>
+                                                                            ))}
+                                                                        </TableRow>
+                                                                    )
+                                                                })}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                </Paper>
+
+                                            </Dialog>
+                                        </>
+                                    )}
                                 </div>
                             )}
 

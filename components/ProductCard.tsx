@@ -173,6 +173,15 @@ export default function ProductCard({
                                 height: "auto",
                                 overflow: 'hidden'
                             }} />
+                            <Chip
+                            sx={{
+                                position: 'absolute',
+                                top: "0.5rem",
+                                left: "0.5rem",
+                            }}
+                            key="out_of_stock"
+                            label="Out of Stock"
+                            />
                         {isHovering && addToCart && (
                             <Button variant="contained"
                                 onClick={handleAddToCart}

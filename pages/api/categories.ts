@@ -1,6 +1,6 @@
 import SafeString from "@/middleware/security";
 import verifySession from "@/middleware/session/verifySession";
-import { Category, StripePrice, StripeProduct } from "@/types";
+import { Category, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
 import { ObjectId, WithId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -142,7 +142,7 @@ export async function getAllCategories(query: Partial<{
   [key: string]: string | string[];
 }>, select = {
   getProductsIfVariant: false
-}) {
+}) : Promise<WithId<Category>[]> {
 
   console.log({ query, select })
   try {
@@ -150,8 +150,8 @@ export async function getAllCategories(query: Partial<{
 
     if (query.cat_ids && Array.isArray(query.cat_ids)) {
 
-      const categories = await mongo.clientPromise.db('products').collection('categories').find({
-        _id: { $in: query.cat_ids.map(id => new ObjectId(id)) }
+      const categories : WithId<Category>[] = await mongo.clientPromise.db('products').collection<WithId<Category>>('categories').find({
+        _id: { $in: query.cat_ids.map(id => new ObjectId(id)) as any }
       }).toArray();
 
       if (select.getProductsIfVariant) {
@@ -166,16 +166,18 @@ export async function getAllCategories(query: Partial<{
         }
       }
 
-      return categories;
+      return categories || [];
     }
 
-    const categories = await mongo.clientPromise.db('products').collection('categories').find().toArray()
+    const categories = await mongo.clientPromise.db('products').collection<WithId<Category>>('categories').find().toArray()
 
-    return categories;
+    return categories || [];
 
   } catch (error) {
     console.error('Error retrieving categories:', error);
   }
+
+  return [];
 }
 
 

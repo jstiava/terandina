@@ -36,7 +36,9 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
         {isHovering && images.length > 1 && (
           <>
             <IconButton
+              href=""
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setActive(prev => {
                   const newIndex = prev - 1;
@@ -53,7 +55,9 @@ export default function CoverImageCarousel({ images, height, width, isHovering =
               <ChevronLeft />
             </IconButton>
             <IconButton
+              href=""
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setActive(prev => {
                   const newIndex = prev + 1;

@@ -1,7 +1,7 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types";
-import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import {
     GridColDef,
@@ -28,6 +28,7 @@ import { formatPrice } from "@/components/ProductCard";
 import { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
 import { zain_sans_font } from "@/styles/theme";
+
 
 const MAX_IMAGES = 5;
 
@@ -514,17 +515,17 @@ export default function AdminPage() {
             sortable: false,
             width: 100,
             renderCell: (params: GridRenderCellParams<StripeProduct, string[]>) => <ManagePhotosField
-            type="products" key={params.id} params={params} onChange={(uploads) => {
-                const row = products?.find(x => params.id);
-                if (!row) {
-                    return;
-                }
-                console.log(row);
-                // processRowUpdate({
-                //     ...row,
-                //     images: uploads
-                // })
-            }} />
+                type="products" key={params.id} params={params} onChange={(uploads) => {
+                    const row = products?.find(x => params.id);
+                    if (!row) {
+                        return;
+                    }
+                    console.log(row);
+                    // processRowUpdate({
+                    //     ...row,
+                    //     images: uploads
+                    // })
+                }} />
         },
         {
             field: "name",
@@ -1479,6 +1480,7 @@ export default function AdminPage() {
 
         setCategories(response.categories);
     }
+
 
     useEffect(() => {
         getProducts();

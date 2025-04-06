@@ -29,6 +29,16 @@ const theme = createTheme({
     }
   },
   components: {
+    MuiChip: {
+      styleOverrides: {
+        sizeSmall: {
+          height: '1.5rem',
+        },
+        root: {
+          height: "2rem"
+        }
+      }
+    },
     MuiTextField: {
       styleOverrides: {
         root: {

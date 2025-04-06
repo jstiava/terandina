@@ -75,7 +75,7 @@ export const getStaticProps = (async (context: any) => {
     }
 
     const cats = await getAllCategories({
-      cat_ids: p.categories.map((c: ObjectId) => c.toString())
+      cat_ids: (p.categories as any).map((c: ObjectId) => c.toString())
     }, {
       getProductsIfVariant: true
     });
