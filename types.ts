@@ -52,6 +52,7 @@ export interface StripeProduct extends Stripe.Product {
     details?: string,
     sizes?: SizeChart,
     default_size?: string,
+    dimensions?: string | null;
     
     // checkout
     size?: string,
@@ -75,6 +76,7 @@ export interface Category {
     products: StripeProduct[],
     media: TerandinaImage[],
     categories: string[] | Category[],
-    description?: string | null
+    description?: string | null;
+   
 
 }

@@ -1,5 +1,5 @@
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, IconButton, lighten, Popover, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, FormControl, IconButton, InputLabel, lighten, MenuItem, Popover, Select, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
@@ -120,90 +120,134 @@ export default function ProductCard({
 
     try {
 
-  
 
-    return (
-        <ButtonBase className="column left top"
-            disableRipple
-            onMouseEnter={() => {
-                if (!isSm) {
-                    setIsHovering(true);
-                }
-            }}
-            onMouseLeave={() => setIsHovering(false)}
-            onClick={() => router.push(`/item/${product.id}`)}
-            style={{
-                width: isSm ? "100%" : "25rem",
-                padding: isSm ? "0" : "2rem",
-                animation: `popIn 0.5s ease forwards`,
-                transform: "scale(0)",
-                opacity: 0,
-                marginBottom: "2rem",
-                ...style
-            }}>
-            {product.media && (
-                <div className="column snug center"
 
-                    style={{
-                        position: 'relative',
-                        width: "100%"
-                    }}>
-                    <CoverImageCarousel
-                        images={product.media}
-                        width="100%"
-                        height={"100%"}
-                        isHovering={isHovering}
-                        style={{
-                            // borderRadius: "0.5rem",
-                            aspectRatio: "1 / 1",
-                            height: "auto",
-                            overflow: 'hidden'
-                        }} />
-                    {isHovering && addToCart && (
-                        <Button variant="contained"
-                            onClick={handleAddToCart}
-                            fullWidth
-                            sx={{
-                                position: 'absolute',
-                                bottom: "0.75rem",
-                                width: "90%"
-                            }}>Add to Cart</Button>
-                    )}
-                </div>
-            )}
-            <div className={"flex between top"}
-                style={{
-                    opacity: isHovering ? 0.85 : 1,
-                    transition: "0.25s ease-in-out",
+        return (
+            <ButtonBase
+                href={`/item/${product.id}`}
+                className="column left top"
+                disableRipple
+                onMouseEnter={() => {
+                    if (!isSm) {
+                        setIsHovering(true);
+                    }
                 }}
-            >
-                <div className={isMd ? "column compact" : "flex between top"} >
-                    <div className="column compact">
-                        <PriceSelector
-                            product={copyOfProduct}
-                            handleChangePrice={handleChangePrice}
-                        />
+                onMouseLeave={() => setIsHovering(false)}
+                onClick={() => router.push(`/item/${product.id}`)}
+                style={{
+                    width: isSm ? "100%" : "25rem",
+                    padding: isSm ? "0" : "2rem",
+                    animation: `popIn 0.5s ease forwards`,
+                    transform: "scale(0)",
+                    opacity: 0,
+                    marginBottom: "2rem",
+                    ...style
+                }}>
+                {product.media && (
+                    <div className="column snug center"
 
+                        style={{
+                            position: 'relative',
+                            width: "100%"
+                        }}>
+                        <CoverImageCarousel
+                            images={product.media}
+                            width="100%"
+                            height={"100%"}
+                            isHovering={isHovering}
+                            style={{
+                                // borderRadius: "0.5rem",
+                                aspectRatio: "1 / 1",
+                                height: "auto",
+                                overflow: 'hidden'
+                            }} />
+                        {isHovering && addToCart && (
+                            <Button variant="contained"
+                                onClick={handleAddToCart}
+                                fullWidth
+                                sx={{
+                                    position: 'absolute',
+                                    bottom: "0.75rem",
+                                    width: "90%"
+                                }}>Add to Cart</Button>
+                        )}
+                    </div>
+                )}
+                <div className={"flex between top"}
+                    style={{
+                        opacity: isHovering ? 0.85 : 1,
+                        transition: "0.25s ease-in-out",
+                    }}
+                >
+                    <div className={isMd ? "column compact" : "flex between top"} >
+                        <div className="column compact">
 
-                        <Typography variant="h5" sx={{
-                            width: "fit-content",
-                            lineHeight: "115%",
-                            textAlign: 'left',
-                            fontSize: "1rem",
-                            // minHeight: '2rem',
-                            maxHeight: isSm ? "3.5rem" : 'fit-content',
-                            overflow: 'hidden',
-                            whiteSpace: 'wrap',
-                            textOverflow: 'ellipsis',
-                            lineClamp: 3,
-                            display: '-webkit-flex',
-                            WebkitLineClamp: 3
+                            <Typography variant="h5" sx={{
+                                width: "fit-content",
+                                lineHeight: "115%",
+                                textAlign: 'left',
+                                fontSize: "1rem",
+                                // minHeight: '2rem',
+                                maxHeight: isSm ? "3.5rem" : 'fit-content',
+                                overflow: 'hidden',
+                                whiteSpace: 'wrap',
+                                textOverflow: 'ellipsis',
+                                lineClamp: 3,
+                                display: '-webkit-flex',
+                                WebkitLineClamp: 3
 
-                        }}>{product.name}</Typography>
+                            }}>{product.name}</Typography>
+                        </div>
 
-                        {!isSm && product.sizes && (
-                            <div className="flex compact2">
-                                {SIZING_OPTIONS.map(size => {
+                        <DisplayPrice product={copyOfProduct} style={{
+                            fontSize: '1rem'
+                        }} />
+
+                    </div>
+
+                    <div className={"flex fit"}>
+                        {isSm && product && categories ? (
+                            <div className="flex fit">
+                                {categories.map(c => {
+
+                                    if (c.type === 'variant') {
+                                        return (
+                                            <Fragment key={c._id}>
+                                                <AvatarGroup spacing={36} max={2} total={2}
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        setIsVariantMenuOpen(true);
+                                                    }}
+                                                    sx={{
+                                                        marginLeft: "0.5rem"
+                                                    }}
+                                                >
+                                                    {c.products.map(p => {
+
+                                                        return (
+                                                            <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
+                                                        )
+                                                    })}
+                                                </AvatarGroup>
+                                            </Fragment>
+                                        )
+                                    }
+
+                                    return null;
+                                })}
+                            </div>
+
+                        ) : (
+                            <></>
+                        )}
+                    </div>
+                </div>
+
+                {!isSm && (
+                    <div className="flex between">
+                        {product.sizes && (
+                            <div className="flex compact2 fit">
+                                {SIZING_OPTIONS.length < 3 ? SIZING_OPTIONS.map(size => {
                                     const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
                                     const doesNotExist = marking === undefined || marking === null;
@@ -236,12 +280,34 @@ export default function ProductCard({
                                     )
 
 
-                                })}
+                                }) : (
+                                    <FormControl fullWidth size="small" onClick={(e) => {
+                                        e.stopPropagation();
+                                    }}>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={"L"}
+                                            label="Age"
+                                            sx={{
+                                                '& .MuiOutlinedInput-notchedOutline': {
+                                                    border: 'none'
+                                                }
+                                            }}
+                                        >
+                                            <MenuItem value={"XS"}>XS</MenuItem>
+                                            <MenuItem value={"S"}>S</MenuItem>
+                                            <MenuItem value={"L"}>L</MenuItem>
+                                            <MenuItem value={"XL"}>XL</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                )}
+
                             </div>
                         )}
 
-                        {!isSm && categories && categories.some(c => c.type === 'variant') && (
-                            <div className="flex between">
+                        {categories && categories.some(c => c.type === 'variant') && (
+                            <div className="flex fit">
                                 <div className="flex compact">
                                     {product && categories && categories.map((c, i) => {
 
@@ -259,7 +325,7 @@ export default function ProductCard({
                                                     onClose={() => {
                                                         setIsVariantMenuOpen(false);
                                                     }}
-                                                    limit={5}
+                                                    limit={isMd ? 2 : 4}
                                                 />
                                             )
                                         }
@@ -269,37 +335,95 @@ export default function ProductCard({
 
                             </div>
                         )}
+
                     </div>
 
-                    <DisplayPrice product={copyOfProduct} style={{
-                        fontSize: '1rem'
-                    }} />
+                )}
 
+                <div className="flex between">
+                    {isSm && addToCart && (
+                        <Button variant="contained"
+                            onClick={handleAddToCart}
+                            fullWidth
+                            sx={{
+                                height: "2.5rem"
+                            }}>Add to Cart</Button>
+                    )}
                 </div>
-                <div className={"flex fit"}>
-                    {isSm && product && categories ? (
-                        <div className="flex fit">
-                            {categories.map(c => {
+                <Drawer anchor={isMd ? 'bottom' : 'right'} open={isVariantMenuOpen}
+                    onClose={(e: any, reason) => {
+                        e.stopPropagation();
+                        setIsVariantMenuOpen(false)
+                    }}
+                    onClick={e => {
+                        e.stopPropagation();
+                    }}
+                >
+
+                    <IconButton
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsVariantMenuOpen(false);
+                        }}
+                        sx={{
+                            position: "absolute",
+                            top: "0.5rem",
+                            right: "0.5rem"
+                        }}>
+                        <CloseOutlined fontSize="small" />
+                    </IconButton>
+                    <div className="column" style={{
+                        padding: "2rem 0",
+                        backgroundColor: 'white',
+                        width: isMd ? "100%" : "30rem",
+                        maxWidth: "100%",
+                        height: "100%"
+                    }}>
+
+                        <div className="column" style={{
+                            padding: "0 1rem"
+                        }}>
+
+                            {categories && categories.map(c => {
 
                                 if (c.type === 'variant') {
+
                                     return (
                                         <Fragment key={c._id}>
-                                            <AvatarGroup spacing={36} max={2} total={2}
-                                                onClick={e => {
-                                                    e.stopPropagation();
-                                                    setIsVariantMenuOpen(true);
-                                                }}
-                                                sx={{
-                                                    marginLeft: "0.5rem"
-                                                }}
-                                            >
-                                                {c.products.map(p => {
-
+                                            <Typography variant="h6" sx={{
+                                                textTransform: "uppercase",
+                                                opacity: 0.75,
+                                                fontSize: "1rem"
+                                            }}>{c.name}</Typography>
+                                            <div className="column snug">
+                                                {c.products.map((p: any) => {
                                                     return (
-                                                        <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
+                                                        <ButtonBase
+                                                            key={p.id}
+                                                            className="flex between"
+                                                            onClick={e => {
+                                                                e.stopPropagation();
+                                                                setIsVariantMenuOpen(false);
+                                                                router.push(`/item/${p.id}`)
+                                                            }}
+                                                            style={{
+                                                                padding: "0.5rem 0.75rem 0.5rem 0.5rem",
+                                                                backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
+                                                                borderRadius: "0.25rem"
+                                                            }}>
+                                                            <div className="flex compact">
+                                                                <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
+                                                                <Typography sx={{
+                                                                    fontSize: "1rem"
+                                                                }}>{p.name}</Typography>
+                                                            </div>
+                                                            <ArrowForward fontSize="small" sx={{
+                                                                opacity: 0.75
+                                                            }} />
+                                                        </ButtonBase>
                                                     )
                                                 })}
-                                            </AvatarGroup>
+                                            </div>
                                         </Fragment>
                                     )
                                 }
@@ -307,191 +431,94 @@ export default function ProductCard({
                                 return null;
                             })}
                         </div>
-
-                    ) : (
-                        <></>
-                    )}
-                </div>
-            </div>
-            <div className="flex between">
-                {isSm && addToCart && (
-                    <Button variant="contained"
-                        onClick={handleAddToCart}
-                        fullWidth
-                        sx={{
-                            height: "2.5rem"
-                        }}>Add to Cart</Button>
-                )}
-            </div>
-            <Drawer anchor={isMd ? 'bottom' : 'right'} open={isVariantMenuOpen}
-                onClose={(e: any, reason) => {
-                    e.stopPropagation();
-                    setIsVariantMenuOpen(false)
-                }}
-                onClick={e => {
-                    e.stopPropagation();
-                }}
-            >
-
-                <IconButton
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsVariantMenuOpen(false);
-                    }}
-                    sx={{
-                        position: "absolute",
-                        top: "0.5rem",
-                        right: "0.5rem"
-                    }}>
-                    <CloseOutlined fontSize="small" />
-                </IconButton>
-                <div className="column" style={{
-                    padding: "2rem 0",
-                    backgroundColor: 'white',
-                    width: isMd ? "100%" : "30rem",
-                    maxWidth: "100%",
-                    height: "100%"
-                }}>
-
-                    <div className="column" style={{
-                        padding: "0 1rem"
-                    }}>
-
-                        {categories && categories.map(c => {
-
-                            if (c.type === 'variant') {
-
-                                return (
-                                    <Fragment key={c._id}>
+                        <div className="column">
+                            <Accordion
+                                expanded={expanded}
+                                onChange={(e) => setExpanded(prev => !prev)}
+                                disableGutters
+                                elevation={0}
+                                square
+                                sx={{
+                                    backgroundColor: "white"
+                                }}
+                            >
+                                <AccordionSummary
+                                    {...props}
+                                    expandIcon={<ExpandMore />}
+                                    aria-controls="panel1-content"
+                                    id="panel1-header"
+                                    sx={{
+                                        '& .MuiAccordionSummary-content': {
+                                            width: "calc(100% - 5rem)",
+                                            backgroundColor: 'transparent'
+                                        }
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            padding: '0.25rem 0.25rem 0.25rem 0',
+                                            height: '2rem',
+                                            width: "100%",
+                                        }}
+                                    >
                                         <Typography variant="h6" sx={{
                                             textTransform: "uppercase",
                                             opacity: 0.75,
                                             fontSize: "1rem"
-                                        }}>{c.name}</Typography>
-                                        <div className="column snug">
-                                            {c.products.map((p: any) => {
-                                                return (
-                                                    <ButtonBase
-                                                        key={p.id}
-                                                        className="flex between"
-                                                        onClick={e => {
-                                                            e.stopPropagation();
-                                                            setIsVariantMenuOpen(false);
-                                                            router.push(`/item/${p.id}`)
-                                                        }}
-                                                        style={{
-                                                            padding: "0.5rem 0.75rem 0.5rem 0.5rem",
-                                                            backgroundColor: p.id === product.id ? lighten(theme.palette.primary.main, 0.9) : 'white',
-                                                            borderRadius: "0.25rem"
-                                                        }}>
-                                                        <div className="flex compact">
-                                                            <Avatar key={p.id} alt={p.name} src={p.media[0].small || ''} />
-                                                            <Typography sx={{
-                                                                fontSize: "1rem"
-                                                            }}>{p.name}</Typography>
-                                                        </div>
-                                                        <ArrowForward fontSize="small" sx={{
-                                                            opacity: 0.75
-                                                        }} />
-                                                    </ButtonBase>
-                                                )
-                                            })}
-                                        </div>
-                                    </Fragment>
-                                )
-                            }
+                                        }}>Related</Typography>
 
-                            return null;
-                        })}
+                                    </div>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <div className="column" >
+                                        {categories && categories.map((c, i) => {
+
+                                            if (c.type === 'variant') {
+                                                return null;
+                                            }
+
+                                            return (
+                                                <ButtonBase
+                                                    key={c._id}
+                                                    className="flex between"
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        router.push(`/${c.slug}`);
+                                                        setIsVariantMenuOpen(false);
+                                                    }}
+                                                    style={{
+                                                        padding: "0.5rem 0.75rem 0.5rem 0.5rem",
+
+                                                        borderRadius: "0.25rem"
+                                                    }}>
+                                                    <div className="flex compact">
+                                                        <Typography sx={{
+                                                            fontSize: "1rem"
+                                                        }}>{c.name}</Typography>
+                                                    </div>
+                                                    <ArrowForward fontSize="small" sx={{
+                                                        opacity: 0.75
+                                                    }} />
+                                                </ButtonBase>
+                                            )
+                                        })}
+                                    </div>
+                                </AccordionDetails>
+                            </Accordion>
+                        </div>
                     </div>
-                    <div className="column">
-                        <Accordion
-                            expanded={expanded}
-                            onChange={(e) => setExpanded(prev => !prev)}
-                            disableGutters
-                            elevation={0}
-                            square
-                            sx={{
-                                backgroundColor: "white"
-                            }}
-                        >
-                            <AccordionSummary
-                                {...props}
-                                expandIcon={<ExpandMore />}
-                                aria-controls="panel1-content"
-                                id="panel1-header"
-                                sx={{
-                                    '& .MuiAccordionSummary-content': {
-                                        width: "calc(100% - 5rem)",
-                                        backgroundColor: 'transparent'
-                                    }
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        padding: '0.25rem 0.25rem 0.25rem 0',
-                                        height: '2rem',
-                                        width: "100%",
-                                    }}
-                                >
-                                    <Typography variant="h6" sx={{
-                                        textTransform: "uppercase",
-                                        opacity: 0.75,
-                                        fontSize: "1rem"
-                                    }}>Related</Typography>
+                </Drawer>
+            </ButtonBase>
+        )
 
-                                </div>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <div className="column" >
-                                    {categories && categories.map((c, i) => {
-
-                                        if (c.type === 'variant') {
-                                            return null;
-                                        }
-
-                                        return (
-                                            <ButtonBase
-                                                key={c._id}
-                                                className="flex between"
-                                                onClick={e => {
-                                                    e.stopPropagation();
-                                                    router.push(`/${c.slug}`);
-                                                    setIsVariantMenuOpen(false);
-                                                }}
-                                                style={{
-                                                    padding: "0.5rem 0.75rem 0.5rem 0.5rem",
-
-                                                    borderRadius: "0.25rem"
-                                                }}>
-                                                <div className="flex compact">
-                                                    <Typography sx={{
-                                                        fontSize: "1rem"
-                                                    }}>{c.name}</Typography>
-                                                </div>
-                                                <ArrowForward fontSize="small" sx={{
-                                                    opacity: 0.75
-                                                }} />
-                                            </ButtonBase>
-                                        )
-                                    })}
-                                </div>
-                            </AccordionDetails>
-                        </Accordion>
-                    </div>
-                </div>
-            </Drawer>
-        </ButtonBase>
-    )
-
-}
-catch (err) {
-    console.log({
-        message: `Error when viewing product ${product.id}`,
-        err
-    })
-    return null;
-}
+    }
+    catch (err) {
+        console.log({
+            message: `Error when viewing product ${product.id}`,
+            err
+        })
+        return null;
+    }
 }
