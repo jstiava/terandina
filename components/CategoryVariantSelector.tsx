@@ -1,6 +1,6 @@
 import { Category, StripeProduct } from "@/types";
 import CoverImage from "./CoverImage";
-import { Avatar, AvatarGroup, ButtonBase, Tooltip, useTheme } from "@mui/material";
+import { Avatar, AvatarGroup, ButtonBase, IconButton, Link, Tooltip, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { AddOutlined, MoreHorizOutlined, MoreOutlined } from "@mui/icons-material";
@@ -15,8 +15,12 @@ export default function CategoryVariantSelector({ product, category, size = 'med
 
     return (
 
-        <AvatarGroup spacing={-2} max={limit + 1} total={limit} onMouseEnter={() => setAction('hovering')}
-            onMouseLeave={() => setAction(null)}>
+        <div className="flex compact top"
+            onMouseEnter={() => setAction('hovering')}
+            onMouseLeave={() => setAction(null)}
+        >
+
+
             {category.products.map((p, i) => {
 
                 const isChosen = product.id === p.id;
@@ -38,35 +42,51 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                             marginBottom: "0.5rem"
                         }}
                     >
-                        <Avatar
-                            key={p.id}
-                            alt={p.name}
-                            src={p.media[0].small || ''}
-                            sx={{
-                                backgroundSize: "200%"
-                            }}
-                            onClick={() => {
-                                onClose();
-                                router.replace(`/item/${p.id}`);
-                            }} />
+                        <Link href={`/item/${p.id}`}>
+                            <Avatar
+                                key={p.id}
+                                alt={p.name}
+                                src={p.media[0].small || ''}
+                                sx={{
+                                    backgroundSize: "200%"
+                                }}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onClose();
+                                    router.replace(`/item/${p.id}`);
+                                }} />
+                        </Link>
                     </Tooltip>
                 )
             })}
 
             {onMore && (
-                <Avatar
-                    sx={{
-                        backgroundColor: 'transparent',
-                        color: theme.palette.primary.main
-                    }}
-                    onClick={e => {
-                        e.stopPropagation();
-                        onMore();
-                    }}
+                <Tooltip
+                    key={'More'}
+                    title={'See More'}
+                    placement="top"
                 >
-                    <MoreHorizOutlined />
-                </Avatar>
+                    <Avatar
+                        sx={{
+                            backgroundColor: 'transparent',
+                            color: theme.palette.primary.main,
+                            border: 'none !important'
+                        }}
+                    >
+                        <IconButton
+                            href=""
+                            onClick={e => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onMore();
+                            }}>
+
+                            <MoreHorizOutlined />
+                        </IconButton>
+                    </Avatar>
+                </Tooltip>
             )}
-        </AvatarGroup>
+        </div>
     )
 }

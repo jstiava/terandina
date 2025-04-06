@@ -161,7 +161,7 @@ export default function CategoryPage(props: StripeAppProps & {
           padding: "1rem"
         }}>
           <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
-            padding: isMd ? "1.5rem 2rem 3rem 2rem" : "5rem 1rem",
+            padding: isMd ? "1.5rem 2rem 3rem 2rem" : "9rem 1rem",
             width: '100%',
             margin: isMd ? isSm ? "0rem 0rem 2rem 0rem" : "1rem 2rem" : "1rem 2rem",
             backgroundColor: TerandinaGreen,
@@ -177,6 +177,7 @@ export default function CategoryPage(props: StripeAppProps & {
               <div className="column center middle">
                 <Typography variant="h1" sx={{
                   fontSize: isMd ? '3rem' : "4rem",
+                  lineHeight: "100%"
                 }}>{props.static.category.name}</Typography>
               </div>
             </div>

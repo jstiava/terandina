@@ -623,6 +623,7 @@ export default function Home(props: StripeAppProps & {
                                             // width: "100%"
                                         }}
                                         categories={props.categories}
+                                        disableSizing
                                     />
                                 </div>
                             </SwiperSlide>
