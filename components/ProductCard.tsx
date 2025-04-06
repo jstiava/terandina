@@ -1,5 +1,5 @@
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, FormControl, IconButton, InputLabel, lighten, MenuItem, Popover, Select, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, AvatarGroup, Button, ButtonBase, Chip, Drawer, FormControl, IconButton, InputLabel, lighten, Link, MenuItem, Popover, Select, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import PriceSelector from "./PriceSelector";
@@ -234,8 +234,10 @@ export default function ProductCard({
                                     if (c.type === 'variant') {
                                         return (
                                             <Fragment key={c._id}>
+                                                <Link href="">
                                                 <AvatarGroup spacing={36} max={2} total={2}
                                                     onClick={e => {
+                                                        e.preventDefault();
                                                         e.stopPropagation();
                                                         setIsVariantMenuOpen(true);
                                                     }}
@@ -250,6 +252,7 @@ export default function ProductCard({
                                                         )
                                                     })}
                                                 </AvatarGroup>
+                                                        </Link>
                                             </Fragment>
                                         )
                                     }
