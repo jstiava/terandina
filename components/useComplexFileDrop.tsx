@@ -233,21 +233,8 @@ export default function useComplexFileDrop(uploads: UploadType[] | null, setUplo
 
                 </SortableContext>
               </DndContext>
+            </div>
 
-              <>
-                {loading && (
-                  <div className="flex center middle">
-                    <CircularProgress color="primary" />
-                  </div>
-                )}
-              </>
-            </div>
-            <div className="column">
-                <Alert severity="warning">
-                    <AlertTitle component="h6">The image quality.</AlertTitle>
-                    These previews will look like shit. Don&apos;t worry...the real page looks better.
-                </Alert>
-            </div>
             {isOpen && (
               <UploadForm
                 onAdd={handleAddedFiles}

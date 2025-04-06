@@ -140,9 +140,18 @@ async function getProductById(productId: string): Promise<any | null> {
 
 export async function getAllCategories(query: Partial<{
   [key: string]: string | string[];
-}>, select = {
-  getProductsIfVariant: false
+}>, select? : {
+  getProductsIfVariant?: boolean,
+  getProducts?: boolean
 }) : Promise<WithId<Category>[]> {
+
+  select = {
+    ...{
+      getProductsIfVariant: false,
+      getProducts: false
+    },
+    ...select
+  }
 
   console.log({ query, select })
   try {
@@ -159,6 +168,14 @@ export async function getAllCategories(query: Partial<{
           if (cat.type != 'variant') {
             continue;
           }
+          const products = await getAllProducts({
+            category: cat._id.toString()
+          })
+          cat.products = products;
+        }
+      }
+      else if (select.getProducts) {
+        for (const cat of categories) {
           const products = await getAllProducts({
             category: cat._id.toString()
           })
@@ -235,7 +252,7 @@ async function handleDeleteRequest(
   }
 }
 
-const allowedFields: (keyof Category)[] = ['media', 'name', 'description'];
+const allowedFields: (keyof Category)[] = ['media', 'name', 'description', 'categories'];
 
 async function handlePatchRequest(
   req: NextApiRequest,

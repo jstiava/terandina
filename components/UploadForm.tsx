@@ -2,6 +2,8 @@
 // import axios from '@/utils/axios';
 import {
   Button,
+  CircularProgress,
+  LinearProgress,
   Typography,
   styled,
   useTheme,
@@ -30,10 +32,23 @@ interface FileUploadProps {
 export default function UploadForm({onAdd} : {onAdd : (newImages : UploadType[]) => any}) {
   const theme = useTheme();
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
-
+  const startProgress = () => {
+    setUploadProgress(10);
+  }
 
   const UploadThing = useUploadThing('imageUploader', {
+    onUploadProgress: (progress) => {
+      const value = Math.round(progress * 1);
+      if (value <= 95) {
+        startProgress();
+      }
+      else {
+        setUploadProgress(null);
+      }
+
+    },
     onClientUploadComplete: (res) => {
       if (res) {
 
@@ -139,6 +154,9 @@ export default function UploadForm({onAdd} : {onAdd : (newImages : UploadType[])
 
   return (
     <div className='column'>
+      {uploadProgress && (
+        <CircularProgress size={"2rem"}/>
+      )}
       <div
         className={`visual-drop-area ${isDragOver ? 'drag-over' : ''}`}
         onDragOver={handleDragOver}

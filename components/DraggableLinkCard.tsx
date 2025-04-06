@@ -30,7 +30,7 @@ export default function DraggableLinkCard({ id, variant = 'flipped', item, onDel
                     sx={{
                         padding: "0.5rem 0",
                         fontWeight: 600,
-                        textTransform: "uppercase",
+                        // textTransform: "uppercase",
                         height: "2.75rem"
                     }} >
                     <Typography>{item.name}</Typography>

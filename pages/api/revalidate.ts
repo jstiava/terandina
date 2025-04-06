@@ -47,7 +47,7 @@ export async function getProductByIdFromStripe(product_id: string): Promise<Part
     }
 }
 
-async function getAllProducts() {
+export async function getAllProductsFromStripe() {
     try {
         const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
         const products = await stripe.products.list({

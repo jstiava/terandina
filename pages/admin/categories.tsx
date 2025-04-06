@@ -1,5 +1,6 @@
 "use client"
 import ManagePhotosField from "@/components/ManagePhotosField";
+import ManageSubcategories from "@/components/ManageSubcategories";
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps, StripeProduct } from "@/types";
 import { AddOutlined, CancelOutlined, CloseOutlined, DeleteOutline, EditOutlined, OpenInNew, RefreshOutlined, SaveOutlined, TurnLeftOutlined } from "@mui/icons-material";
@@ -93,6 +94,8 @@ export default function CategoryAdminPage(props: StripeAppProps) {
     });
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+
+    console.log(categories);
 
     const handleUpdate = async (newRow: Category) => {
         await fetch(`/api/categories?id=${newRow._id}`, {
@@ -225,7 +228,6 @@ export default function CategoryAdminPage(props: StripeAppProps) {
     };
 
     const handleEditClick = (id: GridRowId) => () => {
-        console.log(id);
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     };
 
@@ -361,7 +363,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                 )
             }
         },
-        {
+        { 
             field: "type",
             headerName: "Type",
             width: 100,
@@ -380,6 +382,35 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                             }}>{params.value}</Typography>
                     </div>
                 ) : <></>
+            }
+        },
+        {
+            field: "categories",
+            headerName: "Categories",
+            width: 100,
+            editable: true,
+            renderCell: (params: GridRenderCellParams<Category, Category[] | null>) => {
+
+                if (!categories) {
+                    return <></>
+                }
+
+                return (
+                    <ManageSubcategories
+                        params={params}
+                        onChange={(files) => {
+                            console.log(files);
+                        }}
+                        onSave={(files) => {
+                            processRowUpdate({
+                                ...params.row,
+                                categories: files
+                            })
+                        }}
+                        allCategories={categories}
+                    />
+                )
+                
             }
         },
         {
@@ -448,8 +479,8 @@ export default function CategoryAdminPage(props: StripeAppProps) {
             type: "actions",
             headerName: "Actions",
             width: 100,
-            getActions: ({ _id } : {_id : string}) => {
-                const isInEditMode = rowModesModel[_id]?.mode === GridRowModes.Edit;
+            getActions: ({ id } : {id : string}) => {
+                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
                     return [
@@ -458,14 +489,14 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                             icon={<SaveOutlined />}
                             label="Save"
                             color="primary"
-                            onClick={handleSaveClick(_id)}
+                            onClick={handleSaveClick(id)}
                         />,
                         <GridActionsCellItem
                             key="cancel"
                             icon={<CancelOutlined />}
                             label="Cancel"
                             className="textPrimary"
-                            onClick={handleCancelClick(_id)}
+                            onClick={handleCancelClick(id)}
                             color="inherit"
                         />,
                     ];
@@ -477,7 +508,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                         icon={<EditOutlined />}
                         label="Edit"
                         className="textPrimary"
-                        onClick={handleEditClick(_id)}
+                        onClick={handleEditClick(id)}
                         color="inherit"
                     />
                 ];
