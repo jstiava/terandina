@@ -144,6 +144,7 @@ export default function CategoryPage(props: StripeAppProps & {
   const isMd = useMediaQuery("(max-width: 70rem)");
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 
+
   useEffect(() => {
     anime({
       targets: ".subSectionButton",
@@ -152,7 +153,8 @@ export default function CategoryPage(props: StripeAppProps & {
       easing: "easeInOutQuad",
       delay: (el, i) => (100 * i) + 100,
     });
-  }, [isSm]);
+  }, [router, isSm]);
+
 
   useEffect(() => {
     anime({
@@ -162,40 +164,27 @@ export default function CategoryPage(props: StripeAppProps & {
       easing: "easeInOutQuad",
       delay: (el, i) => (100 * i) + 100,
     });
-  }, [isSm, currentCategory]);
+  }, [router, isSm, currentCategory]);
+
 
   useEffect(() => {
     const handleScroll = () => {
-      // Get the current scroll position
       const scrollY = window.scrollY;
-
-      // Get all elements with the class "Category Section"
       const categories = Array.from(document.querySelectorAll('.categorySection')) as HTMLElement[];
-
-      console.log(categories);
-
-
-      // Find the category currently visible in the viewport
       for (let i = 0; i < categories.length; i++) {
         const category = categories[i];
-        const categoryTop = category.getBoundingClientRect().top + scrollY; // Get Y-coordinate relative to the page
-
-        // Check if the category is within the viewport
+        const categoryTop = category.getBoundingClientRect().top + scrollY;
         if (scrollY >= categoryTop - window.innerHeight / 2 && scrollY < categoryTop + category.offsetHeight - window.innerHeight / 2) {
-          setCurrentCategory(category.id); // Or any other identifier for the category
+          setCurrentCategory(category.id);
           break;
         }
       }
     };
-
-    // Attach the scroll event listener
     window.addEventListener('scroll', handleScroll);
-
-    // Cleanup on component unmount
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (props && props.static) {
@@ -330,6 +319,9 @@ export default function CategoryPage(props: StripeAppProps & {
         </div>
       </div>
 
+      <div className="column snug" style={{
+        marginTop: "8rem"
+      }}>
       {props.static.categories ? (
         <div className="column snug">
           {props.static.categories.map(cat => (
@@ -350,6 +342,7 @@ export default function CategoryPage(props: StripeAppProps & {
           products={props.static.products || []}
         />
       )}
+      </div>
 
     </>
   )

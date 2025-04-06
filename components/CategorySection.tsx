@@ -25,8 +25,7 @@ export default function CategorySection({category, products, ...props}: {
         id={category.slug}
         style={{
             width: "100%",
-            padding: 0,
-            paddingTop: "8rem"
+            padding: 0
           }}>
     
             <div className={'flex between top'} style={{
@@ -70,7 +69,9 @@ export default function CategorySection({category, products, ...props}: {
                     key={product.id}
                     product={product}
                     addToCart={!isSm ? props.Cart.add : undefined}
-                    categories={props.categories}
+                    categories={props.categories.filter(c => {
+                        return product.categories.some(x => x === c._id)
+                    })}
                     style={{
                       animationDelay: `${delay}ms`,
                       width: isSm ? "calc(50% - 0.5rem)" : "calc(33% - 0rem)",

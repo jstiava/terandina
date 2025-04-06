@@ -274,7 +274,7 @@ export default function ProductCard({
                     <div className="flex between">
                         {!disableSizing && product.sizes && (
                             <div className="flex compact2 fit">
-                                {((sizing && sizing.length < 3) || (sizing && categories.some(x => x.type != 'variant'))) ? sizing.map((size) => {
+                                {((sizing && sizing.length <= 3) || (sizing && !categories.some(x => x.type === 'variant'))) ? sizing.map((size) => {
                                     const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
                                     const doesNotExist = marking === undefined || marking === null;
