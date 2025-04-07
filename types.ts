@@ -30,9 +30,10 @@ export interface SizeChart {
     '13'?: boolean | number,
     'One-Size'?: boolean | number,
     'Adjustable'?: boolean | number,
+    'Queen'?: boolean | number,
 }
 
-export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13', 'One-Size', 'Adjustable'] as (keyof SizeChart)[]);
+export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13', 'One-Size', 'Adjustable', 'Queen'] as (keyof SizeChart)[]);
 
 
 export interface TerandinaImage {
