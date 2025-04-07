@@ -597,15 +597,6 @@ export default function Home(props: StripeAppProps & {
                             <div className="flex"
                             >
                                 <div className="column fit compact center">
-                                    <RecyclingOutlined />
-                                    <Typography sx={{
-                                        fontSize: "1rem",
-                                        textAlign: 'center',
-                                        width: "9rem",
-                                        lineHeight: "115%"
-                                    }}>Ethical & Sustainable, Limited Quantities</Typography>
-                                </div>
-                                <div className="column fit compact center">
                                     <LocalShippingOutlined />
                                     <Typography sx={{
                                         fontSize: "1rem",
