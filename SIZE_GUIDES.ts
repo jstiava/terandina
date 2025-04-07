@@ -30,7 +30,6 @@ const SIZE_GUIDES = {
         ["Shoulder Width", "26.00 in"],
         ["Sleeve Length", "26.00 in"],
     ]
-
 }
 
 export default SIZE_GUIDES;

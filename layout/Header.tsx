@@ -336,7 +336,7 @@ export default function Header({ Cart, color, setColor }: {
                                     padding: "0 2rem"
                                 }}>
                                     <div className="column compact">
-                                        <CoverImage url={'/pile.jpg'} width={"100%"} height={"22rem"} />
+                                        <CoverImage url={'/blanket_example.jpg'} width={"100%"} height={"22rem"} />
                                         {/* <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography> */}
                                     </div>
                                 </div>
