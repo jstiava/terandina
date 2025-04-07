@@ -17,7 +17,6 @@ export default function CategorySection({category, products, ...props}: {
     const router = useRouter();
     const isSm = useMediaQuery("(max-width: 45rem)");
     const isMd = useMediaQuery("(max-width: 70rem)");
-
     
     return (
         <div 
@@ -40,9 +39,8 @@ export default function CategorySection({category, products, ...props}: {
                 padding: isMd ? "1.5rem 2rem 3rem 2rem" : "9rem 1rem",
                 width: '100%',
                 margin: isMd ? isSm ? "0rem 0rem 2rem 0rem" : "1rem 2rem" : "1rem 2rem",
-                backgroundColor: TerandinaGreen,
                 color: theme.palette.getContrastText(TerandinaGreen),
-                backgroundImage: category.media && category.media.length > 0 ? `url(${category.media[0].large})` : `url(./ecuador-landscape-sunrise-morning-preview.jpg)`,
+                backgroundImage: category.media && category.media.length > 0 ? `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(${category.media[0].large})` : `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(./ecuador-landscape-sunrise-morning-preview.jpg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}>

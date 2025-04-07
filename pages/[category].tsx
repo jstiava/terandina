@@ -99,6 +99,25 @@ export const getStaticProps = (async (context: any) => {
 
     console.log(cats.map(x => x.name))
 
+
+    for (const cat of cats) {
+      for (const p of cat.products) {
+        if (!p.categories) {
+          continue;
+        }
+    
+        const variantCats = await getAllCategories({
+          cat_ids: (p.categories as any).map((c: ObjectId) => c.toString())
+        }, {
+          getProductsIfVariant: true
+        });
+    
+        p.quantity = 1;
+        p.selectedPrice = p.prices ? p.prices[0] : null;
+        p.categories = variantCats;
+      }
+    }
+
     return {
       props: {
         static: {

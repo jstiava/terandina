@@ -326,20 +326,16 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
-
                                 <MenuItem
                                     focused
                                     key={'blankets'}
                                     onClick={() => pleasePush('/blankets')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Blankets</MenuItem>
-
-
                                 <div className="column fit" style={{
                                     padding: "0 2rem"
                                 }}>
                                     <div className="column compact">
-
                                         <CoverImage url={'/pile.jpg'} width={"100%"} height={"22rem"} />
                                         {/* <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography> */}
                                     </div>
@@ -359,7 +355,7 @@ export default function Header({ Cart, color, setColor }: {
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Outerwear</MenuItem>
 
-                                <div className="flex" style={{
+                                {/* <div className="flex" style={{
                                     padding: "0 2rem"
                                 }}>
                                     <div className="column compact" style={{
@@ -384,19 +380,25 @@ export default function Header({ Cart, color, setColor }: {
                                         }}></div>
                                         <Typography sx={{ textAlign: "center" }}>Women's</Typography>
                                     </div>
-                                </div>
-                                <div className="column snug fit">
-                                    <MenuItem
-                                        key={'cardigans'}
-                                        onClick={() => pleasePush('/cardigans')}
-                                        icon={<ArrowForward fontSize="small" />}
-                                    >Cardigans</MenuItem>
+                                </div> */}
 
-                                    <MenuItem
-                                        key={'hoodies'}
-                                        onClick={() => pleasePush('/hoodies')}
-                                        icon={<ArrowForward fontSize="small" />}
-                                    >Hoodies</MenuItem>
+
+                                <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
+                                    padding: "0 1.5rem 0 2rem",
+                                    flexWrap: 'wrap'
+                                }}>
+                                    <MenuItemCover
+                                        src={'/cardigan_example.webp'}
+                                        onClick={() => {
+                                            pleasePush(`/cardigans`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Cardigans</Typography></MenuItemCover>
+                                    <MenuItemCover
+                                        src={'/hoodie_example.webp'}
+                                        onClick={() => {
+                                            pleasePush(`/hoodies`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Hoodies</Typography></MenuItemCover>
 
                                 </div>
                             </div>
@@ -413,12 +415,36 @@ export default function Header({ Cart, color, setColor }: {
                                     onClick={() => pleasePush('/jewelry')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Jewelry</MenuItem>
+
                                 <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
+                                    padding: "0 1.5rem 0 2rem",
+                                    flexWrap: 'wrap'
+                                }}>
+                                    <MenuItemCover
+                                        src={'/ring_example.webp'}
+                                        onClick={() => {
+                                            pleasePush(`/rings`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Rings</Typography></MenuItemCover>
+                                    <MenuItemCover
+                                        src={'/pendant_example.webp'}
+                                        onClick={() => {
+                                            pleasePush(`/pendants`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Pendants</Typography></MenuItemCover>
+                                    <MenuItemCover
+                                        src={'/cuff_example.webp'}
+                                        onClick={() => {
+                                            pleasePush(`/cuffs`)
+                                        }}
+                                    ><Typography sx={{ textAlign: "center" }}>Cuffs</Typography></MenuItemCover>
+                                </div>
+                                {/* <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
                                     padding: "0 2rem"
                                 }}>
                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Men's</Typography></MenuItemCover>
                                     <MenuItemCover><Typography sx={{ textAlign: "center" }}>Women's</Typography></MenuItemCover>
-                                </div>
+                                </div> */}
 
 
                             </div>
@@ -437,28 +463,15 @@ export default function Header({ Cart, color, setColor }: {
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Handcrafted</MenuItem>
 
-                                <div className={isVerySmall ? "column compact" : "flex compact top"} style={{
-                                    padding: "0 1.5rem 0 2rem",
-                                    flexWrap: 'wrap'
+                                <div className="column" style={{
+                                    padding: "0 2rem"
                                 }}>
-                                    <MenuItemCover
-                                        src={'/AmethystTree2.jpg'}
-                                        onClick={() => {
-                                            pleasePush(`/spiritual`)
-                                        }}
-                                    ><Typography sx={{ textAlign: "center" }}>Spirtual</Typography></MenuItemCover>
+                                    <ButtonBase href={`/item/prod_RopvBBF8ycpwyF`} className="column compact2 left">
 
-                                    <MenuItemCover
-                                        src={'/Pottery.jpg'}
-                                        onClick={() => {
-                                            pleasePush(`/pottery`)
-                                        }}
-                                    ><Typography sx={{ textAlign: "center" }}>Pottery</Typography></MenuItemCover>
-                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Authentic Collectables</Typography></MenuItemCover>
-                                    <MenuItemCover><Typography sx={{ textAlign: "center" }}>Accessories</Typography></MenuItemCover>
-
+                                        <CoverImage url={'/AmethystTree2.jpg'} width={"100%"} height={"22rem"} />
+                                        <Typography variant="caption">Amethyst Natural Healing Tree</Typography>
+                                    </ButtonBase>
                                 </div>
-
 
                             </div>
                         )}
@@ -478,11 +491,11 @@ export default function Header({ Cart, color, setColor }: {
                                 <div className="column" style={{
                                     padding: "0 2rem"
                                 }}>
-                                    <div className="column compact">
+                                    <ButtonBase href={`/item/prod_RigTRdFfzArr0Q`} className="column compact2 left">
 
                                         <CoverImage url={'/P1120417.jpg'} width={"100%"} height={"22rem"} />
-                                        <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography>
-                                    </div>
+                                        <Typography variant="caption">Sacred Smoke - Heavy Wool Poncho</Typography>
+                                    </ButtonBase>
                                 </div>
                             </div>
                         )}
