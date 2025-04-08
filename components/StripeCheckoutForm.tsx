@@ -12,7 +12,13 @@ import {
 import { Layout } from "@stripe/stripe-js";
 import { Button } from "@mui/material";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({
+  subtotal,
+  emailAddress
+} : {
+  subtotal : string,
+  emailAddress: string | null
+}) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -37,7 +43,12 @@ export default function CheckoutForm() {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "https://stripe-test-app.vercel.app/payment-complete",
+        return_url: `${window.location.origin}/payment-complete`,
+        payment_method_data: {
+          billing_details: {
+            email: emailAddress,
+          }
+        }
       },
     });
 
@@ -65,10 +76,13 @@ export default function CheckoutForm() {
         id="payment-element"
         options={paymentElementOptions}
       />
-      <Button variant="contained" fullWidth onClick={handleSubmit}>
-        Continue to Checkout
+      <Button variant="contained" size="large" fullWidth onClick={handleSubmit} 
+      disabled={!emailAddress}
+      sx={{
+        borderRadius: "0.25rem"
+      }}>
+        Checkout - {subtotal}
       </Button>
-      {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </div>
   );

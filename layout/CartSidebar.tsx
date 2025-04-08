@@ -102,7 +102,7 @@ export default function CartSidebar({
                                     }
                                     return (
                                         <ProductInBagCard 
-                                        key={`${product.id}_${product.selectedPrice.id}`} 
+                                        key={`${product.id}_${product.selectedPrice.id}_${product.size}`} 
                                         product={product} 
                                         removeFromCart={Cart.remove} 
                                         swap={Cart.swap}

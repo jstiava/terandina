@@ -42,7 +42,7 @@ export default function ProductInBagCard({
         if (!product.selectedPrice) {
             return;
         }
-        removeFromCart(product.selectedPrice.id);
+        removeFromCart(product.selectedPrice.id, product.size);
     }
 
     const handleQuantityChange = (diff: number) => {
@@ -55,7 +55,7 @@ export default function ProductInBagCard({
         }
 
         if (newValue === 0) {
-            removeFromCart(product.selectedPrice.id);
+            removeFromCart(product.selectedPrice.id, product.size);
             return;
         }
 

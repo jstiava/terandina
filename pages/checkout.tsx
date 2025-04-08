@@ -4,9 +4,9 @@ import { AddressElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import StripeCheckoutForm from "@/components/StripeCheckoutForm";
 import { useEffect, useState } from "react";
-import { Alert, AlertTitle, Button, Collapse, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, AlertTitle, Button, Checkbox, Collapse, Divider, FormControlLabel, FormGroup, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import ProductInBagCard from "@/components/ProductInBagCard";
-import { EditOutlined, LocalShippingOutlined, PaymentOutlined, ShoppingBagOutlined } from "@mui/icons-material";
+import { ContactMail, ContactMailOutlined, EditOutlined, LocalShippingOutlined, PaymentOutlined, ShoppingBagOutlined } from "@mui/icons-material";
 import { TransitionGroup } from 'react-transition-group';
 import Cart from "./cart";
 import StripeCompletePage from "@/components/StripeCompletePage";
@@ -24,6 +24,7 @@ export default function Checkout(props: StripeAppProps) {
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [confirmed, setConfirmed] = useState(false);
     const [subtotal, setSubtotal] = useState(0);
+    const [emailAddress, setEmailAddress] = useState<string | null>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
@@ -50,6 +51,15 @@ export default function Checkout(props: StripeAppProps) {
         clientSecret,
         appearance: {
             theme: "stripe",
+            variables: {
+                colorPrimary: '#550e00',
+                colorBackground: '#f4f4f4',
+                colorText: '#30313d',
+                colorDanger: '#df1b41',
+                fontFamily: 'Ideal Sans, system-ui, sans-serif',
+                spacingUnit: '0.25rem',
+                borderRadius: '0.25rem',
+            }
         },
     } as StripeElementsOptions;
 
@@ -61,7 +71,8 @@ export default function Checkout(props: StripeAppProps) {
         <Elements options={options} stripe={stripePromise}>
             <div className="column center" style={{
                 width: "100%",
-                padding: "3rem 1rem"
+                padding: "3rem 1rem",
+                marginTop: !isSm ? '5rem' : '2rem'
             }}>
                 <div className={isSm ? "column relaxed" : "flex relaxed top between"} style={{
                     maxWidth: "70rem",
@@ -69,28 +80,18 @@ export default function Checkout(props: StripeAppProps) {
                     padding: "1rem"
                 }}>
                     <div className="column relaxed" style={{
-                        width: isSm ? "100%" : "45%"
+                        width: isSm ? "100%" : "45%",
+                        position: !isSm ? "sticky" : 'relative',
+                        top: !isSm ? "9rem" : 'unset',
                     }}>
-                        <div className="column compact">
-                            <div className="flex between">
-
-                                <div className="flex fit compact">
-                                    <ShoppingBagOutlined sx={{
-                                        fontSize: "1rem"
-                                    }} />
-                                    <Typography variant="h5" component="h3" sx={{
-                                        fontSize: "1rem"
-                                    }}>Order Summary</Typography>
-                                </div>
-                                <Button
-                                    size="small"
-                                    sx={{
-                                        height: "2rem"
-                                    }}
-                                    variant="outlined"
-                                    startIcon={<EditOutlined />}
-                                    onClick={() => router.push('/')}
-                                >Edit</Button>
+                        <div className="column compact left">
+                            <div className="flex fit compact">
+                                <ShoppingBagOutlined sx={{
+                                    fontSize: "1rem"
+                                }} />
+                                <Typography variant="h5" component="h3" sx={{
+                                    fontSize: "1rem"
+                                }}>Order Summary</Typography>
                             </div>
                             <Divider style={{
                                 width: "100%"
@@ -101,56 +102,61 @@ export default function Checkout(props: StripeAppProps) {
                                 <div className="column" style={{
                                     width: "100%"
                                 }}>
-                                    <TransitionGroup>
-                                        <Collapse>
-                                            {props.Cart.cart.map(product => {
-                                                return (
-                                                    <ProductInBagCard key={product.id} product={product} />
-                                                )
-                                            })}
-                                        </Collapse>
-                                    </TransitionGroup>
-                                    <Divider style={{
-                                        width: "100%"
-                                    }} ></Divider>
-                                    <div className="flex between" style={{
-                                        opacity: "0.9"
-                                    }}>
-                                        <Typography>SUBTOTAL</Typography>
-                                        <Typography sx={{
-                                            fontSize: "1.25rem",
-                                            color: theme.palette.primary.light,
-                                            width: "fit-content",
-                                            maxWidth: "5rem",
-                                            textAlign: "right"
-                                        }}>{formatPrice(subtotal, 'usd')}</Typography>
-                                    </div>
+                                    <TableContainer>
+                                        <Table sx={{
+                                            width: "100%"
+                                        }}>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell sx={{
+                                                        width: "calc(100% - 1rem)"
+                                                    }}>Product</TableCell>
+                                                    <TableCell sx={{
+                                                        width: "1rem"
+                                                    }}>Price</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {props.Cart.cart.map((product, index) => {
+                                                    if (!product.selectedPrice || !product.selectedPrice.unit_amount) {
+                                                        return <Alert>
+                                                            <Typography>{product.name} could not be processed through cart.</Typography>
+                                                        </Alert>
+                                                    }
+                                                    return (
+                                                        <TableRow key={index}>
+                                                            <TableCell sx={{
+                                                                width: "calc(100% - 1rem)"
+                                                            }}>{product.quantity} &middot; {product.name}{product.size && (
+                                                                <>
+                                                                    <br />
+                                                                    <span style={{
+                                                                        opacity: 0.5
+                                                                    }}>Size: {product.size}</span>
+                                                                </>
+                                                            )}</TableCell>
+                                                            <TableCell sx={{
+                                                                width: "1rem",
+                                                                verticalAlign: 'top'
+                                                            }}>{formatPrice(product.selectedPrice.unit_amount * product.quantity, product.selectedPrice.currency)}</TableCell>
+                                                        </TableRow>
+                                                    )
+                                                })}
+                                            </TableBody>
+                                            <TableFooter>
+                                                <TableRow>
+                                                    <TableCell>SUBTOTAL</TableCell>
+                                                    <TableCell>{formatPrice(subtotal, 'usd')}</TableCell>
+                                                </TableRow>
+                                            </TableFooter>
+                                        </Table>
+                                    </TableContainer>
                                 </div>
                             )}
                         </div>
-
-                        <div className="column">
-                            <div className="flex fit compact">
-                                <LocalShippingOutlined sx={{
-                                    fontSize: "1rem"
-                                }} />
-                                <Typography variant="h5" component="h3" sx={{
-                                    fontSize: "1rem"
-                                }}>Shipping</Typography>
-                            </div>
-                            <Divider style={{
-                                width: "100%"
-                            }} ></Divider>
-                            <AddressElement
-                                id="address-element"
-                                options={{
-                                    mode: 'shipping'
-                                }}
-                            />
-                        </div>
                     </div>
 
-                    <div className="column compact" style={{ width: isSm ? "100%" : "45%" }}>
+                    <div className="column relaxed" style={{ width: isSm ? "100%" : "45%" }}>
                         {/* <div className="flex fit compact">
                         <Typography variant="h5" component="h3" sx={{
                             fontSize: "2.5rem"
@@ -159,21 +165,73 @@ export default function Checkout(props: StripeAppProps) {
                             fontSize: "1.5rem"
                         }} />
                     </div> */}
-                        <div className="flex fit compact">
-                            <PaymentOutlined sx={{
-                                fontSize: "1rem"
-                            }} />
-                            <Typography variant="h5" component="h3" sx={{
-                                fontSize: "1rem"
-                            }}>Checkout</Typography>
+                        <div className="column">
+                            <div className="flex fit compact">
+                                <LocalShippingOutlined sx={{
+                                    fontSize: "1rem"
+                                }} />
+                                <Typography variant="h5" component="h3" sx={{
+                                    fontSize: "1rem"
+                                }}>Shipping (2-3 weeks)</Typography>
+                            </div>
+                            <Divider style={{
+                                width: "100%"
+                            }} ></Divider>
+                            <AddressElement
+                                id="address-element"
+                                options={{
+                                    mode: 'shipping',
+                                }}
+                            />
                         </div>
-                        {clientSecret && (
-                            <>
-                                {confirmed ? <StripeCompletePage /> : (
-                                    <StripeCheckoutForm />
-                                )}
-                            </>
-                        )}
+                        <div className="column">
+                            <div className="flex fit compact">
+                                <ContactMailOutlined 
+                                sx={{
+                                    fontSize: "1rem"
+                                }} />
+                                <Typography variant="h5" component="h3" sx={{
+                                    fontSize: "1rem"
+                                }}>Contact</Typography>
+                            </div>
+                            <Divider style={{
+                                width: "100%"
+                            }} ></Divider>
+                            <TextField
+                                label="Email Address"
+                                value={emailAddress}
+                                onChange={(e) => {
+                                    setEmailAddress(e.target.value);
+                                }}
+                            />
+                            <FormGroup>
+                                <FormControlLabel required control={<Checkbox checked={true} />} label="Delivery Tracking" />
+                                <FormControlLabel control={<Checkbox />} label="Marketing Updates" />
+                            </FormGroup>
+                        </div>
+                        <div className="column">
+                            <div className="flex fit compact">
+                                <PaymentOutlined sx={{
+                                    fontSize: "1rem"
+                                }} />
+                                <Typography variant="h5" component="h3" sx={{
+                                    fontSize: "1rem"
+                                }}>Checkout</Typography>
+                            </div>
+
+                            {clientSecret && (
+                                <>
+                                    {confirmed ? <StripeCompletePage /> : (
+                                        <div className="column">
+                                        <StripeCheckoutForm
+                                            subtotal={formatPrice(subtotal, 'usd')}
+                                            emailAddress={emailAddress}
+                                            />
+                                            </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

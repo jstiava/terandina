@@ -7,8 +7,8 @@ export interface UseCart {
     isSidebarOpen: boolean;
     toggleSidebar: () => boolean;
     add: (item: StripeProduct) => boolean;
-    remove: (id: string) => boolean;
-    get: (id: string) => StripeProduct | null;
+    remove: (id: string, size: any) => boolean;
+    get: (id: string, size: any) => StripeProduct | null;
     swap: (removedItem: StripeProduct, newItem: StripeProduct) => void;
     checkout: () => void;
 }
@@ -25,7 +25,7 @@ export default function useCart() {
             return false;
         }
 
-        const existingItem = get(item.selectedPrice.id);
+        const existingItem = get(item.selectedPrice.id, item.size);
         if (existingItem) {
             return false;
         }
@@ -40,25 +40,25 @@ export default function useCart() {
         return true;
     }
 
-    const remove = (price_id: string) => {
+    const remove = (price_id: string, size : any) => {
 
         setCart(prev => {
             if (!prev) {
                 return [];
             }
-            const newCart = prev.filter(p => p.selectedPrice?.id != price_id);
+            const newCart = prev.filter(p => p.selectedPrice?.id === price_id ? p.size != size : true);
             return newCart;
         })
         return false;
     }
 
-    const get = (price_id: string) => {
+    const get = (price_id: string, size: any) => {
 
         if (!cart) {
             return null;
         }
 
-        return cart.find(product => product.selectedPrice?.id === price_id) || null;
+        return cart.find(product => product.selectedPrice?.id === price_id ? product.size === size : false) || null;
     }
 
     const toggleSidebar = () => {
@@ -76,16 +76,22 @@ export default function useCart() {
             setCart([newItem]);
             return;
         }
-        const filtered = cart.filter(p =>  p.selectedPrice?.id != removedItem.selectedPrice?.id);
+        const filtered = cart.filter(p => {
+            return p.selectedPrice?.id === removedItem.selectedPrice?.id ? p.size != removedItem.size : true
+        });
 
-        const alreadyExists = filtered.find(p => p.selectedPrice?.id === newItem.selectedPrice?.id);
+        const alreadyExists = filtered.find(p => {
+            return p.selectedPrice?.id === newItem.selectedPrice?.id ? p.size === newItem.size : false
+        });
 
         if (!alreadyExists) {
             setCart([...filtered, newItem])
             return;
         }
 
-        const filteredAgain = filtered.filter(p =>  p.selectedPrice?.id != newItem.selectedPrice?.id);
+        const filteredAgain = filtered.filter(p =>  {
+            return p.selectedPrice?.id === newItem.selectedPrice?.id ? p.size != newItem.size : true
+        });
 
         setCart([...filteredAgain, {
             ...alreadyExists,

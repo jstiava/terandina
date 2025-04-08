@@ -1,6 +1,8 @@
 import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link, alpha } from "@mui/material";
 import {
+    ArrowBack,
     ArrowForward,
+    ArrowLeftOutlined,
     ChevronLeft,
     ChevronRight,
     CloseOutlined,
@@ -316,7 +318,7 @@ export default function Header({ Cart, color, setColor }: {
                                     </ButtonBase>
                                 </div>
 
-                            
+
                             </div>
                         )}
 
@@ -482,13 +484,13 @@ export default function Header({ Cart, color, setColor }: {
                     <div className="column fit" style={{
                         padding: "1rem 0rem",
                         position: 'absolute',
-                        bottom:  'var(--safe-area-inset-bottom, 0px)',
+                        bottom: 'var(--safe-area-inset-bottom, 0px)',
                         backgroundColor: color,
                         width: '100%'
                     }}>
                         <div className="column snug">
                             <MenuItem
-                            
+
                                 onClick={() => {
                                     pleasePush('/our-values')
                                 }}
@@ -567,15 +569,27 @@ export default function Header({ Cart, color, setColor }: {
                 >
 
                     {isSm && (
-                        <div className="flex fit">
-                            <IconButton onClick={() => {
-                                window.scrollTo(0, 1)
-                                handleSwitchTab('menu')
-                                isSidebarOpen ? handleCloseSidebar() : handleOpenSidebar()
-                            }}>
-                                {isSidebarOpen ? <CloseOutlined /> : <MenuOutlined />}
-                            </IconButton>
-                        </div>
+                        <>
+                            {router.asPath != '/checkout' ? (
+                                <div className="flex fit">
+                                    <IconButton onClick={() => {
+                                        window.scrollTo(0, 1)
+                                        handleSwitchTab('menu')
+                                        isSidebarOpen ? handleCloseSidebar() : handleOpenSidebar()
+                                    }}>
+                                        {isSidebarOpen ? <CloseOutlined /> : <MenuOutlined />}
+                                    </IconButton>
+                                </div>
+                            ) : (
+                                <div className="flex fit">
+                                    <IconButton onClick={() => {
+                                        router.back();
+                                    }}>
+                                        <ArrowBack fontSize="small" />
+                                    </IconButton>
+                                </div>
+                            )}
+                        </>
                     )}
 
 
@@ -672,9 +686,7 @@ export default function Header({ Cart, color, setColor }: {
                         )}
                     </div>
                     <div className="flex fit">
-                        {router.asPath === "/checkout" ? (
-                            <Button variant="contained" onClick={() => pleasePush('/')}>Continue Shopping</Button>
-                        ) : (
+                        {router.asPath != "/checkout" && (
                             <div className="flex snug fit">
                                 {/* <ColorPicker color={color} setColor={setColor} /> */}
 
