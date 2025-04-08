@@ -119,7 +119,7 @@ export default function Checkout(props: StripeAppProps) {
                                             <TableBody>
                                                 {props.Cart.cart.map((product, index) => {
                                                     if (!product.selectedPrice || !product.selectedPrice.unit_amount) {
-                                                        return <Alert>
+                                                        return <Alert key={index}>
                                                             <Typography>{product.name} could not be processed through cart.</Typography>
                                                         </Alert>
                                                     }
