@@ -1,5 +1,6 @@
+"use client"
 import { StripePrice, StripeProduct } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export interface UseCart {
@@ -17,6 +18,23 @@ export default function useCart() {
 
     const [cart, setCart] = useState<StripeProduct[] | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!cart) {
+            const savedCart = localStorage.getItem("cart");
+            if (savedCart) {
+                setCart(JSON.parse(savedCart));
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!cart) {
+            return;
+        }
+        localStorage.setItem("cart", JSON.stringify(cart))
+        
+    }, [cart])
 
     const add = (item: StripeProduct) => {
         setIsSidebarOpen(true);
