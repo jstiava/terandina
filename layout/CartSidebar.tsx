@@ -57,7 +57,7 @@ export default function CartSidebar({
                     width: isSm ? '100vw' : '30rem',
                     right: 0,
                     top: 0,
-                    height: `calc(100vh - env(safe-area-inset-top));`,
+                    height: `100dvh`,
                     overflow: "hidden",
                     backgroundColor: theme.palette.background.paper,
                     color: theme.palette.text.primary,
@@ -113,7 +113,7 @@ export default function CartSidebar({
                 )}
                 <div className="column" style={{
                     position: 'absolute',
-                    bottom: 'env(safe-area-inset-bottom, 0)',
+                    bottom: 'var(--safe-area-inset-bottom, 0px)',
                     height: 'fit-content',
                     padding: "1rem",
                     width: "100%"

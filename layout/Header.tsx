@@ -482,8 +482,9 @@ export default function Header({ Cart, color, setColor }: {
                     <div className="column fit" style={{
                         padding: "1rem 0rem",
                         position: 'absolute',
-                        bottom: 'env(safe-area-inset-bottom, 0)',
-                        backgroundColor: color
+                        bottom:  'var(--safe-area-inset-bottom, 0px)',
+                        backgroundColor: color,
+                        width: '100%'
                     }}>
                         <div className="column snug">
                             <MenuItem
