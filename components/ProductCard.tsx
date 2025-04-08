@@ -86,7 +86,7 @@ export default function ProductCard({
     const [isVariantMenuOpen, setIsVariantMenuOpen] = useState(false);
     const categories = ((product.categories && (Array.isArray(product.categories) && product.categories.length > 0)) && typeof product.categories[0] === 'object') ? product.categories as Category[] : [];
     const [sizing, setSizing] = useState<(keyof SizeChart)[] | null>(null);
-
+    const [isOutOfStock, setIsOutOfStock] = useState(true);
     const [copyOfProduct, setCopyOfProduct] = useState(product);
 
     useEffect(() => {
@@ -94,6 +94,7 @@ export default function ProductCard({
             return;
         }
 
+        let chosenSize = undefined;
         const theSizing: any = [];
         for (const size of SIZING_OPTIONS) {
             const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
@@ -101,14 +102,23 @@ export default function ProductCard({
             if (doesNotExist) {
                 continue;
             }
+            if (marking === false || marking === 0) {
+                theSizing.push(size);
+                continue;
+            }
+            else if (!chosenSize) {
+                chosenSize = size;
+            }
             theSizing.push(size);
         }
         setSizing(theSizing);
 
         setCopyOfProduct({
             ...product,
+            size: chosenSize,
             selectedPrice: product.prices[0]
         })
+        setIsOutOfStock(chosenSize ? false : true);
     }, [product]);
 
 
@@ -174,16 +184,20 @@ export default function ProductCard({
                                 height: "auto",
                                 overflow: 'hidden'
                             }} />
-                        <Chip
-                            sx={{
-                                position: 'absolute',
-                                top: "0.5rem",
-                                left: "0.5rem",
-                            }}
-                            key="out_of_stock"
-                            label="Out of Stock"
-                        />
-                        {isHovering && addToCart && (
+                        {isOutOfStock && (
+
+                            <Chip
+                                sx={{
+                                    position: 'absolute',
+                                    top: "0.5rem",
+                                    left: "0.5rem",
+                                    backgroundColor: '#ffffff'
+                                }}
+                                key="out_of_stock"
+                                label="Out of Stock"
+                            />
+                        )}
+                        {isHovering && addToCart && !isOutOfStock && (
                             <Button
                                 href={undefined}
                                 variant="contained"
@@ -292,6 +306,7 @@ export default function ProductCard({
                                             onDelete={undefined}
                                             disabled={!marking}
                                             onClick={(e) => {
+                                                e.preventDefault();
                                                 e.stopPropagation();
                                                 setCopyOfProduct(prev => ({
                                                     ...prev,
@@ -314,12 +329,23 @@ export default function ProductCard({
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            value={"L"}
-                                            label="Age"
+                                            value={copyOfProduct.size}
+                                            label="Size"
                                             sx={{
                                                 '& .MuiOutlinedInput-notchedOutline': {
                                                     border: 'none'
                                                 }
+                                            }}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+
+                                                if (!e.target || !e.target.value) {
+                                                    return;
+                                                }
+                                                setCopyOfProduct(prev => ({
+                                                    ...prev,
+                                                    size: e.target.value as keyof SizeChart
+                                                }))
                                             }}
                                         >
                                             {sizing && sizing.map((size: keyof SizeChart) => {
@@ -377,7 +403,7 @@ export default function ProductCard({
                 )}
 
                 <div className="flex between">
-                    {isSm && addToCart && (
+                    {isSm && addToCart && !isOutOfStock && (
                         <Button
                             href={undefined}
                             variant="contained"
@@ -528,7 +554,6 @@ export default function ProductCard({
                                                     }}
                                                     style={{
                                                         padding: "0.5rem 0.75rem 0.5rem 0.5rem",
-
                                                         borderRadius: "0.25rem"
                                                     }}>
                                                     <div className="flex compact">

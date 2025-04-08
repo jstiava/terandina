@@ -57,9 +57,18 @@ export interface StripeProduct extends Stripe.Product {
     sizeGuide?: string[][]
     
     // checkout
-    size?: string,
+    size?: keyof SizeChart,
     selectedPrice: StripePrice | null,
     quantity: number,
+
+    /**
+     * Real number only viewable in backend.
+     * Front-end interpretation:
+     * undefined or 0 - Out of stock
+     * same as limit - In stock
+     */
+    inventory?: number,
+    limit?: number
 }
 
 export interface VariantProductStub {

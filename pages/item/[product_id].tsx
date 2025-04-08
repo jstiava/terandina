@@ -3,7 +3,7 @@
 import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
-import { Category, SIZING_OPTIONS, StripeAppProps, StripePrice, StripeProduct } from "@/types";
+import { Category, SIZING_OPTIONS, StripeAppProps, SizeChart, StripeProduct } from "@/types";
 import { Button, Chip, Dialog, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -158,11 +158,13 @@ export default function Home(props: StripeAppProps & {
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
     const isMd = useMediaQuery(theme.breakpoints.down('md'));
     const [isSizeGuideShown, setIsSizeGuideShown] = useState(false);
-    const [isDetailsShown, setIsDetailsShown] = useState(true);
-
+    const [accordion, setAccordion] = useState('details');
+    const [chosenSize, setChosenSize] = useState<keyof SizeChart | null>(null);
+    const [isOutOfStock, setIsOutOfStock] = useState(true);
 
     const [clientHeight, setClientHeight] = useState(0);
     const [scrollHeight, setScrollHeight] = useState(0);
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -174,6 +176,41 @@ export default function Home(props: StripeAppProps & {
         return () => window.removeEventListener("scroll", handleScroll);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+
+
+    useEffect(() => {
+        if (!product || !product.sizes) {
+            return;
+        }
+
+        let chosenSize = undefined;
+        for (const size of SIZING_OPTIONS) {
+            const marking = product.sizes[size];
+            if (marking === undefined || marking === null) {
+                continue;
+            }
+
+            if (marking === false || marking === 0) {
+                continue;
+            }
+            else if (!chosenSize) {
+                chosenSize = size;
+            }
+        }
+
+        setIsOutOfStock(chosenSize ? false : true);
+        chosenSize && setChosenSize(chosenSize)
+
+        if (swiperRef.current) {
+            try {
+                swiperRef.current.slideTo(0)
+            }
+            catch (err) {
+                console.log("Slide failed.")
+            }
+        }
+    }, [product])
 
 
     // const handleChangePrice = (newPrice: StripePrice) => {
@@ -198,7 +235,10 @@ export default function Home(props: StripeAppProps & {
             alert("Could not get prices for this item.")
             return;
         }
-        props.Cart.add(product)
+        props.Cart.add({
+            ...product,
+            size: chosenSize || undefined
+        })
     }
 
     useEffect(() => {
@@ -441,23 +481,17 @@ export default function Home(props: StripeAppProps & {
                                                     size="medium"
                                                     key={size}
                                                     label={size}
-                                                    variant={size === 'L' ? 'outlined' : 'filled'}
                                                     onDelete={undefined}
-                                                    disabled={!marking}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        // setProduct(prev => {
-                                                        //     if (!prev) return null;
-                                                        //     return {
-                                                        //         ...prev,
-                                                        //         size
-                                                        //     }
-                                                        // })
+                                                        setChosenSize(size);
+                                                        setIsOutOfStock(!marking)
                                                     }}
                                                     sx={{
                                                         marginBottom: "0.25rem",
                                                         overflow: 'hidden',
-                                                        backgroundColor: size === product.size ? theme.palette.divider : 'transparent'
+                                                        backgroundColor: size === chosenSize ? theme.palette.divider : 'transparent',
+                                                        opacity: !marking ? 0.5 : 1
                                                     }}
                                                 />
                                             )
@@ -528,9 +562,10 @@ export default function Home(props: StripeAppProps & {
                             variant="outlined"
                             onClick={handleAddToCart}
                             fullWidth
+                            disabled={isOutOfStock}
                             sx={{
                                 width: "100%"
-                            }}>Add to Cart</Button>
+                            }}>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</Button>
 
 
                         {product.description && (
@@ -546,11 +581,11 @@ export default function Home(props: StripeAppProps & {
                         {product.details && (
                             <>
                                 <div className="column compact"
-                                    onClick={() => { setIsDetailsShown(prev => !prev); }}
+                                    onClick={() => { setAccordion('details'); }}
                                 >
                                     <div className="flex between">
                                         <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
-                                        {isDetailsShown ? (
+                                        {accordion === 'details' ? (
                                             <KeyboardArrowUp sx={{
                                                 fontSize: "1rem"
                                             }} />
@@ -560,7 +595,7 @@ export default function Home(props: StripeAppProps & {
                                             }} />
                                         )}
                                     </div>
-                                    {isDetailsShown && (
+                                    {accordion === 'details' && (
                                         <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
                                     )}
                                 </div>
@@ -568,30 +603,28 @@ export default function Home(props: StripeAppProps & {
                             </>
                         )}
 
-                        {product.dimensions && (
-                            <>
-                                <div className="column compact"
-                                    onClick={() => { setIsDetailsShown(prev => !prev); }}
-                                >
-                                    <div className="flex between">
-                                        <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DETAILS</Typography>
-                                        {isDetailsShown ? (
-                                            <KeyboardArrowUp sx={{
-                                                fontSize: "1rem"
-                                            }} />
-                                        ) : (
-                                            <KeyboardArrowDown sx={{
-                                                fontSize: "1rem"
-                                            }} />
-                                        )}
-                                    </div>
-                                    {isDetailsShown && (
-                                        <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.details}</Typography>
+                        <>
+                            <div className="column compact"
+                                onClick={() => { setAccordion('shipping'); }}
+                            >
+                                <div className="flex between">
+                                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>SHIPPING</Typography>
+                                    {accordion === 'shipping' ? (
+                                        <KeyboardArrowUp sx={{
+                                            fontSize: "1rem"
+                                        }} />
+                                    ) : (
+                                        <KeyboardArrowDown sx={{
+                                            fontSize: "1rem"
+                                        }} />
                                     )}
                                 </div>
-                                <Divider />
-                            </>
-                        )}
+                                {accordion === 'shipping' && (
+                                    <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>This item is made with care and will ship within 2-3 weeks. Thank you for your patience!</Typography>
+                                )}
+                            </div>
+                            <Divider />
+                        </>
 
                         <>
                             <div className="flex"
@@ -603,7 +636,7 @@ export default function Home(props: StripeAppProps & {
                                         textAlign: 'center',
                                         width: "10rem",
                                         lineHeight: "115%"
-                                    }}>30-day Hassle-Free Returns and Exchanges</Typography>
+                                    }}>30-day Returns or Exchanges</Typography>
                                 </div>
                             </div>
                             <Divider />

@@ -223,32 +223,6 @@ export default function Header({ Cart, color, setColor }: {
                     position: 'fixed',
                     opacity: 0,
                 }}></div>
-            <Image src={GarmentAll} alt="Garment"
-                className="slide-in"
-                onClick={() => handleCloseSidebar()}
-                style={{
-                    display: isSidebarOpen ? 'flex' : 'none',
-                    position: "fixed",
-                    // transform: "translateX(-115%)",
-                    // top: "-10rem",
-                    left: "5.5rem",
-                    height: "100vh",
-                    width: "auto",
-                    zIndex: 3,
-                }} />
-            <Image src={GarmentNoSleeve} alt="Garment"
-                className="slide-in"
-                onClick={() => handleCloseSidebar()}
-                style={{
-                    display: isSidebarOpen ? 'flex' : 'none',
-                    position: "fixed",
-                    // transform: "translateX(-115%)",
-                    // top: "-10rem",
-                    left: "7.5rem",
-                    height: "100vh",
-                    width: "auto",
-                    zIndex: 3
-                }} />
             <div className="column top compact slide-in"
                 style={{
                     display: isSidebarOpen ? 'flex' : 'none',
@@ -262,7 +236,7 @@ export default function Header({ Cart, color, setColor }: {
                     backgroundSize: 'cover',
                     backgroundPosition: "center",
                     // transform: "translateX(-115%)",
-                    zIndex: 4,
+                    zIndex: 6,
                     maxWidth: "100vw"
 
                 }}>
@@ -507,8 +481,8 @@ export default function Header({ Cart, color, setColor }: {
 
                     <div className="column fit" style={{
                         padding: "1rem 0rem",
-                        // position: 'absolute',
-                        bottom: 0,
+                        position: 'absolute',
+                        bottom: 'env(safe-area-inset-bottom, 0)',
                         backgroundColor: color
                     }}>
                         <div className="column snug">

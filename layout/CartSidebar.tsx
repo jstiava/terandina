@@ -113,7 +113,7 @@ export default function CartSidebar({
                 )}
                 <div className="column" style={{
                     position: 'absolute',
-                    bottom: 0,
+                    bottom: 'env(safe-area-inset-bottom, 0)',
                     height: 'fit-content',
                     padding: "1rem",
                     width: "100%"

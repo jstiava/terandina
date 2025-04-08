@@ -1,9 +1,9 @@
-import { SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
-import { Button, ButtonBase, Chip, IconButton, Typography, useTheme } from "@mui/material"
+import { SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types"
+import { Button, ButtonBase, Chip, FormControl, IconButton, MenuItem, Select, Typography, useMediaQuery, useTheme } from "@mui/material"
 import CoverImageCarousel from "./CoverImageCarousel";
 import { useEffect, useState } from "react";
 import CoverImage from "./CoverImage";
-import { AddOutlined, DeleteOutlined, MinimizeOutlined, Preview, RemoveOutlined } from "@mui/icons-material";
+import { AddOutlined, Delete, DeleteOutlined, MinimizeOutlined, Preview, RemoveOutlined } from "@mui/icons-material";
 import { DisplayPrice } from "./ProductCard";
 import PriceSelector from "./PriceSelector";
 import { setConfig } from "next/config";
@@ -22,6 +22,8 @@ export default function ProductInBagCard({
 }) {
 
     const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+    const [isHovering, setIsHovering] = useState(false);
 
     const handleChangePrice = (newPrice: StripePrice) => {
 
@@ -66,10 +68,23 @@ export default function ProductInBagCard({
 
     }
 
+    const handleSizeChange = (newSize: keyof SizeChart) => {
+        if (!removeFromCart || !swap) return;
+
+        const newProduct = {
+            ...product,
+            size: newSize
+        }
+
+        swap(product, newProduct);
+    }
+
 
     return (
         <ButtonBase className="flex between top"
             disableRipple
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
             style={{
                 width: "100%",
                 padding: "0.25rem"
@@ -87,27 +102,66 @@ export default function ProductInBagCard({
             <div className="column compact left" style={{
                 width: "calc(100% - 6rem)"
             }}>
-                    <div className="flex between top">
+                <div className="flex between top">
 
-                        <div className="flex fit">
-                            <Typography variant="h5" sx={{
-                                fontSize: "1rem",
-                                textAlign: 'left',
-                                lineHeight: "115%"
-                            }}>{product.name}</Typography>
-                        </div>
-                        {product.selectedPrice && product.quantity && (
-                            <DisplayPrice product={product} style={{
-                                fontSize: '1rem'
-                            }} />
-                        )}
+                    <div className="flex fit">
+                        <Typography variant="h5" sx={{
+                            fontSize: "1rem",
+                            textAlign: 'left',
+                            lineHeight: "115%"
+                        }}>{product.name}</Typography>
                     </div>
-                    {!swap && (
-                        <Typography sx={{
-                            textTransform: 'uppercase'
-                        }}>{product.selectedPrice?.lookup_key}</Typography>
+                    {product.selectedPrice && product.quantity && (
+                        <DisplayPrice product={product} style={{
+                            fontSize: '1rem'
+                        }} />
                     )}
-                    <div className="flex between">
+                </div>
+                {!swap && (
+                    <Typography sx={{
+                        textTransform: 'uppercase'
+                    }}>{product.selectedPrice?.lookup_key}</Typography>
+                )}
+                <div className="flex between top">
+                    <div className="column snug left">
+                        {product.sizes && (
+                            <FormControl fullWidth size="small" onClick={(e) => {
+                                e.stopPropagation();
+                            }}>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={product.size}
+                                    label="Size"
+                                    sx={{
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            border: 'none'
+                                        }
+                                    }}
+                                    onChange={(e: any) => {
+                                        e.stopPropagation();
+                                        if (!e.target.value) {
+                                            return;
+                                        }
+                                        handleSizeChange(e.target.value);
+                                    }}
+                                >
+                                    {SIZING_OPTIONS.map((size: keyof SizeChart) => {
+                                        const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
+
+                                        const doesNotExist = marking === undefined || marking === null;
+
+                                        if (doesNotExist) {
+                                            return;
+                                        }
+
+                                        return (
+                                            <MenuItem key={size} value={size} disabled={!marking}>{size}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                        )}
                         <div className="flex compact fit">
                             <IconButton onClick={() => handleQuantityChange(-1)}>
                                 <RemoveOutlined fontSize="small" />
@@ -116,21 +170,25 @@ export default function ProductInBagCard({
                             <IconButton onClick={() => handleQuantityChange(1)}>
                                 <AddOutlined fontSize="small" />
                             </IconButton>
-                    {product.sizes && (
-                        <div className="flex compact2 fit middle">
-                            {/* TODO - Size */}
+                        </div>
+
+                    </div>
+                    {(swap && removeFromCart) && (isHovering || isSm) && (
+                        <div className="flex snug fit">
+                            <Button
+                                onClick={handleRemoveFromCart}
+                                startIcon={<DeleteOutlined fontSize="small" color="error" />}
+                                color="error"
+                                sx={{
+                                    height: "2rem"
+                                }}
+                            >
+                                Remove
+                            </Button>
                         </div>
                     )}
-                        </div>
-                        {swap && removeFromCart && (
-                            <div className="flex snug fit">
-                                <IconButton onClick={handleRemoveFromCart}>
-                                    <DeleteOutlined fontSize="small" color="error" />
-                                </IconButton>
-                            </div>
-                        )}
-                    </div>
                 </div>
+            </div>
         </ButtonBase>
     )
 }

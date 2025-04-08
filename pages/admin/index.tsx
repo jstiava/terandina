@@ -28,6 +28,7 @@ import { formatPrice } from "@/components/ProductCard";
 import { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
 import { zain_sans_font } from "@/styles/theme";
+import { useRouter } from "next/router";
 
 
 const MAX_IMAGES = 5;
@@ -288,6 +289,7 @@ const CategorySelectInput = ({ categories, ...props }: { categories: Category[] 
 export default function AdminPage() {
 
     const theme = useTheme();
+    const router = useRouter();
 
     const [images, setImages] = useState<UploadType[]>([]);
     const [newUploads, setNewUploads] = useState<UploadType[]>([]);
@@ -296,9 +298,6 @@ export default function AdminPage() {
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
 
     const [searchValue, setSearchValue] = useState("");
-
-
-
 
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
@@ -1208,7 +1207,7 @@ export default function AdminPage() {
                         }}>
 
                         {params.value && params.value.map(price => (
-                            <div className="flex between" key={price.id} style={{
+                            <div className="column snug" key={price.id} style={{
                                 width: "100%"
                             }}>
                                 <div className="flex fit">
@@ -1218,36 +1217,6 @@ export default function AdminPage() {
                                     {price.unit_amount && (
                                         <Typography>{formatPrice(price.unit_amount * 1, price.currency)}</Typography>
                                     )}
-                                </div>
-                                <div className="flex fit" style={{
-                                    padding: "0.5rem"
-                                }}>
-                                    <TextField
-                                        sx={{
-                                            width: "8rem",
-                                            '& .MuiInputBase-root': {
-                                                height: "2.5rem",
-                                                '& .MuiInputBase-input': {
-                                                    textAlign: "center"
-                                                }
-                                            }
-                                        }}
-                                        value={price.inventory || 100}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <div className="flex snug fit">
-
-                                                    <IconButton><RemoveOutlined fontSize="small" /></IconButton>
-                                                </div>
-                                            ),
-                                            endAdornment: (
-                                                <div className="flex snug fit">
-                                                    <IconButton><AddOutlined fontSize="small" /></IconButton>
-                                                </div>
-                                            )
-                                        }}
-                                    />
-                                    <IconButton><DeleteOutlined color="error" fontSize="small" /></IconButton>
                                 </div>
                             </div>
                         ))}
@@ -1271,25 +1240,6 @@ export default function AdminPage() {
                                         <Typography>{formatPrice(price.unit_amount * 1, price.currency)}</Typography>
                                     )}
                                 </div>
-                                {/* <div className="flex fit" style={{
-                                    padding: "0.5rem"
-                                }}>
-                                    <TextField
-                                        size="small"
-                                        value={price.inventory || 100}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <div className="flex snug fit">
-                                                    <IconButton><AddOutlined fontSize="small" /></IconButton>
-                                                    <IconButton><RemoveOutlined fontSize="small" /></IconButton>
-                                                </div>
-                                            )
-                                        }}
-                                        sx={{
-                                            width: "8rem"
-                                        }}
-                                    />
-                                </div> */}
                             </div>
                         ))}
                     </div>
@@ -1461,7 +1411,9 @@ export default function AdminPage() {
             productList.push({
                 ...product,
                 quantity: 1,
-                selectedPrice: product.prices[0]
+                selectedPrice: product.prices[0],
+                inventory: product.inventory || 0,
+                limit: product.limit || 0
             })
         }
 
@@ -1506,13 +1458,21 @@ export default function AdminPage() {
                 width: "100%"
             }}>
 
+
+<div className="flex compact">
+
                 <TextField
                     label="Search"
                     value={searchValue}
                     onChange={(e) => {
                         handleSearch(e.target.value)
                     }}
-                />
+                    />
+
+                    <Button onClick={() => {
+                        router.push('/admin/inventory')
+                    }}>Manage Inventory</Button>
+                    </div>
 
                 <div className="flex" style={{
                     width: "100%"
