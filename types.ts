@@ -54,7 +54,8 @@ export interface StripeProduct extends Stripe.Product {
     sizes?: SizeChart,
     default_size?: string,
     dimensions?: string | null;
-    sizeGuide?: string[][]
+    sizeGuide?: string[][];
+    sizeNotes?: string;
     
     // checkout
     size?: keyof SizeChart,

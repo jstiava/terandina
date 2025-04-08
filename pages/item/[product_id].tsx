@@ -318,6 +318,7 @@ export default function Home(props: StripeAppProps & {
                             overflow: 'hidden'
                         }}>
                             <Swiper
+                                key={`slider-${product.id}`}
                                 ref={swiperRef}
                                 direction="horizontal"
                                 slidesPerView={1}
@@ -463,10 +464,10 @@ export default function Home(props: StripeAppProps & {
                                 )
                             })}
                             {product.sizes && (
-                                <div className="column right fit snug" style={{
+                                <div className="flex between" style={{
                                     marginTop: "0.5rem"
                                 }}>
-                                    <div className="flex compact2">
+                                    <div className="flex compact2 fit">
                                         {SIZING_OPTIONS.map(size => {
                                             const marking = product.sizes && typeof product.sizes === 'object' ? product.sizes[size] : null;
 
@@ -501,7 +502,7 @@ export default function Home(props: StripeAppProps & {
                                     </div>
 
                                     {product.sizeGuide && (
-                                        <>
+                                        <div className="flex fit snug">
                                             <Link href={undefined} onClick={(e) => {
                                                 e.preventDefault();
                                                 setIsSizeGuideShown(true);
@@ -512,11 +513,16 @@ export default function Home(props: StripeAppProps & {
                                                     setIsSizeGuideShown(false)
                                                 }}
                                                 sx={{
-                                                    padding: "0.5rem"
+                                                    padding: "0rem",
+                                                    '& .MuiDialog-paper': {
+                                                        margin: "0.5rem"
+                                                    }
                                                 }}
                                             >
-                                                <Paper sx={{
-                                                    padding: isSm ? "0.5rem" : "2rem",
+                                                <div 
+                                                    className="column compact"
+                                                style={{
+                                                    padding: isSm ? "0rem" : "2rem",
                                                     width: "100%",
                                                     maxWidth: "40rem",
                                                 }}>
@@ -549,10 +555,13 @@ export default function Home(props: StripeAppProps & {
                                                             </TableBody>
                                                         </Table>
                                                     </TableContainer>
-                                                </Paper>
+                                                                {product.sizeNotes && (
+                                                                    <Typography variant="caption">Notes on size.</Typography>
+                                                                )}
+                                                </div>
 
                                             </Dialog>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
                             )}
