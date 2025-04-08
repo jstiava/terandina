@@ -487,12 +487,17 @@ export default function Header({ Cart, color, setColor }: {
                     }}>
                         <div className="column snug">
                             <MenuItem
-                                onClick={() => setIsSidebarOpen(false)}
+                            
+                                onClick={() => {
+                                    pleasePush('/our-values')
+                                }}
                                 icon={<ArrowForward fontSize="small" />}
                             >Our Values</MenuItem>
 
                             <MenuItem
-                                onClick={() => setIsSidebarOpen(false)}
+                                onClick={() => {
+                                    pleasePush('/contact')
+                                }}
                                 icon={<EmailOutlined fontSize="small" />}
                             >Contact</MenuItem>
                         </div>

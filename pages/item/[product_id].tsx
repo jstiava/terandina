@@ -200,7 +200,9 @@ export default function Home(props: StripeAppProps & {
         }
 
         setIsOutOfStock(chosenSize ? false : true);
-        chosenSize && setChosenSize(chosenSize)
+        if (chosenSize) {
+            setChosenSize(chosenSize)
+        }
 
         if (swiperRef.current) {
             try {
