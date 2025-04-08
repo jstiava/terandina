@@ -1,6 +1,6 @@
 "use client"
 import { StripeAppProps } from "@/types";
-import { Elements } from '@stripe/react-stripe-js';
+import { AddressElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import StripeCheckoutForm from "@/components/StripeCheckoutForm";
 import { useEffect, useState } from "react";
@@ -43,7 +43,7 @@ export default function Checkout(props: StripeAppProps) {
                 console.log(err);
             });
 
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const options = {
@@ -53,78 +53,105 @@ export default function Checkout(props: StripeAppProps) {
         },
     } as StripeElementsOptions;
 
-    return (
-        <div className="column center" style={{
-            width: "100%",
-            padding: "3rem 1rem"
-        }}>
-            <div className={isSm ? "column relaxed" : "flex relaxed top between"} style={{
-                maxWidth: "70rem",
-                width: "100%",
-                padding: "1rem"
-            }}>
-                <div className="column compact" style={{
-                    width: isSm ? "100%" : "45%"
-                }}>
-                    <div className="flex between">
+    if (!options || !clientSecret || !stripePromise) {
+        return null;
+    }
 
-                        <div className="flex fit compact">
-                            <Typography variant="h5" component="h3" sx={{
-                                fontSize: "2.5rem"
-                            }}>Order Summary</Typography>
-                            <ShoppingBagOutlined sx={{
-                                fontSize: "1.5rem"
-                            }} />
-                        </div>
-                        <Button
-                            size="small"
-                            sx={{
-                                height: "2rem"
-                            }}
-                            variant="outlined"
-                            startIcon={<EditOutlined />}
-                            onClick={() => router.push('/')}
-                        >Edit</Button>
-                    </div>
-                    <Divider style={{
-                        width: "100%"
-                    }} ></Divider>
-                    {!props.Cart.cart || props.Cart.cart.length === 0 ? (
-                        <Typography>Cart is empty.</Typography>
-                    ) : (
-                        <div className="column" style={{
-                            width: "100%"
-                        }}>
-                            <TransitionGroup>
-                                <Collapse>
-                                    {props.Cart.cart.map(product => {
-                                        return (
-                                            <ProductInBagCard key={product.id} product={product} />
-                                        )
-                                    })}
-                                </Collapse>
-                            </TransitionGroup>
+    return (
+        <Elements options={options} stripe={stripePromise}>
+            <div className="column center" style={{
+                width: "100%",
+                padding: "3rem 1rem"
+            }}>
+                <div className={isSm ? "column relaxed" : "flex relaxed top between"} style={{
+                    maxWidth: "70rem",
+                    width: "100%",
+                    padding: "1rem"
+                }}>
+                    <div className="column relaxed" style={{
+                        width: isSm ? "100%" : "45%"
+                    }}>
+                        <div className="column compact">
+                            <div className="flex between">
+
+                                <div className="flex fit compact">
+                                    <ShoppingBagOutlined sx={{
+                                        fontSize: "1rem"
+                                    }} />
+                                    <Typography variant="h5" component="h3" sx={{
+                                        fontSize: "1rem"
+                                    }}>Order Summary</Typography>
+                                </div>
+                                <Button
+                                    size="small"
+                                    sx={{
+                                        height: "2rem"
+                                    }}
+                                    variant="outlined"
+                                    startIcon={<EditOutlined />}
+                                    onClick={() => router.push('/')}
+                                >Edit</Button>
+                            </div>
                             <Divider style={{
                                 width: "100%"
                             }} ></Divider>
-                            <div className="flex between" style={{
-                                opacity: "0.9"
-                            }}>
-                                <Typography>SUBTOTAL</Typography>
-                                <Typography sx={{
-                                    fontSize: "1.25rem",
-                                    color: theme.palette.primary.light,
-                                    width: "fit-content",
-                                    maxWidth: "5rem",
-                                    textAlign: "right"
-                                }}>{formatPrice(subtotal, 'usd')}</Typography>
-                            </div>
+                            {!props.Cart.cart || props.Cart.cart.length === 0 ? (
+                                <Typography>Cart is empty.</Typography>
+                            ) : (
+                                <div className="column" style={{
+                                    width: "100%"
+                                }}>
+                                    <TransitionGroup>
+                                        <Collapse>
+                                            {props.Cart.cart.map(product => {
+                                                return (
+                                                    <ProductInBagCard key={product.id} product={product} />
+                                                )
+                                            })}
+                                        </Collapse>
+                                    </TransitionGroup>
+                                    <Divider style={{
+                                        width: "100%"
+                                    }} ></Divider>
+                                    <div className="flex between" style={{
+                                        opacity: "0.9"
+                                    }}>
+                                        <Typography>SUBTOTAL</Typography>
+                                        <Typography sx={{
+                                            fontSize: "1.25rem",
+                                            color: theme.palette.primary.light,
+                                            width: "fit-content",
+                                            maxWidth: "5rem",
+                                            textAlign: "right"
+                                        }}>{formatPrice(subtotal, 'usd')}</Typography>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
 
-                <div className="column compact" style={{ width: isSm ? "100%" : "45%" }}>
-                    {/* <div className="flex fit compact">
+                        <div className="column">
+                            <div className="flex fit compact">
+                                <LocalShippingOutlined sx={{
+                                    fontSize: "1rem"
+                                }} />
+                                <Typography variant="h5" component="h3" sx={{
+                                    fontSize: "1rem"
+                                }}>Shipping</Typography>
+                            </div>
+                            <Divider style={{
+                                width: "100%"
+                            }} ></Divider>
+                            <AddressElement
+                                id="address-element"
+                                options={{
+                                    mode: 'shipping'
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="column compact" style={{ width: isSm ? "100%" : "45%" }}>
+                        {/* <div className="flex fit compact">
                         <Typography variant="h5" component="h3" sx={{
                             fontSize: "2.5rem"
                         }}>Delivery</Typography>
@@ -132,23 +159,24 @@ export default function Checkout(props: StripeAppProps) {
                             fontSize: "1.5rem"
                         }} />
                     </div> */}
-                    <div className="flex fit compact">
-                        <Typography variant="h5" component="h3" sx={{
-                            fontSize: "2.5rem"
-                        }}>Checkout</Typography>
-                        <PaymentOutlined sx={{
-                            fontSize: "1.5rem"
-                        }} />
+                        <div className="flex fit compact">
+                            <PaymentOutlined sx={{
+                                fontSize: "1rem"
+                            }} />
+                            <Typography variant="h5" component="h3" sx={{
+                                fontSize: "1rem"
+                            }}>Checkout</Typography>
+                        </div>
+                        {clientSecret && (
+                            <>
+                                {confirmed ? <StripeCompletePage /> : (
+                                    <StripeCheckoutForm />
+                                )}
+                            </>
+                        )}
                     </div>
-                    {clientSecret && stripePromise && (
-                        <Elements options={options} stripe={stripePromise}>
-                            {confirmed ? <StripeCompletePage /> : (
-                                <StripeCheckoutForm />
-                            )}
-                        </Elements>
-                    )}
                 </div>
             </div>
-        </div>
+        </Elements>
     )
 }

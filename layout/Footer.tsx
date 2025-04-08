@@ -47,7 +47,7 @@ export default function Footer({color} : {
                     height: "8rem"
                 }} />
 
-                <div className="column compact fit">
+                {/* <div className="column compact fit">
 
                     <div className="flex compact fit top">
                         <StoreOutlined fontSize="small" />
@@ -58,7 +58,7 @@ export default function Footer({color} : {
                         <Typography>Mon-Thu: 8am-8pm, Fri: 8am-3pm</Typography>
                     </div>
 
-                </div>
+                </div> */}
             </div>
         </footer>
     )

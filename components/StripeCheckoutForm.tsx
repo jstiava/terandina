@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import {
   PaymentElement,
   useStripe,
-  useElements
+  useElements,
+  AddressElement
 } from "@stripe/react-stripe-js";
 import { Layout } from "@stripe/stripe-js";
 import { Button } from "@mui/material";
@@ -24,7 +25,7 @@ export default function CheckoutForm() {
     setConfirmed(param !== null);
   }, []);
 
-  const handleSubmit = async (e : any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
@@ -41,7 +42,7 @@ export default function CheckoutForm() {
     });
 
     if (error.type === "card_error" || error.type === "validation_error") {
-        console.log(error)
+      console.log(error)
       setMessage("An error occurred.");
     } else {
       setMessage("An unexpected error occurred.");
@@ -59,8 +60,11 @@ export default function CheckoutForm() {
   }
 
   return (
-    <div className="column" id="payment-form"  style={{width: "100%"}}>
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
+    <div className="column" id="payment-form" style={{ width: "100%" }}>
+      <PaymentElement
+        id="payment-element"
+        options={paymentElementOptions}
+      />
       <Button variant="contained" fullWidth onClick={handleSubmit}>
         Continue to Checkout
       </Button>

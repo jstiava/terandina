@@ -332,14 +332,17 @@ export default function Header({ Cart, color, setColor }: {
                                     onClick={() => pleasePush('/blankets')}
                                     icon={<ArrowForward fontSize="small" />}
                                 >Explore All Blankets</MenuItem>
-                                <div className="column fit" style={{
+
+                                <div className="column" style={{
                                     padding: "0 2rem"
                                 }}>
-                                    <div className="column compact">
+                                    <ButtonBase href={`/item/prod_RmSkpjLIPNAj7e`} className="column compact2 left">
                                         <CoverImage url={'/blanket_example.jpg'} width={"100%"} height={"22rem"} />
-                                        {/* <Typography variant="caption">Skyriver Blue - Pishi Alpaca Poncho</Typography> */}
-                                    </div>
+                                        <Typography variant="caption">Sky Blue - Alpaca Blanket</Typography>
+                                    </ButtonBase>
                                 </div>
+
+                            
                             </div>
                         )}
 
