@@ -217,7 +217,7 @@ export default function Header({ Cart, color, setColor }: {
                     left: 0,
                     display: isSidebarOpen ? 'flex' : 'none',
                     width: "100vw",
-                    height: "100vh",
+                    height: "100dvh",
                     backgroundColor: '#00000075',
                     zIndex: 2,
                     position: 'fixed',
