@@ -1,15 +1,18 @@
-import { CopyrightOutlined, EmailOutlined, HomeOutlined, ScheduleOutlined, StoreOutlined } from "@mui/icons-material";
-import { Link, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { ArrowForward, CopyrightOutlined, EmailOutlined, HomeOutlined, Instagram, ScheduleOutlined, StoreOutlined } from "@mui/icons-material";
+import { ButtonBase, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
 import TerandinaLogo from '@/public/Terandina_clear.png'
 import TerandinaNoText from '@/public/Terandina_no_text.png'
 import Image from "next/image";
+import { useRouter } from "next/router";
+import MenuItem from "@/components/MenuItem";
 
 
-export default function Footer({color} : {
+export default function Footer({ color }: {
     color: string
 }) {
 
     const theme = useTheme();
+    const router = useRouter();
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
@@ -22,30 +25,39 @@ export default function Footer({color} : {
             color: theme.palette.getContrastText(color),
             padding: "3rem 5rem"
         }}>
-            <div className={isSm ? "column relaxed center" : "flex between"}
+            <div className={isSm ? "column center" : "flex between"}
                 style={{
-                    width: "100%"
+                    width: "100%",
+                    flexDirection: isSm ? 'column-reverse' : 'row'
                 }}>
 
-                <div className="flex compact fit">
+                    <ButtonBase
+                        className="flex compact left fit"
+                        href="https://www.instagram.com/terandina.apparel/"
+                    >
+                        <Instagram fontSize="small" />
+                        <Typography sx={{
+                            textDecoration: 'underline'
+                        }}>terandina.apparel</Typography>
+                    </ButtonBase>
 
-                </div>
-                
                 <Image src={TerandinaLogo} alt="Terandina" style={isSm ?
                     {
                         position: 'relative',
                         transform: 'translate(0%, 0)',
-                        width: "auto",
+                        width: "12rem",
                         height: "8rem"
                     }
-                : {
-                    position: 'absolute',
-                    bottom: "3.5rem",
-                    transform: 'translate(-50%, 0)',
-                    left: "50vw",
-                    width: "auto",
-                    height: "8rem"
-                }} />
+                    : {
+                        position: 'relative',
+                        transform: 'translate(0%, 0)',
+                        // position: 'absolute',
+                        // bottom: "3.5rem",
+                        // transform: 'translate(-50%, 0)',
+                        // left: "50vw",
+                        width: "auto",
+                        height: "8rem"
+                    }} />
 
                 {/* <div className="column compact fit">
 

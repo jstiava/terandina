@@ -116,7 +116,6 @@ export default function useCart() {
             quantity: alreadyExists.quantity + 1
         }])
         return;
-
     }
 
     const checkout = () : {price: StripePrice | null, quantity: number}[] => {

@@ -31,11 +31,7 @@ import ScrollButton from "@/components/ScrollButton";
 import MenuItemCover from "@/components/MenuItemCover";
 
 
-const menuItems = [
-    // {
-    //     name: "Outerwear",
-    //     value: "outerwear"
-    // },
+export const menuItems = [
     {
         name: "Ponchos",
         value: "ponchos"
@@ -55,11 +51,7 @@ const menuItems = [
     {
         name: "Handcrafted",
         value: "handcrafted"
-    },
-    // {
-    //     name: "Wholesale",
-    //     value: "wholesale"
-    // },
+    }
 ]
 
 
