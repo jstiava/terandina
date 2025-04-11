@@ -506,7 +506,11 @@ export default function Home(props: StripeAppProps & {
                                             <Link href={undefined} onClick={(e) => {
                                                 e.preventDefault();
                                                 setIsSizeGuideShown(true);
-                                            }}>Size Guide</Link>
+                                            }}
+                                                sx={{
+                                                    cursor: 'pointer'
+                                                }}
+                                            >Size Guide</Link>
                                             <Dialog
                                                 open={isSizeGuideShown}
                                                 onClose={() => {
@@ -519,13 +523,13 @@ export default function Home(props: StripeAppProps & {
                                                     }
                                                 }}
                                             >
-                                                <div 
+                                                <div
                                                     className="column compact"
-                                                style={{
-                                                    padding: isSm ? "0rem" : "2rem",
-                                                    width: "100%",
-                                                    maxWidth: "40rem",
-                                                }}>
+                                                    style={{
+                                                        padding: isSm ? "0rem" : "2rem",
+                                                        width: "100%",
+                                                        maxWidth: "40rem",
+                                                    }}>
                                                     <TableContainer>
                                                         <Table sx={{
                                                             width: "30rem"
@@ -555,9 +559,9 @@ export default function Home(props: StripeAppProps & {
                                                             </TableBody>
                                                         </Table>
                                                     </TableContainer>
-                                                                {product.sizeNotes && (
-                                                                    <Typography variant="caption">Notes on size.</Typography>
-                                                                )}
+                                                    {product.sizeNotes && (
+                                                        <Typography variant="caption">Notes on size.</Typography>
+                                                    )}
                                                 </div>
 
                                             </Dialog>
@@ -631,7 +635,10 @@ export default function Home(props: StripeAppProps & {
                                     )}
                                 </div>
                                 {accordion === 'shipping' && (
-                                    <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>This item is made with care and will ship within 2-3 weeks. Thank you for your patience!</Typography>
+                                    <div className="column">
+                                        <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>We intentionally source in small batches to avoid overproduction and waste. Because of this, some items are ready to ship while others may take a little more time. Please allow 1-2 weeks for shipping - we’ll keep you updated every step of the way. </Typography>
+                                        <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>If you are not fully satisfied with your order, we are happy to offer returns and exchanges within 30 days of the delivery date. Items must be returned in original, unused condition with all tags still attached.</Typography>
+                                    </div>
                                 )}
                             </div>
                             <Divider />
