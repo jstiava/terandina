@@ -57,7 +57,7 @@ export default function CategorySection({ category, products, ...props }: {
             </div>
           </div>
         </CategoryHeader>
-        {category.description && (
+        {/* {category.description && (
           <div className="column" style={{
             padding: "1rem 1rem",
             marginBottom: isSm ? "2rem" : "0",
@@ -65,7 +65,7 @@ export default function CategorySection({ category, products, ...props }: {
           }}>
             <Typography>{category.description}</Typography>
           </div>
-        )}
+        )} */}
         {products && products.map((product, index) => {
           const row = Math.floor(index / 3);
           const col = index % 3;
