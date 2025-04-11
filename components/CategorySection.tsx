@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import ProductCard from "./ProductCard";
 import { Category, StripeAppProps, StripeProduct } from "@/types";
 import { UseCart } from "@/checkout/useCart";
+import CategoryHeader from "./CategoryHeader";
 
 
 export default function CategorySection({category, products, ...props}: {
@@ -26,7 +27,6 @@ export default function CategorySection({category, products, ...props}: {
             width: "100%",
             padding: 0
           }}>
-    
             <div className={'flex between top'} style={{
               flexWrap: 'wrap',
               color: theme.palette.text.primary,
@@ -35,14 +35,15 @@ export default function CategorySection({category, products, ...props}: {
               minHeight: "100vh",
               padding: "1rem"
             }}>
-              <div className={isMd ? "column center relaxed" : "flex fit middle relaxed"} style={{
+              <CategoryHeader 
+              url={category.media && category.media.length > 0 ? category.media[0].large || './ecuador-landscape-sunrise-morning-preview.jpg' : './ecuador-landscape-sunrise-morning-preview.jpg'}
+              className={isMd ? "column center relaxed" : "flex fit middle relaxed"} 
+              width={'100%'}
+              height={"fit-content"}
+              style={{
                 padding: isMd ? "1.5rem 2rem 3rem 2rem" : "9rem 1rem",
-                width: '100%',
                 margin: isMd ? isSm ? "0rem 0rem 2rem 0rem" : "1rem 2rem" : "1rem 2rem",
                 color: theme.palette.getContrastText(TerandinaGreen),
-                backgroundImage: category.media && category.media.length > 0 ? `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(${category.media[0].large})` : `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(./ecuador-landscape-sunrise-morning-preview.jpg)`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
               }}>
                 <div className="column snug center middle" style={{
                   minHeight: "20vh",
@@ -55,7 +56,7 @@ export default function CategorySection({category, products, ...props}: {
                     }}>{category.name}</Typography>
                   </div>
                 </div>
-              </div>
+              </CategoryHeader>
               {products && products.map((product, index) => {
                 const row = Math.floor(index / 3);
                 const col = index % 3;

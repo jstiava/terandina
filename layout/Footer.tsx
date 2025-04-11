@@ -110,7 +110,7 @@ export default function Footer({ color }: {
             <Divider></Divider>
             <div className="flex between">
                 <Typography>Terandina Inc. Copyright 2025.</Typography>
-                <Typography>Chicago, IL</Typography>
+                <Typography></Typography>
             </div>
         </footer>
     )
