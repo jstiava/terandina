@@ -75,50 +75,10 @@ export default function Footer({ color }: {
                     <div className="column compact fit" style={{
                         width: isSm ? "100%" : "clamp(10rem, 100%, 15rem)",
                     }}>
-                        <Typography variant="h6" sx={{
+                        {/* <Typography variant="h6" sx={{
                             textTransform: 'uppercase',
                             fontSize: "1rem"
-                        }}>Outerwear</Typography>
-                        {OUTERWEAR.map(item => (
-                            <ButtonBase
-                                key={item.value}
-                                className="flex between"
-                                href={`/${item.value}`}
-                            >
-                                <Typography>{item.name}</Typography>
-                                <ArrowForward sx={{
-                                    fontSize: '1rem'
-                                }} />
-                            </ButtonBase>
-                        ))}
-                    </div>
-                    <div className="column compact fit" style={{
-                        width: isSm ? "100%" : "clamp(10rem, 100%, 15rem)",
-                    }}>
-                        <Typography variant="h6" sx={{
-                            textTransform: 'uppercase',
-                            fontSize: "1rem"
-                        }}>Accessories</Typography>
-                        {ACCESSORIES.map(item => (
-                            <ButtonBase
-                                key={item.value}
-                                className="flex between"
-                                href={`/${item.value}`}
-                            >
-                                <Typography>{item.name}</Typography>
-                                <ArrowForward sx={{
-                                    fontSize: '1rem'
-                                }} />
-                            </ButtonBase>
-                        ))}
-                    </div>
-                    <div className="column compact fit" style={{
-                        width: isSm ? "100%" : "clamp(10rem, 100%, 15rem)",
-                    }}>
-                        <Typography variant="h6" sx={{
-                            textTransform: 'uppercase',
-                            fontSize: "1rem"
-                        }}>About Us</Typography>
+                        }}>About Us</Typography> */}
                         {ABOUT_US.map(item => (
                             <ButtonBase
                                 key={item.value}
@@ -190,7 +150,19 @@ const ACCESSORIES = [
 
 const ABOUT_US = [
     {
-        name: "Our Values",
+        name: "About",
         value: 'our-values'
+    },
+    {
+        name: "Contact",
+        value: 'contact'
+    },
+    {
+        name: "Return Policy",
+        value: 'returns'
+    },
+    {
+        name: "FAQs",
+        value: 'faqs'
     }
 ]
