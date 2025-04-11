@@ -1,3 +1,4 @@
+![Logo](./Terandina_clear.png)
 ## Terandina
 Statically-generated NextJS e-commerce application using Stripe and Upload Thing, deployed on Vercel.
 
