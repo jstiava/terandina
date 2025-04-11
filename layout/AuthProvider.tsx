@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Category } from "@/types";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 
 
@@ -21,6 +22,7 @@ declare module '@mui/material/Button' {
 }
 
 export const headerHeight = "4rem";
+const isProduction = false;
 
 const protectedRoutes = ['/admin'];
 
@@ -106,6 +108,10 @@ export default function AuthProvider({
     }
 
     return (
+        <>
+        {isProduction && !protectedRoutes.some(path => router.pathname.startsWith(path)) && (
+            <GoogleAnalytics />
+        )}
         <ThemeProvider theme={theme}>
             <Head>
                 <meta name="theme-color" content={theme.palette.background.paper} />
@@ -121,5 +127,6 @@ export default function AuthProvider({
             </div>
             <Footer color={color} />
         </ThemeProvider>
+        </>
     )
 }
