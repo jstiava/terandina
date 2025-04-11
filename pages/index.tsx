@@ -230,13 +230,15 @@ export default function Home(props: StripeAppProps) {
               <>
                 <IconButton ref={prevRef} className="custom-prev" sx={{
                   position: 'absolute',
-                  left: "1rem"
+                  left: "1rem",
+                  zIndex: 1
                 }}>
                   <ChevronLeft sx={{ fontSize: "3rem" }} />
                 </IconButton>
                 <IconButton ref={nextRef} className="custom-prev" sx={{
                   position: 'absolute',
-                  right: "1rem"
+                  right: "1rem",
+                  zIndex: 1
                 }}>
                   <ChevronRight sx={{ fontSize: "3rem" }} />
                 </IconButton>
