@@ -11,9 +11,10 @@ interface CoverImageProps {
   children?: any;
   className?: string;
   delay?: number;
+  recursive?: boolean
 }
 
-export default function CoverImage({ className = "", url, height, width, style = {}, children = null, delay = 0 }: CoverImageProps) {
+export default function CoverImage({ className = "", url, height, width, style = {}, children = null, delay = 0, recursive = false }: CoverImageProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const theme = useTheme();
@@ -25,20 +26,28 @@ export default function CoverImage({ className = "", url, height, width, style =
     img.onerror = () => setIsLoaded(false);
   }, [url]);
 
-  if (!isLoaded) {
+  if (!recursive && !isLoaded) {
     return (
       <div
+      className="flex center middle"
         style={{
           width: width,
           height: height,
-          // backgroundColor: theme.palette.primary.main,
+          backgroundColor: "#ffffff",
           backgroundPosition: 'center',
           opacity: 1,
           transform: 'scale(1)',
           transition: `opacity 0.5s ease-in-out ${delay}s`,
           ...style,
         }}
-      />
+      >
+        <CoverImage
+            url="/light_bird.png"
+            height={"2.5rem"}
+            width={"5rem"}
+          recursive
+          />
+      </div>
     )
 
   }
@@ -50,6 +59,7 @@ export default function CoverImage({ className = "", url, height, width, style =
         width: width,
         height: height,
         backgroundImage: `url(${url})`,
+        backgroundColor: "#ffffff",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         opacity: isLoaded ? 1 : 0,

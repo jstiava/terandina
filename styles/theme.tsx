@@ -42,12 +42,14 @@ const theme = createTheme({
     MuiTextField: {
       styleOverrides: {
         root: {
-          '& .MuiInputBase-root': {
-            padding: "0 0.25rem",
-            borderRadius: "0 !important",
-            height: "3rem",
-            fontSize: "1.35rem",
-          },
+          variants: [
+            {
+              props: { variant: "outlined" },
+              style: {
+
+              }
+            }
+          ]
         }
       }
     },

@@ -12,6 +12,7 @@ import HeroImage from '@/public/BSP_191_Cotopaxi+sunset.jpg'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { ArrowLeft, ArrowLeftOutlined, ArrowRight, ArrowRightOutlined, ChevronLeft, ChevronRight } from "@mui/icons-material";
+import TerandinaWordmark from "@/icons/TerandinaWordmark";
 
 
 
@@ -24,6 +25,7 @@ export default function Home(props: StripeAppProps) {
   const swiperRef = useRef<any>(null);
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.down('md'));
 
   const [swiperInstance, setSwiperInstance] = useState<typeof Swiper | null>(null);
   const prevRef = useRef(null);
@@ -113,27 +115,7 @@ export default function Home(props: StripeAppProps) {
               zIndex: 1,
               marginBottom: isSm ? "5rem" : "0rem"
             }}>
-              {isSm ? (
-                <Typography sx={{
-                  lineHeight: "115%",
-                  color: '#ffffff',
-                  textAlign: isSm ? 'center' : 'left',
-                  padding: "1.5rem",
-                  // border: "0.25rem solid white",
-                  marginBottom: "1rem",
-                  fontSize: "1.5rem"
-                }}
-                  variant="h1"
-                >Crafted in the Andes<br />Rooted in Tradition</Typography>
-              ) : (
-                <Typography sx={{
-                  lineHeight: "115%",
-                  color: '#ffffff',
-                  textAlign: isSm ? 'center' : 'left'
-                }}
-                  variant="h1"
-                >Crafted in the Andes<br />Rooted in Tradition</Typography>
-              )}
+
             </div>
             <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
               position: 'absolute',
@@ -205,32 +187,32 @@ export default function Home(props: StripeAppProps) {
               modules={[Pagination, Navigation]}
               breakpoints={{
                 300: {
-                    slidesPerView: 1.4,
-                    spaceBetween: 10,
+                  slidesPerView: 1.4,
+                  spaceBetween: 10,
                 },
                 500: {
-                    slidesPerView: 2.4,
-                    spaceBetween: 0
+                  slidesPerView: 2.4,
+                  spaceBetween: 0
                 },
                 1200: {
-                    slidesPerView: 3.4,
-                    spaceBetween: 10
+                  slidesPerView: 3.4,
+                  spaceBetween: 10
                 },
                 1400: {
-                    slidesPerView: 4.4,
-                    spaceBetween: 10,
+                  slidesPerView: 4.4,
+                  spaceBetween: 10,
                 },
                 1800: {
-                    slidesPerView: 5.4,
-                    spaceBetween: 10,
+                  slidesPerView: 5.4,
+                  spaceBetween: 10,
                 },
-            }}
+              }}
               className="mySwiper"
             >
               {products.map(product => (
                 <SwiperSlide className="slide" key={product.id}>
                   <div className="flex center middle" style={{
-                      padding: isSm ? "1rem" : 0
+                    padding: isSm ? "1rem" : 0
                   }}>
                     <ProductCard
                       product={product}
@@ -263,6 +245,7 @@ export default function Home(props: StripeAppProps) {
           </div>
         </div>
         <div className={isSm ? 'column snug' : "flex snug"} style={{
+          position: 'relative',
           width: "100%"
         }}>
           <CoverImage
@@ -329,6 +312,7 @@ export default function Home(props: StripeAppProps) {
               onClick={() => router.push('/jewelry')}
             >Shop Jewelry</Button>
           </CoverImage>
+
         </div>
       </div>
     </>
