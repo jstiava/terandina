@@ -87,7 +87,6 @@ export default function Home(props: StripeAppProps) {
           padding: isSm ? "0rem" : "1rem",
         }}>
           <CoverImage
-            delay={0.5}
             url="/no_license_landscape.jpg"
             height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
             width={"100%"}

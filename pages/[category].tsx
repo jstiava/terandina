@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import ScrollButton from "@/components/ScrollButton";
 import { Category, StripeAppProps, StripePrice, StripeProduct } from "@/types";
 import Mongo from "@/utils/mongo";
-import { alpha, ButtonBase, IconButton, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, alpha, Button, ButtonBase, Drawer, IconButton, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { GetStaticPaths } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -13,7 +13,7 @@ import { getAllProducts } from "./api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "./api/categories";
 import CategorySection from "@/components/CategorySection";
-import { FilterOutlined, SortOutlined } from "@mui/icons-material";
+import { CloseOutlined, FilterOutlined, SortOutlined } from "@mui/icons-material";
 import anime from "animejs";
 
 
@@ -105,13 +105,13 @@ export const getStaticProps = (async (context: any) => {
         if (!p.categories) {
           continue;
         }
-    
+
         const variantCats = await getAllCategories({
           cat_ids: (p.categories as any).map((c: ObjectId) => c.toString())
         }, {
           getProductsIfVariant: true
         });
-    
+
         p.quantity = 1;
         p.selectedPrice = p.prices ? p.prices[0] : null;
         p.categories = variantCats;
@@ -162,7 +162,7 @@ export default function CategoryPage(props: StripeAppProps & {
   const isSm = useMediaQuery("(max-width: 45rem)");
   const isMd = useMediaQuery("(max-width: 70rem)");
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
-
+  const [isSortFilterPanelOpen, setIsSortFilterPanelOpen] = useState(false);
 
   useEffect(() => {
     anime({
@@ -235,7 +235,9 @@ export default function CategoryPage(props: StripeAppProps & {
         backgroundColor: alpha('#f4f4f4', 0.9),
         animation: 'fade 0.2s ease-in-out forwards'
       }}>
-        <Typography variant="h5">{props.static.tag ? `${props.static.tag.name} ` : ''}{props.static.category.name}</Typography>
+        <div className="flex fit">
+          <Typography variant="h5">{props.static.tag ? `${props.static.tag.name} ` : ''}{props.static.category.name}</Typography>
+        </div>
         <div className="flex fit" style={{
           marginLeft: "1rem"
         }}>
@@ -285,14 +287,28 @@ export default function CategoryPage(props: StripeAppProps & {
                     )
                   })}
 
-                  <IconButton key="outline">
+                  <IconButton key="outline" onClick={() => setIsSortFilterPanelOpen(true)}>
                     <SortOutlined sx={{
                       fontSize: '1.25rem'
                     }} />
                   </IconButton>
                 </div>
               ) : (
-                <>
+                <div className="flex bottom">
+                  {props.static.categories && (
+                    <Button
+                      onClick={() => setIsSortFilterPanelOpen(true)}
+                      startIcon={<SortOutlined sx={{
+                        fontSize: '1.25rem'
+                      }} />}
+                      sx={{
+                        height: "2rem",
+                        marginBottom: '0.25rem'
+                      }}
+                    >
+                      Filter
+                    </Button>
+                  )}
                   {props.static.categories.map((cat) => (
                     <ButtonBase
                       disableRipple
@@ -331,37 +347,81 @@ export default function CategoryPage(props: StripeAppProps & {
                         }}>{cat.name}</Typography>
                     </ButtonBase>
                   ))}
-                </>
+
+                </div>
               )}
             </>
           )}
         </div>
       </div>
 
-      <div className="column snug" style={{
+      <div className="column snug center" style={{
         marginTop: "8rem"
       }}>
-      {props.static.categories ? (
-        <div className="column snug">
-          {props.static.categories.map(cat => (
+        {props.static.categories ? (
+          <div className="column snug">
+            {props.static.categories.map(cat => (
+              <CategorySection
+                key={cat._id}
+                Cart={props.Cart}
+                categories={props.categories || []}
+                category={cat}
+                products={cat.products}
+              />
+            ))}
+          </div>
+        ) : (
+
+          <div className="column">
             <CategorySection
-              key={cat._id}
               Cart={props.Cart}
               categories={props.categories || []}
-              category={cat}
-              products={cat.products}
+              category={props.static.category}
+              products={props.static.products || []}
             />
-          ))}
-        </div>
-      ) : (
-        <CategorySection
-          Cart={props.Cart}
-          categories={props.categories || []}
-          category={props.static.category}
-          products={props.static.products || []}
-        />
-      )}
+          </div>
+        )}
       </div>
+
+
+      <Drawer
+        anchor="right"
+        open={isSortFilterPanelOpen}
+        onClose={(e) => {
+          setIsSortFilterPanelOpen(false);
+        }}
+        sx={{
+          '& .MuiPaper-root': {
+            width: "100%",
+            maxWidth: '30rem'
+          }
+        }}
+      >
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsSortFilterPanelOpen(false);
+          }}
+          sx={{
+            position: "absolute",
+            top: "0.5rem",
+            right: "0.5rem"
+          }}>
+          <CloseOutlined fontSize="small" />
+        </IconButton>
+        <div
+          className="column compact"
+          style={{
+            padding: "1rem"
+          }}
+        >
+          <Alert severity="warning">
+            <Typography sx={{
+              fontSize: '1rem'
+            }}>This feature is under construction.</Typography>
+          </Alert>
+        </div>
+      </Drawer>
 
     </>
   )

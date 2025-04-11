@@ -29,24 +29,35 @@ export default function CategoryHeader({ className = "", url, height, width, sty
 
   if (!recursive && !isLoaded) {
     return (
-      <CoverImage
-        className={`${className}`}
-        url="/light_bird.png"
-        height={width}
-        width={height}
+      <div
+      className="flex center middle"
         style={{
+          width: width,
+          height: height,
           backgroundColor: "#ffffff",
-          color: "#3d3d3d",
-          width: "100%",
+          color: "#3d3d3d !important",
+          backgroundPosition: 'center',
           opacity: 1,
           transform: 'scale(1)',
           transition: `opacity 0.5s ease-in-out ${delay}s`,
           ...style,
         }}
-        recursive
       >
-        {children}
-      </CoverImage>
+        <CoverImage
+            url="/light_bird.png"
+            height={"2.5rem"}
+            width={"5rem"}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              marginLeft: "-2.5rem",
+              marginTop: "-1.25rem"
+            }}
+          recursive
+          ></CoverImage>
+          {children}
+      </div>
     )
 
   }
