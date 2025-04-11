@@ -422,6 +422,9 @@ export default function ProductCard({
                     onClick={e => {
                         e.stopPropagation();
                     }}
+                    sx={{
+                        position: 'relative'
+                    }}
                 >
 
                     <IconButton
@@ -430,7 +433,7 @@ export default function ProductCard({
                             setIsVariantMenuOpen(false);
                         }}
                         sx={{
-                            position: "absolute",
+                            position: "fixed",
                             top: "0.5rem",
                             right: "0.5rem"
                         }}>
@@ -459,6 +462,11 @@ export default function ProductCard({
                                                 opacity: 0.75,
                                                 fontSize: "1rem"
                                             }}>{c.name}</Typography>
+                                            {c.description && (
+                                                <Typography sx={{
+                                                    marginBottom: '2rem !important'
+                                                }}>{c.description}</Typography>
+                                            )}
                                             <div className="column snug">
                                                 {c.products.map((p: any) => {
                                                     return (
