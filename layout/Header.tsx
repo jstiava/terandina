@@ -8,6 +8,7 @@ import {
     CloseOutlined,
     EditOutlined,
     EmailOutlined,
+    Instagram,
     MenuOutlined,
     PhoneOutlined,
     SearchOutlined,
@@ -29,6 +30,8 @@ import ColorPicker from "@/components/ColorPicker";
 import { headerHeight } from "./AuthProvider";
 import ScrollButton from "@/components/ScrollButton";
 import MenuItemCover from "@/components/MenuItemCover";
+import { ABOUT_US, ABOUT_US_SIDEBAR } from "./Footer";
+import TerandinaWordmark from "@/icons/TerandinaWordmark";
 
 
 export const menuItems = [
@@ -236,11 +239,10 @@ export default function Header({ Cart, color, setColor }: {
                 }}>
 
                 <div className="column between" style={{
-                    height: "100%"
+                    height: "calc(100% - 13.5rem)"
                 }}>
 
                     <div className="column fit snug" style={{
-                        maxHeight: "calc(100% - 6rem)",
                         height: "fit-content",
                         overflowY: "scroll",
                         marginBottom: 0,
@@ -474,51 +476,73 @@ export default function Header({ Cart, color, setColor }: {
                     </div>
 
                     <div className="column fit" style={{
-                        padding: "1rem 0rem",
+                        padding: "2rem 0rem",
                         position: 'absolute',
                         bottom: 'var(--safe-area-inset-bottom, 0px)',
                         backgroundColor: color,
                         width: '100%'
                     }}>
-                        <div className="column snug">
+                        {/* <div className="column snug">
                             <MenuItem
-
                                 onClick={() => {
                                     pleasePush('/our-values')
                                 }}
                                 icon={<ArrowForward fontSize="small" />}
                             >Our Values</MenuItem>
-
                             <MenuItem
                                 onClick={() => {
                                     pleasePush('/contact')
                                 }}
                                 icon={<EmailOutlined fontSize="small" />}
                             >Contact</MenuItem>
-                        </div>
+                        </div> */}
 
                         <div className="column" style={{
                             padding: "0 2rem"
                         }}>
-                            <div className="flex snug" >
-                                <TextField sx={{
-                                    width: "calc(100% - 6rem)",
-                                }}
-                                    inputProps={{
-                                        style: {
-                                            fontWeight: 900,
-                                            letterSpacing: '0.15px',
-                                        },
-                                    }}
-                                />
-                                <Button variant="contained" sx={{
-                                    width: '6rem',
-                                }}>Subscribe</Button>
+                            <div className="column">
+                                <div className="flex compact">
+                                    <IconButton
+                                        href="https://www.instagram.com/terandina.apparel/"
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            window.open('https://www.instagram.com/terandina.apparel/', '_blank')
+                                        }}
+                                    >
+                                        <Instagram fontSize="small" />
+                                    </IconButton>
+                                </div>
+                                <div className="column snug">
+                                    <Typography variant="h6" sx={{
+                                        textTransform: 'uppercase',
+                                        fontSize: "1rem"
+                                    }}>Subscribe to our Newsletter</Typography>
+                                    <TextField
+                                        variant="standard"
+                                        placeholder="Email Address"
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: (
+                                                    <IconButton>
+                                                        <ArrowForward sx={{
+                                                            fontSize: '1.25rem'
+                                                        }} />
+                                                    </IconButton>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </div>
+
                             </div>
                             <div className="flex between">
-
-                                <Typography>Copyright Terandina 2025</Typography>
-                                <Link href="/login">Login</Link>
+                            <Typography sx={{
+                                        fontSize: "0.85rem"
+                                    }}>Terandina Inc. Copyright 2025.</Typography>
+                                    <Link href="/login" sx={{
+                                        fontSize: "0.85rem"
+                                    }}>Login</Link>
                             </div>
                         </div>
                     </div>

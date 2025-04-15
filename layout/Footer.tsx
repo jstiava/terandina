@@ -39,7 +39,7 @@ export default function Footer({ color }: {
                         <Typography variant="h6" sx={{
                             textTransform: 'uppercase',
                             fontSize: "1rem"
-                        }}>Subscribe to your Newsletter</Typography>
+                        }}>Subscribe to our Newsletter</Typography>
                         <TextField
                             variant="standard"
                             placeholder="Email Address"
@@ -148,7 +148,7 @@ const ACCESSORIES = [
     }
 ]
 
-const ABOUT_US = [
+export const ABOUT_US = [
     {
         name: "About",
         value: 'our-values'
@@ -165,4 +165,16 @@ const ABOUT_US = [
         name: "FAQs",
         value: 'faqs'
     }
+]
+
+
+export const ABOUT_US_SIDEBAR = [
+    {
+        name: "About",
+        value: 'our-values'
+    },
+    {
+        name: "Contact",
+        value: 'contact'
+    },
 ]

@@ -22,7 +22,7 @@ declare module '@mui/material/Button' {
 }
 
 export const headerHeight = "4rem";
-const isProduction = true;
+const isProduction = false;
 
 const protectedRoutes = ['/admin'];
 
