@@ -320,7 +320,10 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                         padding: "0.5rem"
                     }}
                     >
-                        <Typography >{params.value}</Typography>
+                        <Typography >{params.value}<span style={{
+                            opacity: 0.55,
+                            fontSize: '0.75rem'
+                        }}> ({params.row.slug})</span></Typography>
                         <div className="flex compact fit">
                             {/* <Button
                                 variant="text"

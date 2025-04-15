@@ -4,7 +4,7 @@ import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
 import ProductCard, { DisplayPrice } from "@/components/ProductCard";
 import { Category, SIZING_OPTIONS, StripeAppProps, SizeChart, StripeProduct } from "@/types";
-import { Button, Chip, Dialog, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, Button, Chip, Dialog, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -523,46 +523,68 @@ export default function Home(props: StripeAppProps & {
                                                     }
                                                 }}
                                             >
-                                                <div
-                                                    className="column compact"
-                                                    style={{
-                                                        padding: isSm ? "0rem" : "2rem",
-                                                        width: "100%",
-                                                        maxWidth: "40rem",
-                                                    }}>
-                                                    <TableContainer>
-                                                        <Table sx={{
-                                                            width: "30rem"
+
+                                                {product.sizeGuide && (
+
+                                                    <div
+                                                        className="column compact"
+                                                        style={{
+                                                            padding: isSm ? "0rem" : "2rem",
+                                                            width: "100%",
+                                                            maxWidth: "40rem",
                                                         }}>
-                                                            {product.sizeGuide[0] && (
-                                                                <TableHead>
-                                                                    <TableRow>
-                                                                        {product.sizeGuide[0].map(value => (
-                                                                            <TableCell key={value}>{value}</TableCell>
-                                                                        ))}
-                                                                    </TableRow>
-                                                                </TableHead>
-                                                            )}
-                                                            <TableBody>
-                                                                {product.sizeGuide.map((row, index) => {
-                                                                    if (index === 0) {
-                                                                        return null;
-                                                                    }
-                                                                    return (
-                                                                        <TableRow key={index}>
-                                                                            {row.map(value => (
-                                                                                <TableCell key={value}>{value}</TableCell>
+                                                        <Typography variant="caption">{product.sizeGuide.name}</Typography>
+                                                        <TableContainer>
+                                                            <Table sx={{
+                                                                width: "100%"
+                                                            }}>
+                                                                {product.sizeGuide.data && (
+                                                                    <TableHead>
+                                                                        <TableRow>
+                                                                            {product.sizeGuide.data[0].map((value, i) => (
+                                                                                <TableCell sx={{
+                                                                                    width: i === 0 ? "1.5rem" : "5rem",
+                                                                                    lineHeight: "115%",
+                                                                                     backgroundColor: chosenSize && product.sizeGuide ? product.sizeGuide.data[0].findIndex(x => x === chosenSize) === i ? alpha(theme.palette.primary.main, 0.1) : 'unset' : 'unset'
+                                                                                }} key={value}>{value}</TableCell>
                                                                             ))}
                                                                         </TableRow>
-                                                                    )
-                                                                })}
-                                                            </TableBody>
-                                                        </Table>
-                                                    </TableContainer>
-                                                    {product.sizeNotes && (
-                                                        <Typography variant="caption">Notes on size.</Typography>
-                                                    )}
-                                                </div>
+                                                                    </TableHead>
+                                                                )}
+                                                                <TableBody>
+                                                                    {product.sizeGuide.data.map((row, index) => {
+                                                                        if (index === 0) {
+                                                                            return null;
+                                                                        }
+                                                                        return (
+                                                                            <TableRow key={index}>
+                                                                                {row.map((value, i) => (
+                                                                                    <TableCell sx={{
+                                                                                        width: i === 0 ? "1.5rem" : "5rem",
+                                                                                        lineHeight: "115%",
+                                                                                        backgroundColor: chosenSize && product.sizeGuide ? product.sizeGuide.data[0].findIndex(x => x === chosenSize) === i ? alpha(theme.palette.primary.main, 0.1) : 'unset' : 'unset'
+                                                                                    }} key={value}>{value}</TableCell>
+                                                                                ))}
+                                                                            </TableRow>
+                                                                        )
+                                                                    })}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                        {product.sizeGuide.notes && (
+                                                            <Typography variant="caption" sx={{
+                                                                whiteSpace: 'pre-line',
+                                                                lineHeight: "115%"
+                                                            }}>{product.sizeGuide.notes}</Typography>
+                                                        )}
+                                                        {product.sizeNotes && (
+                                                            <Typography variant="caption" sx={{
+                                                                whiteSpace: 'pre-line',
+                                                                lineHeight: "115%"
+                                                            }}>{product.sizeNotes}</Typography>
+                                                        )}
+                                                    </div>
+                                                )}
 
                                             </Dialog>
                                         </div>
