@@ -56,7 +56,9 @@ export default function CoverImage({ className = "", url, height, width, style =
   }
 
   return (
-    <div className="column snug left"
+    <div 
+      key="loaded"
+    className="column snug left"
       style={{
         width: width,
         height: height,
@@ -72,8 +74,8 @@ export default function CoverImage({ className = "", url, height, width, style =
         style={{
           width: "100%",
           height: "100%",
-          backgroundImage: `url(${url})`,
-          backgroundColor: "#ffffff",
+          backgroundImage: style.backgroundImage ? 'unset' : `url(${url})`,
+          backgroundColor: style.backgroundImage ? "#ffffff00" : "#ffffff",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

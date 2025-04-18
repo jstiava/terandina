@@ -64,7 +64,8 @@ export const getStaticProps = (async (context: any) => {
   }
 
   products = await getAllProducts({
-    category: category._id.toString()
+    category: category._id.toString(),
+    active: true
   })
 
   if (!products) {

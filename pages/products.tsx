@@ -23,7 +23,7 @@ export default function Home(props: StripeAppProps) {
         let productList = [];
         let i = 0;
 
-        const productsFetch = await fetch('/api/products');
+        const productsFetch = await fetch(`/api/products?active=true`);
 
         if (!productsFetch.ok) {
             return;

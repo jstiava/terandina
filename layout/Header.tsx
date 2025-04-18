@@ -52,8 +52,8 @@ export const menuItems = [
         value: "jewelry"
     },
     {
-        name: "Handcrafted",
-        value: "handcrafted"
+        name: "Accessories",
+        value: "accessories"
     }
 ]
 
@@ -424,17 +424,17 @@ export default function Header({ Cart, color, setColor }: {
                         )}
 
 
-                        {activeMenu === 'handcrafted' && (
+                        {activeMenu === 'accessories' && (
                             <div className="column fit menuPanel" style={{
                                 opacity: 0
                             }}>
 
                                 <MenuItem
                                     focused
-                                    key={'handcrafted'}
-                                    onClick={() => pleasePush('/handcrafted')}
+                                    key={'accessories'}
+                                    onClick={() => pleasePush('/accessories')}
                                     icon={<ArrowForward fontSize="small" />}
-                                >Explore All Handcrafted</MenuItem>
+                                >Explore All Accessories</MenuItem>
 
                                 <div className="column" style={{
                                     padding: "0 2rem"

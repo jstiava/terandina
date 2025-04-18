@@ -185,8 +185,8 @@ const ACCESSORIES = [
         value: 'jewelry'
     },
     {
-        name: "Handcrafted",
-        value: 'handcrafted'
+        name: "Accessories",
+        value: 'accessories'
     }
 ]
 

@@ -116,7 +116,7 @@ export async function getProductById(productId: string): Promise<any | null> {
 }
 
 export async function getAllProducts(query? : Partial<{
-  [key: string]: string | string[];
+  [key: string]: string | string[] | boolean;
 }>, isProd = true) : Promise<WithId<StripeProduct>[]> {
   try {
 
@@ -142,6 +142,9 @@ export async function getAllProducts(query? : Partial<{
 
     if (query.is_featured != undefined) {
       filter.is_featured = new SafeString(query.is_featured).isTrue();
+    }
+    if (query.active != undefined) {
+      filter.active = new SafeString(query.active).isTrue();
     }
     if (query.category != undefined) {
       const cat_id = new ObjectId(new SafeString(query.category).toString());

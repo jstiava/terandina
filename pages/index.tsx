@@ -272,7 +272,8 @@ export default function Home(props: StripeAppProps) {
               padding: "1.5rem",
               //  border: "0.25rem solid white",
               color: 'white',
-              zIndex: 1
+              zIndex: 1,
+              textAlign: 'center'
             }}>Explore All Ponchos</Typography>
             <Button
               variant="contained"
@@ -305,6 +306,7 @@ export default function Home(props: StripeAppProps) {
             <Typography variant="h2" sx={{
               padding: "1.5rem",
               //  border: "0.25rem solid white",
+              textAlign: 'center',
               color: 'white',
               zIndex: 1
             }}>Explore All Jewelry</Typography>
