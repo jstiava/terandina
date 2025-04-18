@@ -16,7 +16,7 @@ import Mongo from "@/utils/mongo";
 import { getAllProducts } from "../api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "../api/categories";
-import { KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { FlightTakeoff, KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined } from "@mui/icons-material";
 import SIZE_GUIDES from "@/SIZE_GUIDES";
 
 interface StaticProps {
@@ -677,6 +677,15 @@ export default function Home(props: StripeAppProps & {
                                         width: "10rem",
                                         lineHeight: "115%"
                                     }}>30-day Returns or Exchanges</Typography>
+                                </div>
+                                <div className="column fit compact center">
+                                    <FlightTakeoff />
+                                    <Typography sx={{
+                                        fontSize: "1rem",
+                                        textAlign: 'center',
+                                        width: "10rem",
+                                        lineHeight: "115%"
+                                    }}>Ships from the U.S.</Typography>
                                 </div>
                             </div>
                             <Divider />

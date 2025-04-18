@@ -250,7 +250,7 @@ export default function Home(props: StripeAppProps) {
           width: "100%"
         }}>
           <CoverImage
-            className="column compact center middle"
+            className="column snug center middle"
             url="/poncho_cover.jpg"
             width={isSm ? "100%" : "50vw"}
             height="auto"

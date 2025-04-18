@@ -45,21 +45,28 @@ export default async function handleRequest(
         const { items } = req.body;
 
 
+        const SHIPPING_FEE = 1500;
         const subtotal = calculateOrderAmount(items);
+        const totalDue = subtotal >= 30000 ? subtotal : subtotal + SHIPPING_FEE
 
+        console.log(items);
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: subtotal,
+            amount: totalDue,
             currency: "usd",
             automatic_payment_methods: {
                 enabled: true,
             },
+            metadata: {
+                items: JSON.stringify(items)
+            }
         });
 
         console.log(paymentIntent);
 
         return res.status(200).json({
             clientSecret: paymentIntent.client_secret,
-            subtotal: subtotal
+            subtotal,
+            totalDue
         })
     }
     catch (err) {

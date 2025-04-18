@@ -14,7 +14,8 @@ import { formatPrice } from "@/components/ProductCard";
 import { Router, useRouter } from "next/router";
 
 
-const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
+// const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
+const STRIPE_PUBLISHABLE_KEY = "pk_test_51QoxC5BNjcHRVZ2aSGjCO486T5HmE7E9Y7cWKHUABEJF6zdNJBnDu3jaDzfDqLDJLhGl2iuTNLdRktTFdc84rPqU00cfj7qfyE"
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout(props: StripeAppProps) {
@@ -24,6 +25,7 @@ export default function Checkout(props: StripeAppProps) {
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [confirmed, setConfirmed] = useState(false);
     const [subtotal, setSubtotal] = useState(0);
+    const [totalDue, setTotalDue] = useState(0);
     const [emailAddress, setEmailAddress] = useState<string | null>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -39,6 +41,7 @@ export default function Checkout(props: StripeAppProps) {
             .then((data) => {
                 setClientSecret(data.clientSecret)
                 setSubtotal(data.subtotal)
+                setTotalDue(data.totalDue)
             })
             .catch(err => {
                 console.log(err);
@@ -143,12 +146,29 @@ export default function Checkout(props: StripeAppProps) {
                                                     )
                                                 })}
                                             </TableBody>
-                                            <TableFooter>
-                                                <TableRow>
-                                                    <TableCell>SUBTOTAL</TableCell>
-                                                    <TableCell>{formatPrice(subtotal, 'usd')}</TableCell>
+                                            <TableRow>
+                                                <TableCell>SUBTOTAL</TableCell>
+                                                <TableCell>{formatPrice(subtotal, 'usd')}</TableCell>
+                                            </TableRow>
+                                            {subtotal === totalDue ? (
+                                                <TableRow sx={{
+                                                    opacity: 0.5
+                                                }}>
+                                                    <TableCell>Shipping (7-14 business days)</TableCell>
+                                                    <TableCell>FREE</TableCell>
                                                 </TableRow>
-                                            </TableFooter>
+                                            ) : (
+                                                <TableRow sx={{
+                                                    opacity: 0.5
+                                                }}>
+                                                    <TableCell>Shipping (7-14 business days)</TableCell>
+                                                    <TableCell>{formatPrice(totalDue - subtotal, 'usd')}</TableCell>
+                                                </TableRow>
+                                            )}
+                                            <TableRow>
+                                                <TableCell sx={{ fontSize: "2rem" }}>Total due</TableCell>
+                                                <TableCell sx={{ fontSize: "2rem" }}>{formatPrice(totalDue, 'usd')}</TableCell>
+                                            </TableRow>
                                         </Table>
                                     </TableContainer>
                                 </div>
@@ -186,10 +206,10 @@ export default function Checkout(props: StripeAppProps) {
                         </div>
                         <div className="column">
                             <div className="flex fit compact">
-                                <ContactMailOutlined 
-                                sx={{
-                                    fontSize: "1rem"
-                                }} />
+                                <ContactMailOutlined
+                                    sx={{
+                                        fontSize: "1rem"
+                                    }} />
                                 <Typography variant="h5" component="h3" sx={{
                                     fontSize: "1rem"
                                 }}>Contact</Typography>
@@ -223,11 +243,11 @@ export default function Checkout(props: StripeAppProps) {
                                 <>
                                     {confirmed ? <StripeCompletePage /> : (
                                         <div className="column">
-                                        <StripeCheckoutForm
-                                            subtotal={formatPrice(subtotal, 'usd')}
-                                            emailAddress={emailAddress}
+                                            <StripeCheckoutForm
+                                                subtotal={formatPrice(totalDue, 'usd')}
+                                                emailAddress={emailAddress}
                                             />
-                                            </div>
+                                        </div>
                                     )}
                                 </>
                             )}

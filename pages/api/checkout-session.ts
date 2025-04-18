@@ -15,8 +15,8 @@ export default async function handleRequest(
     }
 
     const line_items = req.body.line_items;
-    
-    
+
+
     try {
         if (!line_items) {
             throw Error("No line items.")
@@ -25,6 +25,25 @@ export default async function handleRequest(
         const session = await stripe.checkout.sessions.create({
             line_items,
             mode: 'payment',
+            shipping_address_collection: {
+                allowed_countries: ['US'],
+            },
+            shipping_options: [
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        display_name: 'Standard Shipping',
+                        fixed_amount: {
+                            amount: 1500,
+                            currency: 'usd',
+                        },
+                        delivery_estimate: {
+                            minimum: { unit: 'business_day', value: 7 },
+                            maximum: { unit: 'business_day', value: 14 },
+                        },
+                    },
+                },
+            ],
             success_url: `${req.headers.origin}/?success=true`,
             cancel_url: `${req.headers.origin}/?canceled=true`,
         });

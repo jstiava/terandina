@@ -1,6 +1,7 @@
 
+import DarkroomIcon from '@/icons/Darkroom';
 import { JSX } from '@emotion/react/jsx-runtime';
-import { useTheme } from '@mui/material';
+import { ButtonBase, Link, Typography, useTheme } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
 interface CoverImageProps {
@@ -11,10 +12,12 @@ interface CoverImageProps {
   children?: any;
   className?: string;
   delay?: number;
-  recursive?: boolean
+  recursive?: boolean;
+  caption?: string | null;
+  caption_link?: string | null;
 }
 
-export default function CoverImage({ className = "", url, height, width, style = {}, children = null, delay = 0, recursive = false }: CoverImageProps) {
+export default function CoverImage({ className = "", url, height, width, style = {}, children = null, delay = 0, recursive = false, caption = null, caption_link = null }: CoverImageProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const theme = useTheme();
@@ -29,7 +32,7 @@ export default function CoverImage({ className = "", url, height, width, style =
   if (!recursive && !isLoaded) {
     return (
       <div
-      className="flex center middle"
+        className="flex center middle"
         style={{
           width: width,
           height: height,
@@ -42,33 +45,62 @@ export default function CoverImage({ className = "", url, height, width, style =
         }}
       >
         <CoverImage
-            url="/light_bird.png"
-            height={"2.5rem"}
-            width={"5rem"}
+          url="/light_bird.png"
+          height={"2.5rem"}
+          width={"5rem"}
           recursive
-          />
+        />
       </div>
     )
 
   }
 
   return (
-    <div
-      className={`${className}`}
+    <div className="column snug left"
       style={{
         width: width,
         height: height,
-        backgroundImage: `url(${url})`,
-        backgroundColor: "#ffffff",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         opacity: isLoaded ? 1 : 0,
         transform: isLoaded ? 'scale(1)' : 'scale(0.5)',
         transition: `opacity 0.5s ease-in-out ${delay}s
-         transform 3s ease-in-out 0.5s
-        `,
+     transform 3s ease-in-out 0.5s
+    `,
         ...style,
-      }}
-    >{children}</div>
+      }}>
+      <div
+        className={`${className}`}
+        style={{
+          width: "100%",
+          height: "100%",
+          backgroundImage: `url(${url})`,
+          backgroundColor: "#ffffff",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >{children}</div>
+      {caption && (
+
+        <ButtonBase className="flex compact fit"
+        sx={{
+          padding: "0.25rem"
+        }}
+          href={caption_link || ""}
+          onClick={(e) => {
+            e.preventDefault();
+            window.open(caption_link || "/", '_blank')
+          }}
+        >
+          <DarkroomIcon sx={{
+            width: "0.5em",
+            height: "0.5em"
+          }} />
+          <Typography sx={{
+            fontSize: '0.75rem'
+          }}>
+            {caption}
+          </Typography>
+        </ButtonBase>
+      )}
+    </div>
   );
 }

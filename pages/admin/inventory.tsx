@@ -351,7 +351,11 @@ export default function AdminPage() {
         const newSizing : Partial<SizeChart> = {};
         for (const size of SIZING_OPTIONS) {
             const marking = newRow[size];
-            if (marking === undefined || marking === null) {
+            if (marking === "") {
+                delete newRow[size];
+                continue;
+            }
+            else if (marking === undefined || marking === null) {
                 continue;
             }
             delete newRow[size];
@@ -425,7 +429,7 @@ export default function AdminPage() {
                                 params.api.setEditCellValue({
                                     id: params.id,
                                     field: params.field,
-                                    value: null
+                                    value: ""
                                 })
                                 return;
                             }
