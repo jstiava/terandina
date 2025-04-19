@@ -9,7 +9,7 @@ import Stripe from "stripe";
 
 const sizeOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 const sendToStripeFields: (keyof Stripe.Product)[] = ['name', 'description']
-const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'media', 'details', 'is_featured', 'categories', 'sizes', 'size', 'inventory', 'limit', 'sizeNotes', 'dimensions'];
+const allowedFields: (keyof StripeProduct)[] = ['images', 'name', 'description', 'media', 'details', 'is_featured', 'categories', 'sizes', 'size', 'inventory', 'limit', 'sizeNotes', 'dimensions', 'icons'];
 
 async function handlePostRequest(
   req: NextApiRequest,

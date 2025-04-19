@@ -68,7 +68,28 @@ export default function Home(props: StripeAppProps) {
 
 
   if (!products) {
-    return <></>
+    return (
+      <div
+        className="flex center middle"
+        style={{
+          width: '100vw',
+          height: "100vh",
+          backgroundColor: "#ffffff",
+          backgroundPosition: 'center',
+          opacity: 1,
+          transform: 'scale(1)',
+          transition: `opacity 0.5s ease-in-out ${3}s`,
+          // ...style,
+        }}
+      >
+        <CoverImage
+          url="/light_bird.png"
+          height={"2.5rem"}
+          width={"5rem"}
+          recursive
+        />
+      </div>
+    )
   }
 
 

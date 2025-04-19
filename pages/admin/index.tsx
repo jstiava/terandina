@@ -285,6 +285,13 @@ const CategorySelectInput = ({ categories, ...props }: { categories: Category[] 
     )
 }
 
+const ICONS = [
+    "ships_from_us",
+    "returns",
+    "hypoallergenic",
+    "indigenous_artisans"
+]
+
 
 export default function AdminPage() {
 
@@ -886,6 +893,122 @@ export default function AdminPage() {
                                 overflow: 'hidden'
                             }}
                         />
+                    </div>
+                )
+            }
+        },
+
+        {
+            field: "icons",
+            headerName: "Icons",
+            width: 300,
+            editable: true,
+            renderEditCell: (params: GridRenderCellParams<StripeProduct, string[] | undefined>) => {
+
+                return (
+                    <div className="column compact" style={{
+                        padding: "0.5rem",
+                        height: "100%",
+                        overflowY: "scroll",
+                        width: "100%"
+                    }}>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {ICONS.map(icon => {
+
+                                const doesExist = params.value ? params.value.some(x => x === icon) : false;
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        key={icon}
+                                        label={icon}
+                                        onDelete={undefined}
+                                        onClick={(e) => {
+
+                                            let newList = null;
+
+                                            if (!params.value) {
+                                                newList = [icon]
+                                            }
+                                            else if (!doesExist) {
+                                                newList = [...params.value, icon]
+                                            }
+                                            else {
+                                                newList = params.value.filter(x => x != icon);
+                                            }
+
+                                            params.api.setEditCellValue({
+                                                id: params.id,
+                                                field: params.field,
+                                                value: newList
+                                            });
+
+                                            return;
+                                        }}
+                                        variant={doesExist ? 'filled' : 'outlined'}
+                                        sx={{
+                                            marginBottom: "0.25rem",
+                                            overflow: 'hidden'
+                                        }}
+                                    />
+                                )
+                            })}
+                        </div>
+                    </div>
+                )
+            },
+            renderCell: (params: GridRenderCellParams<StripeProduct, string[] | undefined>) => {
+
+                if (!params.value) {
+                    return null;
+                }
+
+                return (
+                    <div className="column compact" style={{
+                        padding: "0.5rem",
+                        height: "100%",
+                        overflowY: "scroll",
+                        width: "100%"
+                    }}>
+                        <div className="flex compact2 top" style={{
+                            flexWrap: 'wrap',
+                        }}>
+                            {ICONS.map(icon => {
+
+                                const doesExist = params.value!.some((x) => x === icon);
+
+                                if (!doesExist) {
+                                    return;
+                                }
+
+                                return (
+                                    <Chip
+                                        size="small"
+                                        key={icon}
+                                        label={icon}
+                                        onDelete={undefined}
+                                        sx={{
+                                            marginBottom: "0.25rem",
+                                            overflow: 'hidden'
+                                        }}
+                                    />
+                                )
+                            })}
+
+                            <Chip
+                                size="small"
+                                key="create"
+                                label="Manage Sizing"
+                                variant="outlined"
+                                onClick={handleEditClick(params.id)}
+                                sx={{
+                                    marginBottom: "0.25rem",
+                                    overflow: 'hidden'
+                                }}
+                            />
+                        </div>
                     </div>
                 )
             }

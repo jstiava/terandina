@@ -1,3 +1,4 @@
+import NativeCrossDivider from "@/components/NativeCrossDivider";
 import { Divider, Link, Typography } from "@mui/material";
 import Head from "next/head";
 
@@ -64,9 +65,7 @@ export default function OurValuesPage() {
                                     lineHeight: "150%",
                                     textAlign: 'justify'
                                 }}>{faq.answer}</Typography>
-                                <Divider sx={{
-                                    margin: "1rem 0 0 0"
-                                }}/>
+                                <div style={{marginTop: "1rem"}}><NativeCrossDivider /></div>
                             </div>
                         ))}
                     </div>

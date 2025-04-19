@@ -1,0 +1,25 @@
+import { SvgIcon, SxProps, useTheme } from '@mui/material';
+
+// CustomIcon component
+function NativeCross(props: {
+    fill: string,
+    sx?: SxProps,
+    [key: string] : any
+}) {
+
+    const theme = useTheme();
+    return (
+        <SvgIcon {...props}>
+            <svg width="22" height="17" viewBox="0 0 22 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.87 10.05H2L3.81 8.20003L3.88 8.13003L2 6.28003H7.85999L5.98 8.16003L7.87 10.05Z" fill={props.fill} stroke={props.fill} stroke-miterlimit="10" />
+                <path d="M18.78 8.20003L20.6 10.05H14.75L15.36 9.44003L16.6 8.20003L16.64 8.16003L14.76 6.28003H20.6L18.76 8.18003L18.78 8.20003Z" fill={props.fill} stroke={props.fill} stroke-miterlimit="10" />
+                <path d="M11.9199 13.1H17.9599L15.4599 10.55L14.9599 10.05L14.3599 9.44L11.3099 12.49L8.24989 9.43L7.62988 10.05L7.14988 10.54L4.62988 13.1H10.6699L10.1899 13.58L7.45988 16.25H15.1299L12.4199 13.59L11.9199 13.1ZM11.9199 3.25L12.4599 2.71L15.1399 0H7.44988L10.1499 2.72L10.6699 3.25H4.62988L7.09988 5.77L7.59988 6.28L8.22988 6.91L11.3099 3.83L13.7599 6.28L14.3799 6.9L14.9899 6.28L15.4999 5.75L17.9599 3.25H11.9199Z" fill={props.fill} />
+                <path d="M16.0302 6.28006L11.3102 1.56006L10.1502 2.72006L9.62023 3.25006L7.10023 5.77006L6.59023 6.28006L4.74023 8.13006L4.81023 8.20006L6.66023 10.0501L9.71024 13.1001L10.1902 13.5801L11.3102 14.7001L17.8802 8.13006L16.0302 6.28006ZM14.3602 9.44006L11.3102 12.4901L6.98023 8.16006L11.3102 3.83006L13.7602 6.28006L15.6402 8.16006L15.6002 8.20006L14.3602 9.44006Z" fill={props.fill} />
+                <path d="M12.92 8.18007L12.9 8.20007L11.31 9.78007L9.72996 8.20007L9.70996 8.18007L11.31 6.57007L12.92 8.18007Z" fill={props.fill} />
+            </svg>
+
+        </SvgIcon>
+    );
+}
+
+export default NativeCross;

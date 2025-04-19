@@ -12,6 +12,7 @@ import Cart from "./cart";
 import StripeCompletePage from "@/components/StripeCompletePage";
 import { formatPrice } from "@/components/ProductCard";
 import { Router, useRouter } from "next/router";
+import NativeCrossDivider from "@/components/NativeCrossDivider";
 
 
 // const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
@@ -96,9 +97,7 @@ export default function Checkout(props: StripeAppProps) {
                                     fontSize: "1rem"
                                 }}>Order Summary</Typography>
                             </div>
-                            <Divider style={{
-                                width: "100%"
-                            }} ></Divider>
+                            <NativeCrossDivider />
                             {!props.Cart.cart || props.Cart.cart.length === 0 ? (
                                 <Typography>Cart is empty.</Typography>
                             ) : (
@@ -194,9 +193,7 @@ export default function Checkout(props: StripeAppProps) {
                                     fontSize: "1rem"
                                 }}>Shipping (2-3 weeks)</Typography>
                             </div>
-                            <Divider style={{
-                                width: "100%"
-                            }} ></Divider>
+                            <NativeCrossDivider />
                             <AddressElement
                                 id="address-element"
                                 options={{
@@ -214,9 +211,7 @@ export default function Checkout(props: StripeAppProps) {
                                     fontSize: "1rem"
                                 }}>Contact</Typography>
                             </div>
-                            <Divider style={{
-                                width: "100%"
-                            }} ></Divider>
+                            <NativeCrossDivider />
                             <TextField
                                 label="Email Address"
                                 value={emailAddress}

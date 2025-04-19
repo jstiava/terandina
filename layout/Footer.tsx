@@ -10,6 +10,7 @@ import TerandinaWordmark from "@/icons/TerandinaWordmark";
 import DarkroomIcon from "@/icons/Darkroom";
 import { useState } from "react";
 import ContactDialog from "@/components/ContactDialog";
+import NativeCrossDivider from "@/components/NativeCrossDivider";
 
 
 export default function Footer({ color }: {
@@ -122,7 +123,7 @@ export default function Footer({ color }: {
                         </div>
                     )}
                 </div>
-                <Divider></Divider>
+                <NativeCrossDivider />
                 <div className="flex between">
                     <Typography>Terandina Inc. Copyright 2025.</Typography>
                     <div className="flex compact fit">

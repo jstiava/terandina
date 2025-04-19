@@ -16,8 +16,11 @@ import Mongo from "@/utils/mongo";
 import { getAllProducts } from "../api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "../api/categories";
-import { FlightTakeoff, KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { FlightTakeoff, FlightTakeoffOutlined, KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined, SpaOutlined } from "@mui/icons-material";
 import SIZE_GUIDES from "@/SIZE_GUIDES";
+import NativeCross from "@/icons/NativeCross";
+import NativeCrossDivider from "@/components/NativeCrossDivider";
+import NativeMade from "@/icons/NativeMade";
 
 interface StaticProps {
     notFound?: boolean;
@@ -255,7 +258,28 @@ export default function Home(props: StripeAppProps & {
 
 
     if (!props || !props.static || !props.static.product) {
-        return <></>
+        return (
+            <div
+                className="flex center middle"
+                style={{
+                    width: '100vw',
+                    height: "100vh",
+                    backgroundColor: "#ffffff",
+                    backgroundPosition: 'center',
+                    opacity: 1,
+                    transform: 'scale(1)',
+                    transition: `opacity 0.5s ease-in-out ${3}s`,
+                    // ...style,
+                }}
+            >
+                <CoverImage
+                    url="/light_bird.png"
+                    height={"2.5rem"}
+                    width={"5rem"}
+                    recursive
+                />
+            </div>
+        )
     }
 
     return (
@@ -545,7 +569,7 @@ export default function Home(props: StripeAppProps & {
                                                                                 <TableCell sx={{
                                                                                     width: i === 0 ? "1.5rem" : "5rem",
                                                                                     lineHeight: "115%",
-                                                                                     backgroundColor: chosenSize && product.sizeGuide ? product.sizeGuide.data[0].findIndex(x => x === chosenSize) === i ? alpha(theme.palette.primary.main, 0.1) : 'unset' : 'unset'
+                                                                                    backgroundColor: chosenSize && product.sizeGuide ? product.sizeGuide.data[0].findIndex(x => x === chosenSize) === i ? alpha(theme.palette.primary.main, 0.1) : 'unset' : 'unset'
                                                                                 }} key={value}>{value}</TableCell>
                                                                             ))}
                                                                         </TableRow>
@@ -611,7 +635,7 @@ export default function Home(props: StripeAppProps & {
                                     <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>DESCRIPTION</Typography>
                                     <Typography sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>{product.description}</Typography>
                                 </div>
-                                <Divider />
+                                <NativeCrossDivider />
                             </>
                         )}
 
@@ -645,7 +669,7 @@ export default function Home(props: StripeAppProps & {
                                 onClick={() => { setAccordion('shipping'); }}
                             >
                                 <div className="flex between">
-                                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>SHIPPING</Typography>
+                                    <Typography variant="h6" sx={{ fontSize: "0.85rem", whiteSpace: 'pre-wrap' }}>SHIPPING & RETURNS</Typography>
                                     {accordion === 'shipping' ? (
                                         <KeyboardArrowUp sx={{
                                             fontSize: "1rem"
@@ -664,32 +688,79 @@ export default function Home(props: StripeAppProps & {
                                 )}
                             </div>
                             <Divider />
+
                         </>
 
-                        <>
-                            <div className="flex"
-                            >
-                                <div className="column fit compact center">
-                                    <LocalShippingOutlined />
-                                    <Typography sx={{
-                                        fontSize: "1rem",
-                                        textAlign: 'center',
-                                        width: "10rem",
-                                        lineHeight: "115%"
-                                    }}>30-day Returns or Exchanges</Typography>
+                        {product.icons && (
+                            <>
+                                <div className="flex top"
+                                >
+                                    {product.icons.map(x => {
+
+                                        if (x === 'indigenous_artisans') {
+                                            return (
+                                                <div key={x} className="column fit compact center">
+                                                    <NativeMade />
+                                                    <Typography sx={{
+                                                        fontSize: "1rem",
+                                                        textAlign: 'center',
+                                                        width: "10rem",
+                                                        lineHeight: "115%"
+                                                    }}>Made by Indigenous Artisans</Typography>
+                                                </div>
+                                            )
+                                        }
+
+                                        if (x === 'hypoallergenic') {
+                                            return (
+                                                <div key={x} className="column fit compact center">
+                                                    <SpaOutlined />
+                                                    <Typography sx={{
+                                                        fontSize: "1rem",
+                                                        textAlign: 'center',
+                                                        width: "10rem",
+                                                        lineHeight: "115%"
+                                                    }}>Hypoallergenic</Typography>
+                                                </div>
+
+                                            )
+                                        }
+
+                                        if (x === 'returns') {
+                                            return (
+                                                <div key={x} className="column fit compact center">
+                                                    <LocalShippingOutlined />
+                                                    <Typography sx={{
+                                                        fontSize: "1rem",
+                                                        textAlign: 'center',
+                                                        width: "10rem",
+                                                        lineHeight: "115%"
+                                                    }}>30-day Returns or Exchanges</Typography>
+                                                </div>
+                                            )
+                                        }
+
+                                        if (x === 'ships_from_us') {
+                                            return (
+                                                <div key={x} className="column fit compact center">
+                                                    <FlightTakeoffOutlined />
+                                                    <Typography sx={{
+                                                        fontSize: "1rem",
+                                                        textAlign: 'center',
+                                                        width: "10rem",
+                                                        lineHeight: "115%"
+                                                    }}>Ships from the U.S.</Typography>
+                                                </div>
+                                            )
+                                        }
+
+                                        
+                                    })}
+
                                 </div>
-                                <div className="column fit compact center">
-                                    <FlightTakeoff />
-                                    <Typography sx={{
-                                        fontSize: "1rem",
-                                        textAlign: 'center',
-                                        width: "10rem",
-                                        lineHeight: "115%"
-                                    }}>Ships from the U.S.</Typography>
-                                </div>
-                            </div>
-                            <Divider />
-                        </>
+                                <Divider />
+                            </>
+                        )}
 
                     </div>
 

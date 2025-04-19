@@ -12,6 +12,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Category } from "@/types";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import CoverImage from "@/components/CoverImage";
 
 
 
@@ -49,7 +50,7 @@ export default function AuthProvider({
 
         const response = await catFetch.json();
 
-        setCategories(response.categories.map((c : Category) => ({
+        setCategories(response.categories.map((c: Category) => ({
             ...c,
             products: []
         })));
@@ -87,14 +88,14 @@ export default function AuthProvider({
         }
         else if (router.pathname === '/login') {
             verifySession()
-            .then((res) => {
+                .then((res) => {
 
-                if (!res) {
+                    if (!res) {
+                        return;
+                    }
+                    router.push('/admin')
                     return;
-                }
-                router.push('/admin')
-                return;
-            })
+                })
         }
         else {
             return;
@@ -104,29 +105,50 @@ export default function AuthProvider({
     }, [router.asPath]);
 
     if (!categories) {
-        return <></>
+        return (
+            <div
+                className="flex center middle"
+                style={{
+                    width: '100vw',
+                    height: "100vh",
+                    backgroundColor: "#ffffff",
+                    backgroundPosition: 'center',
+                    opacity: 1,
+                    transform: 'scale(1)',
+                    // transition: `opacity 0.5s ease-in-out ${3}s`,
+                    // ...style,
+                }}
+            >
+                <CoverImage
+                    url="/light_bird.png"
+                    height={"2.5rem"}
+                    width={"5rem"}
+                    recursive
+                />
+            </div>
+        )
     }
 
     return (
         <>
-        {isProduction && !protectedRoutes.some(path => router.pathname.startsWith(path)) && (
-            <GoogleAnalytics />
-        )}
-        <ThemeProvider theme={theme}>
-            <Head>
-                <meta name="theme-color" content={theme.palette.background.paper} />
-            </Head>
-            <NextNProgress color={theme.palette.primary.main} />
-            <Header Cart={Cart} color={color} setColor={setColor} />
-            <CartSidebar Cart={Cart} />
-            <div id="content" className="column snug" style={{
-                minHeight: "100vh",
-                backgroundColor: theme.palette.background.paper
-            }}>
-                <Component {...pageProps} Cart={Cart} categories={categories} />
-            </div>
-            <Footer color={color} />
-        </ThemeProvider>
+            {isProduction && !protectedRoutes.some(path => router.pathname.startsWith(path)) && (
+                <GoogleAnalytics />
+            )}
+            <ThemeProvider theme={theme}>
+                <Head>
+                    <meta name="theme-color" content={theme.palette.background.paper} />
+                </Head>
+                <NextNProgress color={theme.palette.primary.main} />
+                <Header Cart={Cart} color={color} setColor={setColor} />
+                <CartSidebar Cart={Cart} />
+                <div id="content" className="column snug" style={{
+                    minHeight: "100vh",
+                    backgroundColor: theme.palette.background.paper
+                }}>
+                    <Component {...pageProps} Cart={Cart} categories={categories} />
+                </div>
+                <Footer color={color} />
+            </ThemeProvider>
         </>
     )
 }

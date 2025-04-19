@@ -8,6 +8,7 @@ import EmptyBag from '@/public/EmptyBag.webp'
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import NativeCrossDivider from "@/components/NativeCrossDivider";
 
 
 export default function CartSidebar({
@@ -83,9 +84,7 @@ export default function CartSidebar({
                         fontSize: "1rem"
                     }} />
                 </div>
-                <Divider style={{
-                    width: "100%"
-                }} ></Divider>
+                <NativeCrossDivider />
                 {!Cart.cart || Cart.cart.length === 0 ? (
                     <div className="column compact center middle" style={{
                         height: "100%"
