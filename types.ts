@@ -34,7 +34,7 @@ export interface SizeChart {
     '40g'?: boolean | number,
 }
 
-export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13', 'One-Size', 'Adjustable', 'Queen'] as (keyof SizeChart)[]);
+export const SIZING_OPTIONS = (['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '8', '9', '10', '11', '12', '13', 'One-Size', 'Adjustable', 'Queen', '40g'] as (keyof SizeChart)[]);
 
 
 export interface TerandinaImage {
