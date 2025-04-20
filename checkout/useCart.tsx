@@ -118,13 +118,14 @@ export default function useCart() {
         return;
     }
 
-    const checkout = () : {price: StripePrice | null, quantity: number}[] => {
+    const checkout = () : {price: StripePrice | null, quantity: number, size: string}[] => {
         if (!cart) {
             return [];
         }
         return cart.map(x => ({
             price: x.selectedPrice,
-            quantity: x.quantity || 1
+            quantity: x.quantity || 1,
+            size: String(x.size)
         }))
     }
 

@@ -7,6 +7,21 @@ interface StripePriceQuantityStub {
     quantity: number
 }
 
+const reduceStripeCheckoutItem = (item : {
+    price: StripePrice,
+    quantity: number,
+    size: string
+}) => {
+
+    return {
+        product_id: item.price.product,
+        price_id: item.price.id,
+        unit_amount: item.price.unit_amount,
+        quantity: item.quantity,
+        size: item.size
+    }
+}
+
 const calculateOrderAmount = (items: StripePriceQuantityStub[]) => {
 
     let amount = 0;
@@ -45,20 +60,23 @@ export default async function handleRequest(
         const { items } = req.body;
 
 
-        const SHIPPING_FEE = 1500;
+        const SHIPPING_FEE = 895;
         const subtotal = calculateOrderAmount(items);
         const totalDue = subtotal >= 30000 ? subtotal : subtotal + SHIPPING_FEE
 
         console.log(items);
+
+        const metadata: Record<string, string> = {};
+        items.forEach((item: any, index: number) => {
+            metadata[`item_${index}`] = JSON.stringify(reduceStripeCheckoutItem(item));
+          });
         const paymentIntent = await stripe.paymentIntents.create({
             amount: totalDue,
             currency: "usd",
             automatic_payment_methods: {
                 enabled: true,
             },
-            metadata: {
-                items: JSON.stringify(items)
-            }
+            metadata
         });
 
         console.log(paymentIntent);

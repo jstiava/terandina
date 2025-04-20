@@ -14,9 +14,10 @@ import { formatPrice } from "@/components/ProductCard";
 import { Router, useRouter } from "next/router";
 import NativeCrossDivider from "@/components/NativeCrossDivider";
 
+// const STRIPE_PUBLISHABLE_KEY = "pk_test_51QoxC5BNjcHRVZ2aSGjCO486T5HmE7E9Y7cWKHUABEJF6zdNJBnDu3jaDzfDqLDJLhGl2iuTNLdRktTFdc84rPqU00cfj7qfyE"
 
 // const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
-const STRIPE_PUBLISHABLE_KEY = "pk_test_51QoxC5BNjcHRVZ2aSGjCO486T5HmE7E9Y7cWKHUABEJF6zdNJBnDu3jaDzfDqLDJLhGl2iuTNLdRktTFdc84rPqU00cfj7qfyE"
+const STRIPE_PUBLISHABLE_KEY = "pk_test_51Qowqz2fAdlAQ5MweSGCb2wcG280BpGKbGdhbu7S0G6crzt0wnNbSsyRPHnKzoPJlgenidrF1N4l52RO2NQMseWf00gkbpgwFz"
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout(props: StripeAppProps) {
