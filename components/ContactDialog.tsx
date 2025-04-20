@@ -1,7 +1,7 @@
 import theme from "@/styles/theme";
 import { Button, Drawer, IconButton, Modal, Slide, TextField, Typography, useMediaQuery } from "@mui/material";
 import CoverImage from "./CoverImage";
-import { forwardRef } from "react";
+import { ChangeEvent, forwardRef, useState } from "react";
 
 
 const MobileSlideTransition = forwardRef(function Transition(
@@ -18,6 +18,29 @@ export default function ContactDialog({ isOpen, onClose }: {
 }) {
 
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const [data, setData] = useState({
+        name: "",
+        email: "",
+        message: ""
+    })
+
+    const handleChange = (eventOrName: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string, value: any) => {
+        if (typeof eventOrName === "string") {
+            setData((prev: any) => ({
+                ...prev,
+                [eventOrName]: value
+            }));
+            return;
+        }
+        if (!eventOrName.target.name) {
+            return;
+        }
+        setData((prev: any) => ({
+            ...prev,
+            [eventOrName.target.name]: value
+        }));
+    }
 
     const content = (
         <>
@@ -37,11 +60,17 @@ export default function ContactDialog({ isOpen, onClose }: {
                 <TextField
                     variant="standard"
                     placeholder="Name"
+                    value={data.name}
+                    name="name"
+                    onChange={e => handleChange(e, e.target.value)}
 
                 />
                 <TextField
                     variant="standard"
                     placeholder="Email Address"
+                    value={data.email}
+                    name="email"
+                    onChange={e => handleChange(e, e.target.value)}
 
                 />
 
@@ -51,9 +80,25 @@ export default function ContactDialog({ isOpen, onClose }: {
                     multiline
                     maxRows={10}
                     minRows={3}
+                    value={data.message}
+                    name="message"
+                    onChange={e => handleChange(e, e.target.value)}
                 />
 
-                <Button variant="contained">Submit</Button>
+                <Button variant="contained"
+                onClick={e => {
+                    fetch('/api/subscribe', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(res => {
+                        onClose();
+                    })
+                }}
+                >Submit</Button>
             </div>
         </>
     )

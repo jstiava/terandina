@@ -693,18 +693,26 @@ export default function Home(props: StripeAppProps & {
 
                         {product.icons && (
                             <>
-                                <div className="flex top"
+                                <div className="flex middle top snug"
+                                    style={{
+                                        flexWrap: 'wrap'
+                                    }}
                                 >
                                     {product.icons.map(x => {
 
                                         if (x === 'indigenous_artisans') {
                                             return (
-                                                <div key={x} className="column fit compact center">
+                                                <div key={x} className="column fit compact center"
+                                                    style={{
+                                                        width: "8rem",
+                                                        maxWidth: "calc(50% - 1rem)",
+                                                        padding: '1rem'
+                                                    }}
+                                                >
                                                     <NativeMade />
                                                     <Typography sx={{
                                                         fontSize: "1rem",
                                                         textAlign: 'center',
-                                                        width: "10rem",
                                                         lineHeight: "115%"
                                                     }}>Made by Indigenous Artisans</Typography>
                                                 </div>
@@ -713,12 +721,17 @@ export default function Home(props: StripeAppProps & {
 
                                         if (x === 'hypoallergenic') {
                                             return (
-                                                <div key={x} className="column fit compact center">
+                                                <div key={x} className="column fit compact center"
+                                                    style={{
+                                                        width: "8rem",
+                                                        maxWidth: "calc(50% - 1rem)",
+                                                        padding: '1rem'
+                                                    }}
+                                                >
                                                     <SpaOutlined />
                                                     <Typography sx={{
                                                         fontSize: "1rem",
                                                         textAlign: 'center',
-                                                        width: "10rem",
                                                         lineHeight: "115%"
                                                     }}>Hypoallergenic</Typography>
                                                 </div>
@@ -728,12 +741,17 @@ export default function Home(props: StripeAppProps & {
 
                                         if (x === 'returns') {
                                             return (
-                                                <div key={x} className="column fit compact center">
+                                                <div key={x} className="column fit compact center"
+                                                style={{
+                                                    width: "8rem",
+                                                    maxWidth: "calc(50% - 1rem)",
+                                                    padding: '1rem'
+                                                }}
+                                                >
                                                     <LocalShippingOutlined />
                                                     <Typography sx={{
                                                         fontSize: "1rem",
                                                         textAlign: 'center',
-                                                        width: "10rem",
                                                         lineHeight: "115%"
                                                     }}>30-day Returns or Exchanges</Typography>
                                                 </div>
@@ -742,19 +760,24 @@ export default function Home(props: StripeAppProps & {
 
                                         if (x === 'ships_from_us') {
                                             return (
-                                                <div key={x} className="column fit compact center">
+                                                <div key={x} className="column fit compact center"
+                                                style={{
+                                                    width: "8rem",
+                                                    maxWidth: "calc(50% - 1rem)",
+                                                    padding: '1rem'
+                                                }}
+                                                >
                                                     <FlightTakeoffOutlined />
                                                     <Typography sx={{
                                                         fontSize: "1rem",
                                                         textAlign: 'center',
-                                                        width: "10rem",
                                                         lineHeight: "115%"
                                                     }}>Ships from the U.S.</Typography>
                                                 </div>
                                             )
                                         }
 
-                                        
+
                                     })}
 
                                 </div>
