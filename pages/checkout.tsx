@@ -4,14 +4,11 @@ import { AddressElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import StripeCheckoutForm from "@/components/StripeCheckoutForm";
 import { useEffect, useState } from "react";
-import { Alert, AlertTitle, Button, Checkbox, Collapse, Divider, FormControlLabel, FormGroup, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
-import ProductInBagCard from "@/components/ProductInBagCard";
-import { ContactMail, ContactMailOutlined, EditOutlined, LocalShippingOutlined, PaymentOutlined, ShoppingBagOutlined } from "@mui/icons-material";
-import { TransitionGroup } from 'react-transition-group';
-import Cart from "./cart";
+import { Alert, Checkbox, FormControlLabel, FormGroup, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { ContactMailOutlined, LocalShippingOutlined, PaymentOutlined, ShoppingBagOutlined } from "@mui/icons-material";
 import StripeCompletePage from "@/components/StripeCompletePage";
 import { formatPrice } from "@/components/ProductCard";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import NativeCrossDivider from "@/components/NativeCrossDivider";
 
 

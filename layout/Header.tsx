@@ -68,6 +68,7 @@ export default function Header({ Cart, color, setColor }: {
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('placeholder');
+    const [email, setEmail] = useState("");
 
     const pleasePush: (...args: Parameters<typeof router.push>) => void = (
         ...args
@@ -521,10 +522,27 @@ export default function Header({ Cart, color, setColor }: {
                                     <TextField
                                         variant="standard"
                                         placeholder="Email Address"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
                                         slotProps={{
                                             input: {
                                                 endAdornment: (
-                                                    <IconButton>
+                                                    <IconButton
+                                                        onClick={e => {
+                                                            fetch('/api/subscribe', {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    'Content-Type': "application/json"
+                                                                },
+                                                                body: JSON.stringify({
+                                                                    email
+                                                                })
+                                                            })
+                                                                .then(res => {
+                                                                    setEmail("We got it. Thank you!")
+                                                                })
+                                                        }}
+                                                    >
                                                         <ArrowForward sx={{
                                                             fontSize: '1.25rem'
                                                         }} />
@@ -537,12 +555,12 @@ export default function Header({ Cart, color, setColor }: {
 
                             </div>
                             <div className="flex between">
-                            <Typography sx={{
-                                        fontSize: "0.85rem"
-                                    }}>Terandina Inc. Copyright 2025.</Typography>
-                                    <Link href="/login" sx={{
-                                        fontSize: "0.85rem"
-                                    }}>Login</Link>
+                                <Typography sx={{
+                                    fontSize: "0.85rem"
+                                }}>Terandina Inc. Copyright 2025.</Typography>
+                                <Link href="/login" sx={{
+                                    fontSize: "0.85rem"
+                                }}>Login</Link>
                             </div>
                         </div>
                     </div>
