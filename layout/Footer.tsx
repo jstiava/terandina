@@ -1,4 +1,4 @@
-import { ArrowForward, CopyrightOutlined, EmailOutlined, GitHub, HomeOutlined, Instagram, ScheduleOutlined, StoreOutlined } from "@mui/icons-material";
+import { ArrowForward, CopyrightOutlined, EmailOutlined, Facebook, FacebookOutlined, GitHub, HomeOutlined, Instagram, ScheduleOutlined, StoreOutlined } from "@mui/icons-material";
 import { Button, ButtonBase, Divider, IconButton, Link, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import TerandinaLogo from '@/public/Terandina_clear.png'
 import TerandinaNoText from '@/public/Terandina_no_text.png'
@@ -92,6 +92,17 @@ export default function Footer({ color }: {
                                 }}
                             >
                                 <Instagram fontSize="small" />
+                            </IconButton>
+
+                            <IconButton
+                                href="https://m.facebook.com/61575338195878/"
+                                onClick={e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    window.open('https://m.facebook.com/61575338195878/', '_blank')
+                                }}
+                            >
+                                <Facebook fontSize="small" />
                             </IconButton>
 
                         </div>
