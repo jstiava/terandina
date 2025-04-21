@@ -8,7 +8,7 @@ export default function OurValuesPage() {
     return (
         <>
             <Head>
-                <title>Return Policy - Terandina - Handcrafted Native Outerwear and Accessories</title>
+                <title>Shipping & Returns Policy - Terandina - Handcrafted Native Outerwear and Accessories</title>
             </Head>
             <div className="column center"
                 style={{
@@ -23,6 +23,17 @@ export default function OurValuesPage() {
                     padding: "4rem 2rem"
                 }}>
 
+                    <Typography variant="h1">Shipping</Typography>
+
+                    <Typography variant="body1" sx={{
+                        lineHeight: '2rem',
+                        // textAlign: 'justify'
+                    }}>
+                        We offer a standard flat rate of $8.95 for domestic shipping in the U.S. We also offer free shipping in the U.S. for all orders over $200.<br/><br/>We intentionally source in small batches to avoid overproduction and waste. Because of this, some items are ready to ship while others may take a little more time. Please allow 1-2 weeks for shipping - we’ll keep you updated every step of the way.
+
+                    </Typography>
+                    
+                    <br/>
                     <Typography variant="h1">Return Policy</Typography>
 
                     <Typography variant="body1" sx={{

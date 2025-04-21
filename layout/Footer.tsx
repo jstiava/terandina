@@ -231,7 +231,7 @@ export const ABOUT_US = [
         value: 'contact'
     },
     {
-        name: "Return Policy",
+        name: "Shipping & Returns Policy",
         value: 'return-policy'
     },
     {
