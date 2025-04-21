@@ -8,6 +8,7 @@ import {
     CloseOutlined,
     EditOutlined,
     EmailOutlined,
+    Facebook,
     Instagram,
     MenuOutlined,
     PhoneOutlined,
@@ -512,6 +513,17 @@ export default function Header({ Cart, color, setColor }: {
                                         }}
                                     >
                                         <Instagram fontSize="small" />
+                                    </IconButton>
+
+                                    <IconButton
+                                        href="https://m.facebook.com/61575338195878/"
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            window.open('https://m.facebook.com/61575338195878/', '_blank')
+                                        }}
+                                    >
+                                        <Facebook fontSize="small" />
                                     </IconButton>
                                 </div>
                                 <div className="column snug">

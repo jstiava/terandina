@@ -76,6 +76,11 @@ export default function CartSidebar({
             <div className="column center" style={{
                 padding: "3rem 1.5rem"
             }}>
+                <Typography sx={{
+                    color: theme.palette.primary.main,
+                    top: "1rem",
+                    position: 'absolute'
+                }}>Free Shipping for orders over $200</Typography>
                 <div className="flex fit compact">
                     <Typography variant="h5" component="h3" sx={{
                         fontSize: "1.5rem"
