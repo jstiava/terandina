@@ -1,7 +1,7 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct, TerandinaImage } from "@/types";
-import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, Popover, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, Popover, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme, MenuItem as MuiMenuItem } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import {
     GridColDef,
@@ -279,7 +279,7 @@ const CategorySelectInput = ({ categories, ...props }: { categories: Category[] 
                 }}
             >
                 {categories.map(cat => (
-                    <MenuItem key={cat._id} value={cat.name}>{cat.name}</MenuItem>
+                    <MuiMenuItem key={cat._id} value={cat.name}>{cat.name}</MuiMenuItem>
                 ))}
             </Select>
         </FormControl>
