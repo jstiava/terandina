@@ -84,11 +84,11 @@ export default function Footer({ color }: {
                         </div>
                         <div className="flex compact">
                             <IconButton
-                                href="https://www.instagram.com/terandina.apparel/"
+                                href="https://www.instagram.com/terandina.official/"
                                 onClick={e => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    window.open('https://www.instagram.com/terandina.apparel/', '_blank')
+                                    window.open('https://www.instagram.com/terandina.official/', '_blank')
                                 }}
                             >
                                 <Instagram fontSize="small" />

@@ -78,8 +78,8 @@ export default function CartSidebar({
             }}>
                 <Typography sx={{
                     color: theme.palette.primary.main,
-                    top: "1rem",
-                    position: 'absolute'
+                    // top: "1rem",
+                    // position: 'absolute'
                 }}>Free Shipping for orders over $200</Typography>
                 <div className="flex fit compact">
                     <Typography variant="h5" component="h3" sx={{
