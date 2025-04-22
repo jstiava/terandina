@@ -62,7 +62,7 @@ export default async function handleRequest(
 
         const SHIPPING_FEE = 895;
         const subtotal = calculateOrderAmount(items);
-        const totalDue = subtotal >= 30000 ? subtotal : subtotal + SHIPPING_FEE
+        const totalDue = subtotal >= 20000 ? subtotal : subtotal + SHIPPING_FEE
 
         console.log(items);
 
