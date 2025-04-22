@@ -1,7 +1,7 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct } from "@/types";
-import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, Popover, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import {
     GridColDef,
@@ -23,12 +23,13 @@ import {
     GridFilterOperator,
     GridFilterInputValueProps,
 } from '@mui/x-data-grid';
-import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupWorkOutlined, OpenInNew, RemoveOutlined, SaveOutlined } from "@mui/icons-material";
+import { AddOutlined, ArchiveOutlined, CancelOutlined, CategoryOutlined, CheckroomOutlined, ChevronRight, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupWorkOutlined, Inventory2Outlined, OpenInNew, RemoveOutlined, SaveOutlined } from "@mui/icons-material";
 import { formatPrice } from "@/components/ProductCard";
 import { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
 import { zain_sans_font } from "@/styles/theme";
 import { useRouter } from "next/router";
+import MenuItem from "@/components/MenuItem";
 
 
 const MAX_IMAGES = 5;
@@ -49,12 +50,14 @@ const nameAlphaComparator: GridComparatorFn<any> = (v1, v2, cellParams1, cellPar
     );
 };
 
-const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGroup }: {
+const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGroup, searchValue, handleSearch }: {
     setProducts: Dispatch<SetStateAction<StripeProduct[] | null>>,
     selected: GridRowSelectionModel,
     setSelected: Dispatch<SetStateAction<GridRowSelectionModel>>,
     handleAdd: () => any,
-    handleGroup: (name: string, type: 'variant' | 'collection' | 'tag', selected: GridRowSelectionModel) => any
+    handleGroup: (name: string, type: 'variant' | 'collection' | 'tag', selected: GridRowSelectionModel) => any,
+    searchValue: any,
+    handleSearch: any
 }) => {
 
     const theme = useTheme();
@@ -105,10 +108,21 @@ const EditToolbar = ({ setProducts, selected, setSelected, handleAdd, handleGrou
     if (!selected || selected.length === 0) {
         return (
             <GridToolbarContainer className='flex between' sx={{ padding: '0.5rem 0.75rem', backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.main }}>
-                <div className="flex compact fit">
+                <div className="flex fit">
                     <Typography className="flex center middle fit" sx={{
                         height: "2rem"
                     }}>Products</Typography>
+                    <TextField
+                        label="Search"
+                        value={searchValue}
+                        onChange={(e) => {
+                            handleSearch(e.target.value)
+                        }}
+                        size="small"
+                    // sx={{
+                    //     height: "1rem"
+                    // }}
+                    />
 
                 </div>
                 <Button
@@ -1643,20 +1657,58 @@ export default function AdminPage() {
             }}>
 
 
-<div className="flex compact">
+                <div className="flex compact">
 
-                <TextField
-                    label="Search"
-                    value={searchValue}
-                    onChange={(e) => {
-                        handleSearch(e.target.value)
-                    }}
-                    />
+                    <MenuItem
+                        key={'products'}
+                        focused
+                        onClick={() => {
+                            router.push('/admin/products')
+                        }}
+                        icon={<CheckroomOutlined  />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                            backgroundColor: "#00000010"
+                        }}
+                    >
 
-                    <Button onClick={() => {
-                        router.push('/admin/inventory')
-                    }}>Manage Inventory</Button>
-                    </div>
+                        Products
+                    </MenuItem>
+
+                    <MenuItem
+                        key={'Inventory'}
+                        onClick={() => {
+                            router.push('/admin/inventory')
+                        }}
+                        icon={<Inventory2Outlined  />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                        }}
+                    >
+
+                        Inventory
+                    </MenuItem>
+                    <MenuItem
+                        key={'Categories'}
+                        onClick={() => {
+                            router.push('/admin/categories')
+                        }}
+                        icon={<CategoryOutlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                        }}
+                    >
+
+                        Categories
+                    </MenuItem>
+
+                </div>
 
                 <div className="flex" style={{
                     width: "100%"
@@ -1690,6 +1742,8 @@ export default function AdminPage() {
                                     setSelected={setRowSelectionModel}
                                     handleAdd={handleAdd}
                                     handleGroup={handleGroup}
+                                    searchValue={searchValue}
+                                    handleSearch={handleSearch}
                                 />
                             )
                         }}

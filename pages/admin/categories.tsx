@@ -1,9 +1,10 @@
 "use client"
 import ManagePhotosField from "@/components/ManagePhotosField";
 import ManageSubcategories from "@/components/ManageSubcategories";
+import MenuItem from "@/components/MenuItem";
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps, StripeProduct } from "@/types";
-import { AddOutlined, CancelOutlined, CloseOutlined, DeleteOutline, EditOutlined, OpenInNew, RefreshOutlined, SaveOutlined, TurnLeftOutlined } from "@mui/icons-material";
+import { AddOutlined, CancelOutlined, CategoryOutlined, CheckroomOutlined, CloseOutlined, DeleteOutline, EditOutlined, Inventory2Outlined, OpenInNew, RefreshOutlined, SaveOutlined, TurnLeftOutlined } from "@mui/icons-material";
 import { Button, Chip, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridEventListener, GridFilterModel, GridRenderCellParams, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowSelectionModel, GridToolbarContainer } from "@mui/x-data-grid";
 import { useRouter } from "next/router";
@@ -366,7 +367,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                 )
             }
         },
-        { 
+        {
             field: "type",
             headerName: "Type",
             width: 100,
@@ -413,7 +414,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                         allCategories={categories}
                     />
                 )
-                
+
             }
         },
         {
@@ -482,7 +483,7 @@ export default function CategoryAdminPage(props: StripeAppProps) {
             type: "actions",
             headerName: "Actions",
             width: 100,
-            getActions: ({ id } : {id : string}) => {
+            getActions: ({ id }: { id: string }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
@@ -531,20 +532,60 @@ export default function CategoryAdminPage(props: StripeAppProps) {
                 padding: "0.5rem",
                 width: "100%"
             }}>
-                <div className="flex fit">
-                    <TextField
-                        label="Search"
-                        value={searchValue}
-                        onChange={(e) => {
-                            handleSearch(e.target.value)
+                <div className="flex compact">
+
+                    <MenuItem
+                        key={'products'}
+                        onClick={() => {
+                            router.push('/admin/products')
                         }}
-                    />
-                    <Button
-                        variant="outlined"
-                        onClick={e => {
-                            router.push('/admin')
+                        icon={<CheckroomOutlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+
                         }}
-                    >Edit Products</Button>
+                    >
+
+                        Products
+                    </MenuItem>
+
+                    <MenuItem
+                        
+                        key={'Inventory'}
+                        onClick={() => {
+                            router.push('/admin/inventory')
+                        }}
+                        icon={<Inventory2Outlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                            
+                        }}
+                    >
+
+                        Inventory
+                    </MenuItem>
+                    <MenuItem
+                    focused
+                        key={'Categories'}
+                        onClick={() => {
+                            router.push('/admin/categories')
+                        }}
+                        icon={<CategoryOutlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                            backgroundColor: "#00000010"
+                        }}
+                    >
+
+                        Categories
+                    </MenuItem>
+
                 </div>
                 <div className="flex">
                     {categories && (

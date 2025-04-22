@@ -23,6 +23,7 @@ export default function Home(props: StripeAppProps) {
   const theme = useTheme();
   const [products, setProducts] = useState<StripeProduct[] | null>(null);
   const swiperRef = useRef<any>(null);
+  const heroSwiperRef = useRef<any>(null);
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
   const isMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -107,7 +108,166 @@ export default function Home(props: StripeAppProps) {
         <div className="flex" style={{
           padding: isSm ? "0rem" : "1rem",
         }}>
-          <CoverImage
+          <div className="flex" style={{
+            padding: 0,
+            width: "100%",
+            overflow: 'hidden'
+          }}>
+            <Swiper
+              key={`slider-hero`}
+              ref={heroSwiperRef}
+              direction="horizontal"
+              slidesPerView={1}
+              spaceBetween={0}
+              // slidesOffsetBefore={-30}
+              style={{
+                display: 'flex',
+                width: "100%",
+                height: "fit-content",
+                padding: 0,
+                "--swiper-theme-color": theme.palette.primary.main,
+                "--swiper-pagination-color": "white",  // Active bullet color
+                "--swiper-pagination-bullet-inactive-color": "white", // Inactive bullet color
+                "--swiper-pagination-bullet-inactive-opacity": "0.5",
+                "--swiper-navigation-size": 64,
+                "--swiper-navigation-top-offset": "calc(50% - 1rem)",
+              } as CSSProperties}
+              pagination={{
+                clickable: true,
+              }}
+              modules={[Pagination]}
+              breakpoints={{
+                300: {
+                  slidesPerView: 1,
+                  spaceBetween: 0,
+                },
+              }}
+              className="mySwiper"
+            >
+              {isSm && (
+                <SwiperSlide className="slide"
+                  key={"cosmic_buffalo"}
+                >
+                  <CoverImage
+                    url="/ring_example.webp"
+                    height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
+                    className={isSm ? 'column center bottom' : 'flex between bottom'}
+                    width={"100%"}
+                    style={{
+                      position: 'relative',
+                      backgroundImage: 'url(/ring_example.webp)',
+                      overflow: "hidden",
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      padding: "2rem",
+                    }}
+                  >
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      marginBottom: isSm ? 0 : "-1rem",
+                      width: "100%",
+                      height: isSm ? "100%" : "30vh",
+                      backgroundImage: isSm ? 'radial-gradient(#000000aa, #00000000)' : 'linear-gradient(to top, #000000aa, #00000000)',
+                      zIndex: 0
+                    }}></div>
+                    <div className="flex fit" style={{
+                      zIndex: 1,
+                      marginBottom: isSm ? "1rem" : "0rem",
+                      padding: "1rem",
+                    }}>
+                      <Typography variant="h2" sx={{
+                        color: "white",
+                        fontSize: isSm ? "1.5rem" : "2rem",
+                        textAlign: isSm ? "center" : "left"
+                      }}>Timeless designs <br />that celebrate Indigenous heritage</Typography>
+                    </div>
+                    <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
+                      // position: 'absolute',
+                      bottom: "2rem",
+                      width: "100%",
+                      left: 0,
+                      padding: "0 2rem"
+                    } : {
+
+                    }}>
+                      <Button fullWidth={isSm} variant="contained" onClick={() => {
+                        router.push('/products')
+                      }}>Shop All</Button>
+                      <Button fullWidth={isSm} variant="text" onClick={() => router.push('/our-values')} sx={{
+                        color: '#ffffff',
+                        borderColor: "#ffffff"
+                      }}>
+                        Our Values
+                      </Button>
+                    </div>
+                  </CoverImage>
+                </SwiperSlide>
+              )}
+              <SwiperSlide className="slide"
+                key={"no_license_landscape_timeless_designs"}
+              >
+                <CoverImage
+                  url="/no_license_landscape.jpg"
+                  height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
+                  className={isSm ? 'column center bottom' : 'flex between bottom'}
+                  width={"100%"}
+                  style={{
+                    position: 'relative',
+                    backgroundImage: 'url(/no_license_landscape.jpg)',
+                    overflow: "hidden",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    padding: "2rem",
+                  }}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    marginBottom: isSm ? 0 : "-1rem",
+                    width: "100%",
+                    height: isSm ? "100%" : "30vh",
+                    backgroundImage: isSm ? 'radial-gradient(#000000aa, #00000000)' : 'linear-gradient(to top, #000000aa, #00000000)',
+                    zIndex: 0
+                  }}></div>
+                  <div className="flex fit" style={{
+                    zIndex: 1,
+                    marginBottom: isSm ? "1rem" : "0rem",
+                    padding: "1rem",
+                  }}>
+                    <Typography component="h3" sx={{
+                      color: "white",
+                      fontSize: isSm ? "1.5rem" : "2rem",
+                      textAlign: isSm ? "center" : "left"
+                    }}>From Quechua Artisans <br />in the highlands of Ecuador</Typography>
+                  </div>
+
+                  <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
+                    // position: 'absolute',
+                    bottom: "2rem",
+                    width: "100%",
+                    left: 0,
+                    padding: "0 2rem"
+                  } : {
+
+                  }}>
+                    <Button fullWidth={isSm} variant="contained" onClick={() => {
+                      router.push('/products')
+                    }}>Shop All</Button>
+                    <Button fullWidth={isSm} variant="text" onClick={() => router.push('/our-values')} sx={{
+                      color: '#ffffff',
+                      borderColor: "#ffffff"
+                    }}>
+                      Our Values
+                    </Button>
+                  </div>
+                </CoverImage>
+              </SwiperSlide>
+            </Swiper>
+          </div>
+          {/* <CoverImage
             url="/no_license_landscape.jpg"
             height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
             width={"100%"}
@@ -135,7 +295,9 @@ export default function Home(props: StripeAppProps) {
               zIndex: 1,
               marginBottom: isSm ? "5rem" : "0rem"
             }}>
-
+              <Typography variant="h2" sx={{
+                color: "white"
+              }}>Timeless designs <br/>that celebrate Indigenous heritage</Typography>
             </div>
             <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
               position: 'absolute',
@@ -156,7 +318,7 @@ export default function Home(props: StripeAppProps) {
                 Our Values
               </Button>
             </div>
-          </CoverImage>
+          </CoverImage> */}
         </div>
 
         <div className="column center" style={{

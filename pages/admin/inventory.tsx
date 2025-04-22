@@ -1,7 +1,7 @@
 "use client"
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, SizeChart, SIZING_OPTIONS, StripePrice, StripeProduct, TerandinaImage } from "@/types";
-import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, MenuItem, Popover, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, ButtonBase, Checkbox, Chip, FormControl, IconButton, InputLabel, Popover, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import {
     GridColDef,
@@ -23,13 +23,14 @@ import {
     GridFilterOperator,
     GridFilterInputValueProps,
 } from '@mui/x-data-grid';
-import { AddOutlined, ArchiveOutlined, CancelOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupWorkOutlined, OpenInNew, RemoveOutlined, SaveOutlined, WarningOutlined } from "@mui/icons-material";
+import { AddOutlined, ArchiveOutlined, CancelOutlined, CategoryOutlined, CheckroomOutlined, CloseOutlined, DeleteOutlined, EditOutlined, ErrorOutline, GroupWorkOutlined, Inventory2Outlined, OpenInNew, RemoveOutlined, SaveOutlined, WarningOutlined } from "@mui/icons-material";
 import { formatPrice } from "@/components/ProductCard";
 import { UploadType } from "@/components/useComplexFileDrop";
 import ManagePhotosField from "@/components/ManagePhotosField";
 import { zain_sans_font } from "@/styles/theme";
 import CoverImage from "@/components/CoverImage";
-
+import { useRouter } from "next/router";
+import MenuItem from "@/components/MenuItem";
 
 const MAX_IMAGES = 5;
 
@@ -290,6 +291,7 @@ export default function AdminPage() {
 
     const theme = useTheme();
 
+    const router = useRouter();
     const [images, setImages] = useState<UploadType[]>([]);
     const [newUploads, setNewUploads] = useState<UploadType[]>([]);
 
@@ -348,7 +350,7 @@ export default function AdminPage() {
 
         console.log(newRow);
 
-        const newSizing : Partial<SizeChart> = {};
+        const newSizing: Partial<SizeChart> = {};
         for (const size of SIZING_OPTIONS) {
             const marking = newRow[size];
             if (marking === "") {
@@ -445,7 +447,7 @@ export default function AdminPage() {
             renderCell: (params: GridRenderCellParams<StripeProduct, number | null>) => {
 
                 if (params.value === null) {
-                   return null;
+                    return null;
                 }
                 return (
                     <Typography sx={{
@@ -621,11 +623,65 @@ export default function AdminPage() {
                 width: "100%"
             }}>
 
+                <div className="flex compact">
+
+                    <MenuItem
+                        key={'products'}
+                        onClick={() => {
+                            router.push('/admin/products')
+                        }}
+                        icon={<CheckroomOutlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+
+                        }}
+                    >
+
+                        Products
+                    </MenuItem>
+
+                    <MenuItem
+                        focused
+                        key={'Inventory'}
+                        onClick={() => {
+                            router.push('/admin/inventory')
+                        }}
+                        icon={<Inventory2Outlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                            backgroundColor: "#00000010"
+                        }}
+                    >
+
+                        Inventory
+                    </MenuItem>
+                    <MenuItem
+                        key={'Categories'}
+                        onClick={() => {
+                            router.push('/admin/categories')
+                        }}
+                        icon={<CategoryOutlined />}
+                        reverse
+                        style={{
+                            width: "fit-content",
+                            padding: "0 0 0 1rem",
+                        }}
+                    >
+
+                        Categories
+                    </MenuItem>
+
+                </div>
+
                 <div className="flex top" style={{
                     width: "100%",
-                    position: "fixed",
-                    // zIndex: 10,
-                    height: "calc(100vh - 5rem)",
+                    // position: "fixed",
+                    // // zIndex: 10,
+                    // height: "calc(100vh - 5rem)",
                     backgroundColor: theme.palette.background.paper,
                 }}>
                     <DataGrid

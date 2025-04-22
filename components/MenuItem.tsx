@@ -61,7 +61,8 @@ export default function MenuItem({ onClick, icon, reverse = false, children, sx 
             </div>
             {icon ? (
                 <div className="flex fit" style={{
-                    opacity: reverse ? 1 : 0.25
+                    opacity: reverse ? 1 : 0.25,
+                    marginRight: reverse ? "0.5rem" : "0"
                 }}>
                     {icon}
                 </div>
