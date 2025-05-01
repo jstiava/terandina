@@ -332,7 +332,6 @@ export default function Home(props: StripeAppProps) {
           <div className="flex" style={{
             padding: isSm ? "0 1rem" : "0rem 3rem",
           }}>
-            {nextRef.current && prevRef.current && (
               <Swiper
                 ref={swiperRef}
                 direction="horizontal"
@@ -405,7 +404,6 @@ export default function Home(props: StripeAppProps) {
                   </SwiperSlide>
                 ))}
               </Swiper>
-            )}
             {!isSm && (
               <>
                 <IconButton ref={prevRef} className="custom-prev swiper-button-prev" sx={{
