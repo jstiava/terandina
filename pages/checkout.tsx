@@ -1,10 +1,10 @@
 "use client"
 import { StripeAppProps } from "@/types";
 import { AddressElement, Elements } from '@stripe/react-stripe-js';
-import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
+import { loadStripe, StripeAddressElementChangeEvent, StripeElementsOptions } from '@stripe/stripe-js';
 import StripeCheckoutForm from "@/components/StripeCheckoutForm";
 import { useEffect, useState } from "react";
-import { Alert, Checkbox, FormControlLabel, FormGroup, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, Button, Checkbox, FormControlLabel, FormGroup, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { ContactMailOutlined, LocalShippingOutlined, PaymentOutlined, ShoppingBagOutlined } from "@mui/icons-material";
 import StripeCompletePage from "@/components/StripeCompletePage";
 import { formatPrice } from "@/components/ProductCard";
@@ -15,6 +15,52 @@ import NativeCrossDivider from "@/components/NativeCrossDivider";
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
+const isAddressFilled = (address: {
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    address: {
+        line1: string;
+        line2: string | null;
+        city: string;
+        state: string;
+        postal_code: string;
+        country: string;
+    };
+    phone?: string;
+}, emailAddress: string | null) => {
+
+    if (!address) {
+        return false;
+    }
+
+    if (!emailAddress && !address.name) {
+        return false;
+    }
+
+    if (!address.address.line1) {
+        return false;
+    }
+
+    if (!address.address.city) {
+        return false;
+    }
+
+    if (!address.address.state) {
+        return false;
+    }
+
+    if (!address.address.postal_code) {
+        return false;
+    }
+
+    if (!address.address.country) {
+        return false;
+    }
+
+    return true;
+}
+
 export default function Checkout(props: StripeAppProps) {
 
     const theme = useTheme();
@@ -24,6 +70,24 @@ export default function Checkout(props: StripeAppProps) {
     const [subtotal, setSubtotal] = useState(0);
     const [totalDue, setTotalDue] = useState(0);
     const [emailAddress, setEmailAddress] = useState<string | null>(null);
+    const [address, setAddress] = useState<{
+        name: string;
+        firstName?: string;
+        lastName?: string;
+        address: {
+            line1: string;
+            line2: string | null;
+            city: string;
+            state: string;
+            postal_code: string;
+            country: string;
+        };
+        phone?: string;
+    } | null>(null);
+
+    const [paymentIntentId, setPaymentIntentId] = useState(null);
+
+    const [taxAdded, setTaxAdded] = useState<number | null>(null);
     const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
@@ -36,6 +100,7 @@ export default function Checkout(props: StripeAppProps) {
         })
             .then((res) => res.json())
             .then((data) => {
+                setPaymentIntentId(data.paymentIntentId)
                 setClientSecret(data.clientSecret)
                 setSubtotal(data.subtotal)
                 setTotalDue(data.totalDue)
@@ -46,6 +111,26 @@ export default function Checkout(props: StripeAppProps) {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const findTaxes = () => {
+        fetch("/api/create-payment-intent", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                items: props.Cart.checkout(),
+                customer_details: address,
+                paymentIntentId
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setTaxAdded(data.tax);
+                setTotalDue(data.totalDue);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 
     const options = {
         clientSecret,
@@ -145,7 +230,7 @@ export default function Checkout(props: StripeAppProps) {
                                                 <TableCell>SUBTOTAL</TableCell>
                                                 <TableCell>{formatPrice(subtotal, 'usd')}</TableCell>
                                             </TableRow>
-                                            {subtotal === totalDue ? (
+                                            {subtotal === (totalDue - (taxAdded ? taxAdded : 0)) ? (
                                                 <TableRow sx={{
                                                     opacity: 0.5
                                                 }}>
@@ -157,7 +242,15 @@ export default function Checkout(props: StripeAppProps) {
                                                     opacity: 0.5
                                                 }}>
                                                     <TableCell>Shipping (7-14 business days)</TableCell>
-                                                    <TableCell>{formatPrice(totalDue - subtotal, 'usd')}</TableCell>
+                                                    <TableCell>{formatPrice(totalDue - subtotal - (taxAdded ? taxAdded : 0), 'usd')}</TableCell>
+                                                </TableRow>
+                                            )}
+                                            {taxAdded != null && (
+                                                <TableRow sx={{
+                                                    opacity: 0.5
+                                                }}>
+                                                    <TableCell>Sales Tax</TableCell>
+                                                    <TableCell>{formatPrice(taxAdded, 'usd')}</TableCell>
                                                 </TableRow>
                                             )}
                                             <TableRow>
@@ -190,12 +283,31 @@ export default function Checkout(props: StripeAppProps) {
                                 }}>Shipping (2-3 weeks)</Typography>
                             </div>
                             <NativeCrossDivider />
-                            <AddressElement
-                                id="address-element"
-                                options={{
-                                    mode: 'shipping',
-                                }}
-                            />
+
+                            {taxAdded && address ? (
+                                <div className="column snug left">
+                                    <Typography>{address.name}</Typography>
+                                    <Typography>{address.address.line1}</Typography>
+                                    <Typography>{address.address.line2}</Typography>
+                                    <Typography>{address.address.city}, {address.address.state} {address.address.postal_code}</Typography>
+                                    <Link
+                                    href=""
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setTaxAdded(null);
+                                        }}>Change Shipping Address</Link>
+                                </div>
+                            ) : (
+                                <AddressElement
+                                    id="address-element"
+                                    options={{
+                                        mode: 'shipping',
+                                    }}
+                                    onChange={(e) => {
+                                        setAddress(e.value);
+                                    }}
+                                />
+                            )}
                         </div>
                         <div className="column">
                             <div className="flex fit compact">
@@ -234,10 +346,20 @@ export default function Checkout(props: StripeAppProps) {
                                 <>
                                     {confirmed ? <StripeCompletePage /> : (
                                         <div className="column">
-                                            <StripeCheckoutForm
-                                                subtotal={formatPrice(totalDue, 'usd')}
-                                                emailAddress={emailAddress}
-                                            />
+                                            {taxAdded != null ? (
+                                                <StripeCheckoutForm
+                                                    subtotal={formatPrice(totalDue, 'usd')}
+                                                    emailAddress={emailAddress}
+                                                />
+                                            ) : (
+                                                <div className="flex right">
+                                                    <Button
+                                                        disabled={address ? !isAddressFilled(address, emailAddress) : true}
+                                                        onClick={() => {
+                                                            findTaxes();
+                                                        }}>Continue</Button>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </>

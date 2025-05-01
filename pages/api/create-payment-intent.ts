@@ -7,7 +7,7 @@ interface StripePriceQuantityStub {
     quantity: number
 }
 
-const reduceStripeCheckoutItem = (item : {
+const reduceStripeCheckoutItem = (item: {
     price: StripePrice,
     quantity: number,
     size: string
@@ -22,13 +22,17 @@ const reduceStripeCheckoutItem = (item : {
     }
 }
 
-const calculateOrderAmount = (items: StripePriceQuantityStub[]) => {
+const calculateOrderAmount = (target: StripePriceQuantityStub | StripePriceQuantityStub[]) => {
 
-    let amount = 0;
-    for (let i = 0; i < items.length; i++) {
-        amount +=( items[i].price.unit_amount || 0) * items[i].quantity;
+    if (Array.isArray(target)) {
+        let amount = 0;
+        for (let i = 0; i < target.length; i++) {
+            amount += calculateOrderAmount(target[i]);
+        }
+        return amount;
     }
-    return amount;
+
+    return (target.price.unit_amount || 0) * target.quantity;
 };
 
 export default async function handleRequest(
@@ -40,36 +44,79 @@ export default async function handleRequest(
         const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
 
         if (req.method === 'GET') {
-
             const paymentIntentId = String(req.query.payment_intent);
-
             const result = await stripe.paymentIntents.retrieve(paymentIntentId);
-
             if (!result.latest_charge) {
                 throw Error("No latest charge exists.")
             }
-
             const charge = await stripe.charges.retrieve(String(result.latest_charge));
             console.log(charge);
             return res.status(200).json({ message: "Success", receipt_url: charge.receipt_url });
         }
 
+        const { items } = req.body;
+        const SHIPPING_FEE = 895;
+        const subtotal = calculateOrderAmount(items);
+        const totalDue = subtotal >= 20000 ? subtotal : subtotal + SHIPPING_FEE;
+
+        if (req.method === 'PATCH') {
+
+            const { customer_details, paymentIntentId } = req.body;
+
+            try {
+                const oldIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+                if (!oldIntent) {
+                    throw Error("No old intent")
+                }
+
+                const taxCalculation = await stripe.tax.calculations.create({
+                    currency: 'usd',
+                    line_items: [...items.map((item: any) => ({
+                        amount: calculateOrderAmount(item),
+                        reference: item.id,
+                        tax_behavior: 'exclusive',
+                    })), {
+                        amount: SHIPPING_FEE,
+                        reference: 'shipping_fee',
+                        tax_behavior: 'exclusive',
+                        tax_code: 'txcd_99999999'
+                    }],
+                    customer_details: {
+                        address: customer_details.address,
+                        address_source: 'shipping'
+                    },
+                });
+
+                console.log(taxCalculation);
+
+                const taxAmount = taxCalculation.tax_amount_exclusive;
+                const total = totalDue + taxAmount;
+
+                const updatedIntent = await stripe.paymentIntents.update(paymentIntentId, {
+                    amount: total,
+                });
+
+                return res.status(200).json({
+                    tax: taxAmount,
+                    totalDue: total
+                });
+
+            } catch (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Failed to update PaymentIntent with tax.' });
+            }
+        }
+
+
         if (req.method != 'POST') {
             return res.status(405).end('Method Not Allowed');
         }
-        const { items } = req.body;
-
-
-        const SHIPPING_FEE = 895;
-        const subtotal = calculateOrderAmount(items);
-        const totalDue = subtotal >= 20000 ? subtotal : subtotal + SHIPPING_FEE
-
-        console.log(items);
 
         const metadata: Record<string, string> = {};
         items.forEach((item: any, index: number) => {
             metadata[`item_${index}`] = JSON.stringify(reduceStripeCheckoutItem(item));
-          });
+        });
         const paymentIntent = await stripe.paymentIntents.create({
             amount: totalDue,
             currency: "usd",
@@ -79,9 +126,8 @@ export default async function handleRequest(
             metadata
         });
 
-        console.log(paymentIntent);
-
         return res.status(200).json({
+            paymentIntentId: paymentIntent.id,
             clientSecret: paymentIntent.client_secret,
             subtotal,
             totalDue

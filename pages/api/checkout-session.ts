@@ -25,6 +25,7 @@ export default async function handleRequest(
         const session = await stripe.checkout.sessions.create({
             line_items,
             mode: 'payment',
+            automatic_tax: { enabled: true },
             shipping_address_collection: {
                 allowed_countries: ['US'],
             },
