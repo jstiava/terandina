@@ -29,6 +29,7 @@ export default function Home(props: StripeAppProps) {
   const isMd = useMediaQuery(theme.breakpoints.down('md'));
 
   const [swiperInstance, setSwiperInstance] = useState<typeof Swiper | null>(null);
+  
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
@@ -327,7 +328,7 @@ export default function Home(props: StripeAppProps) {
         }}>
           <Typography variant="h6">Best Sellers</Typography>
           <div className="flex" style={{
-            padding: isSm ? "0 1rem" : "0rem 0",
+            padding: isSm ? "0 1rem" : "0rem 3rem",
           }}>
             <Swiper
               ref={swiperRef}
@@ -412,17 +413,17 @@ export default function Home(props: StripeAppProps) {
               <>
                 <IconButton ref={prevRef} className="custom-prev" sx={{
                   position: 'absolute',
-                  left: "1rem",
+                  left: "0.25rem",
                   zIndex: 1
                 }}>
-                  <ChevronLeft sx={{ fontSize: "3rem" }} />
+                  <ChevronLeft sx={{ fontSize: "2rem" }} />
                 </IconButton>
                 <IconButton ref={nextRef} className="custom-prev" sx={{
                   position: 'absolute',
-                  right: "1rem",
+                  right: "0.25rem",
                   zIndex: 1
                 }}>
-                  <ChevronRight sx={{ fontSize: "3rem" }} />
+                  <ChevronRight sx={{ fontSize: "2rem" }} />
                 </IconButton>
               </>
             )}
