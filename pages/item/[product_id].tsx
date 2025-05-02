@@ -316,7 +316,47 @@ export default function Home(props: StripeAppProps & {
                     "item": `https://terandina.com/${props.static.categories[0].slug}`
                 }
             ]
-        }
+        },
+        {
+            "@context": "http://schema.org/",
+            "@type": "MerchantReturnPolicy",
+            "@id": "#return_policy",
+            "applicableCountry": "US",
+            "returnPolicyCountry": "US",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 30,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
+        },
+        {
+            "@context": "https://schema.org/",
+            "@type": "OfferShippingDetails",
+            "@id": "#shipping_policy",
+            "shippingRate": {
+                "@type": "MonetaryAmount",
+                "value": 8.95,
+                "currency": "USD"
+            },
+            "shippingDestination": {
+                "@type": "DefinedRegion",
+                "addressCountry": "US"
+            },
+            "deliveryTime": {
+                "@type": "ShippingDeliveryTime",
+                "handlingTime": {
+                    "@type": "QuantitativeValue",
+                    "minValue": 1,
+                    "maxValue": 4,
+                    "unitCode": "DAY"
+                },
+                "transitTime": {
+                    "@type": "QuantitativeValue",
+                    "minValue": 7,
+                    "maxValue": 10,
+                    "unitCode": "DAY"
+                }
+            }
+        },
     ]
 
 
