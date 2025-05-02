@@ -282,6 +282,44 @@ export default function Home(props: StripeAppProps & {
         )
     }
 
+    const richResults = [
+        {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": props.static.product.name,
+            "image": props.static.product.media.map(x => x.medium),
+            "description": props.static.product.description,
+            "sku": props.static.product.id,
+            "brand": {
+                "@type": "Brand",
+                "name": "Terandina Inc."
+            },
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "brand": {
+                "@type": "Brand",
+                "name": "Terandina Inc."
+            },
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Products",
+                    "item": "https://terandina.com/products"
+                },
+                props.static.categories && props.static.categories.length > 0 && {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": props.static.categories[0].name,
+                    "item": `https://terandina.com/${props.static.categories[0].slug}`
+                }
+            ]
+        }
+    ]
+
+
     return (
         <>
             <Head>
@@ -291,6 +329,10 @@ export default function Home(props: StripeAppProps & {
                 <meta property="og:image" content={product.media && product.media.length > 0 ? product.media[0].medium || '' : ''} />
                 <meta property="og:image:width" content="1200" />
                 <meta property="og:image:height" content="630" />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(richResults) }}
+                />
             </Head>
             {isSm && (
                 <ScrollButton
@@ -754,11 +796,11 @@ export default function Home(props: StripeAppProps & {
                                         if (x === 'returns') {
                                             return (
                                                 <div key={x} className="column fit compact center"
-                                                style={{
-                                                    width: "8rem",
-                                                    maxWidth: "calc(50% - 1rem)",
-                                                    padding: '1rem'
-                                                }}
+                                                    style={{
+                                                        width: "8rem",
+                                                        maxWidth: "calc(50% - 1rem)",
+                                                        padding: '1rem'
+                                                    }}
                                                 >
                                                     <LocalShippingOutlined />
                                                     <Typography sx={{
@@ -773,11 +815,11 @@ export default function Home(props: StripeAppProps & {
                                         if (x === 'ships_from_us') {
                                             return (
                                                 <div key={x} className="column fit compact center"
-                                                style={{
-                                                    width: "8rem",
-                                                    maxWidth: "calc(50% - 1rem)",
-                                                    padding: '1rem'
-                                                }}
+                                                    style={{
+                                                        width: "8rem",
+                                                        maxWidth: "calc(50% - 1rem)",
+                                                        padding: '1rem'
+                                                    }}
                                                 >
                                                     <FlightTakeoffOutlined />
                                                     <Typography sx={{

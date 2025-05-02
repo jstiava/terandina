@@ -99,6 +99,12 @@ export default function Home(props: StripeAppProps) {
     <>
       <Head>
         <title>Terandina - Handcrafted Native Outerwear and Accessories</title>
+        <meta property="og:title" content="Terandina - Handcrafted Native Outerwear and Accessories" />
+        <meta name="description" content="Terandina, a proudly Native-owned business, offers curated, authentic indigeneous pieces: clothing, blankets, and jewelry." />
+        <meta property="og:description" content="Terandina, a proudly Native-owned business, offers curated, authentic indigeneous pieces: clothing, blankets, and jewelry." />
+        <meta property="og:image" content="/blue_poncho.jpg" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://terandina.com/" />
       </Head>
       <div className="column center"
         style={{
@@ -145,6 +151,67 @@ export default function Home(props: StripeAppProps) {
               }}
               className="mySwiper"
             >
+             
+              <SwiperSlide className="slide"
+                key={"no_license_landscape_timeless_designs"}
+              >
+                <CoverImage
+                  url="/no_license_landscape.jpg"
+                  height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
+                  className={isSm ? 'column center bottom' : 'flex between bottom'}
+                  width={"100%"}
+                  style={{
+                    position: 'relative',
+                    backgroundImage: 'url(/no_license_landscape.jpg)',
+                    overflow: "hidden",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    padding: "2rem",
+                  }}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    marginBottom: isSm ? 0 : "-1rem",
+                    width: "100%",
+                    height: isSm ? "100%" : "30vh",
+                    backgroundImage: isSm ? 'radial-gradient(#000000aa, #00000000)' : 'linear-gradient(to top, #000000aa, #00000000)',
+                    zIndex: 0
+                  }}></div>
+                  <div className="flex fit" style={{
+                    zIndex: 1,
+                    marginBottom: isSm ? "1rem" : "0rem",
+                    padding: "1rem",
+                  }}>
+                    <Typography component="h3" sx={{
+                      color: "white",
+                      fontSize: isSm ? "1.25rem" : "2rem",
+                      textAlign: isSm ? "center" : "left"
+                    }}>From Quechua Artisans <br />in the highlands of Ecuador</Typography>
+                  </div>
+
+                  <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
+                    // position: 'absolute',
+                    bottom: "2rem",
+                    width: "100%",
+                    left: 0,
+                    padding: "0 2rem"
+                  } : {
+
+                  }}>
+                    <Button fullWidth={isSm} variant="contained" onClick={() => {
+                      router.push('/products')
+                    }}>Shop All</Button>
+                    <Button fullWidth={isSm} variant="text" onClick={() => router.push('/our-values')} sx={{
+                      color: '#ffffff',
+                      borderColor: "#ffffff"
+                    }}>
+                      Our Values
+                    </Button>
+                  </div>
+                </CoverImage>
+              </SwiperSlide>
               {isSm && (
                 <SwiperSlide className="slide"
                   key={"cosmic_buffalo"}
@@ -180,9 +247,9 @@ export default function Home(props: StripeAppProps) {
                     }}>
                       <Typography variant="h2" sx={{
                         color: "white",
-                        fontSize: isSm ? "1.5rem" : "2rem",
+                        fontSize: isSm ? "1.25rem" : "2rem",
                         textAlign: isSm ? "center" : "left"
-                      }}>Timeless designs <br />that celebrate Indigenous heritage</Typography>
+                      }}>Timeless designs that celebrate Indigenous heritage</Typography>
                     </div>
                     <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
                       // position: 'absolute',
@@ -206,66 +273,6 @@ export default function Home(props: StripeAppProps) {
                   </CoverImage>
                 </SwiperSlide>
               )}
-              <SwiperSlide className="slide"
-                key={"no_license_landscape_timeless_designs"}
-              >
-                <CoverImage
-                  url="/no_license_landscape.jpg"
-                  height={isSm ? "calc(90vh - 6rem)" : "calc(100vh - 6rem)"}
-                  className={isSm ? 'column center bottom' : 'flex between bottom'}
-                  width={"100%"}
-                  style={{
-                    position: 'relative',
-                    backgroundImage: 'url(/no_license_landscape.jpg)',
-                    overflow: "hidden",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    padding: "2rem",
-                  }}
-                >
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    marginBottom: isSm ? 0 : "-1rem",
-                    width: "100%",
-                    height: isSm ? "100%" : "30vh",
-                    backgroundImage: isSm ? 'radial-gradient(#000000aa, #00000000)' : 'linear-gradient(to top, #000000aa, #00000000)',
-                    zIndex: 0
-                  }}></div>
-                  <div className="flex fit" style={{
-                    zIndex: 1,
-                    marginBottom: isSm ? "1rem" : "0rem",
-                    padding: "1rem",
-                  }}>
-                    <Typography component="h3" sx={{
-                      color: "white",
-                      fontSize: isSm ? "1.5rem" : "2rem",
-                      textAlign: isSm ? "center" : "left"
-                    }}>From Quechua Artisans <br />in the highlands of Ecuador</Typography>
-                  </div>
-
-                  <div className={isSm ? "column compact2" : "flex fit"} style={isSm ? {
-                    // position: 'absolute',
-                    bottom: "2rem",
-                    width: "100%",
-                    left: 0,
-                    padding: "0 2rem"
-                  } : {
-
-                  }}>
-                    <Button fullWidth={isSm} variant="contained" onClick={() => {
-                      router.push('/products')
-                    }}>Shop All</Button>
-                    <Button fullWidth={isSm} variant="text" onClick={() => router.push('/our-values')} sx={{
-                      color: '#ffffff',
-                      borderColor: "#ffffff"
-                    }}>
-                      Our Values
-                    </Button>
-                  </div>
-                </CoverImage>
-              </SwiperSlide>
             </Swiper>
           </div>
           {/* <CoverImage
@@ -332,78 +339,78 @@ export default function Home(props: StripeAppProps) {
           <div className="flex" style={{
             padding: isSm ? "0 1rem" : "0rem 3rem",
           }}>
-              <Swiper
-                ref={swiperRef}
-                direction="horizontal"
-                slidesPerView={1}
-                spaceBetween={10}
-                navigation={{
-                  nextEl: '.swiper-button-next',
-                  prevEl: '.swiper-button-prev',
-                  disabledClass: 'swiper-button-disabled', // ✅ REQUIRED
-                }}
-                onBeforeInit={(swiper) => {
-                  swiper.navigation.init();
-                  swiper.navigation.update();
-                }}
-                centeredSlides={false}
-                // slidesOffsetBefore={-30}
-                style={{
-                  display: 'flex',
-                  width: "100%",
-                  height: "fit-content",
-                  padding: 0,
-                  "--swiper-theme-color": theme.palette.primary.main,
-                  "--swiper-pagination-color": theme.palette.primary.main,  // Active bullet color
-                  "--swiper-pagination-bullet-inactive-color": "gray", // Inactive bullet color
-                  "--swiper-pagination-bullet-inactive-opacity": "0.5",
-                  "--swiper-navigation-top-offset": "calc(50% - 1rem)",
-                } as CSSProperties}
-                pagination={{
-                  clickable: true,
-                }}
-                modules={[Pagination, Navigation]}
-                breakpoints={{
-                  300: {
-                    slidesPerView: 1.4,
-                    spaceBetween: 10,
-                  },
-                  500: {
-                    slidesPerView: 2.4,
-                    spaceBetween: 0
-                  },
-                  1200: {
-                    slidesPerView: 3.4,
-                    spaceBetween: 10
-                  },
-                  1400: {
-                    slidesPerView: 4.4,
-                    spaceBetween: 10,
-                  },
-                  1800: {
-                    slidesPerView: 5.4,
-                    spaceBetween: 10,
-                  },
-                }}
-                className="mySwiper"
-              >
-                {products.map(product => (
-                  <SwiperSlide className="slide" key={product.id}>
-                    <div className="flex center middle" style={{
-                      padding: isSm ? "1rem" : 0
-                    }}>
-                      <ProductCard
-                        product={product}
-                        addToCart={!isSm ? props.Cart.add : undefined}
-                        style={{
-                          animationDelay: `${0}ms`,
-                          // width: "100%"
-                        }}
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+            <Swiper
+              ref={swiperRef}
+              direction="horizontal"
+              slidesPerView={1}
+              spaceBetween={10}
+              navigation={{
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+                disabledClass: 'swiper-button-disabled', // ✅ REQUIRED
+              }}
+              onBeforeInit={(swiper) => {
+                swiper.navigation.init();
+                swiper.navigation.update();
+              }}
+              centeredSlides={false}
+              // slidesOffsetBefore={-30}
+              style={{
+                display: 'flex',
+                width: "100%",
+                height: "fit-content",
+                padding: 0,
+                "--swiper-theme-color": theme.palette.primary.main,
+                "--swiper-pagination-color": theme.palette.primary.main,  // Active bullet color
+                "--swiper-pagination-bullet-inactive-color": "gray", // Inactive bullet color
+                "--swiper-pagination-bullet-inactive-opacity": "0.5",
+                "--swiper-navigation-top-offset": "calc(50% - 1rem)",
+              } as CSSProperties}
+              pagination={{
+                clickable: true,
+              }}
+              modules={[Pagination, Navigation]}
+              breakpoints={{
+                300: {
+                  slidesPerView: 1.4,
+                  spaceBetween: 10,
+                },
+                500: {
+                  slidesPerView: 2.4,
+                  spaceBetween: 0
+                },
+                1200: {
+                  slidesPerView: 3.4,
+                  spaceBetween: 10
+                },
+                1400: {
+                  slidesPerView: 4.4,
+                  spaceBetween: 10,
+                },
+                1800: {
+                  slidesPerView: 5.4,
+                  spaceBetween: 10,
+                },
+              }}
+              className="mySwiper"
+            >
+              {products.map(product => (
+                <SwiperSlide className="slide" key={product.id}>
+                  <div className="flex center middle" style={{
+                    padding: isSm ? "1rem" : 0
+                  }}>
+                    <ProductCard
+                      product={product}
+                      addToCart={!isSm ? props.Cart.add : undefined}
+                      style={{
+                        animationDelay: `${0}ms`,
+                        // width: "100%"
+                      }}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
             {!isSm && (
               <>
                 <IconButton ref={prevRef} className="custom-prev swiper-button-prev" sx={{
