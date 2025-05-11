@@ -363,7 +363,7 @@ export default function Header({ Cart, color, setColor }: {
                                     flexWrap: 'wrap'
                                 }}>
                                     <MenuItemCover
-                                        src={'/cardigan_example.webp'}
+                                        src={'/octavio_cardigan_bag_blanket.jpg'}
                                         onClick={() => {
                                             pleasePush(`/cardigans`)
                                         }}
@@ -656,13 +656,25 @@ export default function Header({ Cart, color, setColor }: {
                                     opacity: 0
                                 }} />
                         ) : (
-                            <Image id="logo" src={TerandinaLogo} alt="Terandina"
-                                onClick={() => pleasePush('/')}
-                                style={{
-                                    width: "auto",
-                                    height: "4rem",
-                                    opacity: 0
-                                }} />
+                            <>
+                                {/* <Image id="logo" src={TerandinaNoText} alt="Terandina"
+                                    onClick={() => pleasePush('/')}
+                                    style={{
+                                        width: "auto",
+                                        height: "2.5rem",
+                                        marginBottom: isSm ? "0.25rem" : '0.45rem',
+                                        opacity: 0
+                                    }}
+                                /> */}
+                                <Image id="logo" src={TerandinaLogo} alt="Terandina"
+                                    onClick={() => pleasePush('/')}
+                                    style={{
+                                        width: "auto",
+                                        height: "4rem",
+                                        opacity: 0
+                                    }}
+                                />
+                            </>
                         )}
 
                         {!isSm && (
