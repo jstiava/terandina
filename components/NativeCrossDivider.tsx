@@ -5,8 +5,8 @@ export default function NativeCrossDivider() {
     return (
         <div className="flex" style={{
             position: "relative",
-            height: 'fit-content',
             width: "100%",
+            height: 'fit-content'
         }}>
             <Divider sx={{
                 width: "100%"
@@ -16,8 +16,9 @@ export default function NativeCrossDivider() {
                 sx={{
                     position: "absolute",
                     left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -0.675rem)"
+                    // top: "50%",
+                    transform: "translate(-50%, 0.035rem)",
+                    height: "1rem"
                 }} />
         </div>
     )
