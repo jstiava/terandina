@@ -47,12 +47,21 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                         }}
                     >
                         <Link href={`/item/${p.id}`}>
+                            <div style={{
+                                borderRadius: '100%',
+                                padding: isChosen ? '0.25rem' : 0,
+                                border: `1.5px solid`,
+                                borderColor: isChosen ? theme.palette.primary.main : 'transparent'
+                            }}>
                             <Avatar
                                 key={p.id}
                                 alt={p.name}
                                 src={p.media[0].small || ''}
+
                                 sx={{
-                                    backgroundSize: "200%"
+                                    backgroundSize: "300%",
+                                    width: isChosen ? "2rem" : "2.5rem",
+                                    height: isChosen ? "2rem" : "2.5rem",
                                 }}
                                 onClick={(e) => {
                                     e.preventDefault();
@@ -60,6 +69,7 @@ export default function CategoryVariantSelector({ product, category, size = 'med
                                     onClose();
                                     router.replace(`/item/${p.id}`);
                                 }} />
+                            </div>
                         </Link>
                     </Tooltip>
                 )
