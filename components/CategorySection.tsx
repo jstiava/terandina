@@ -41,7 +41,7 @@ export default function CategorySection({ category, products, ...props }: {
           width={'100%'}
           height={"fit-content"}
           style={{
-            padding: isMd ? "1.5rem 2rem 3rem 2rem" : "9rem 1rem",
+            padding: isMd ? "10rem 2rem 6rem 2rem" : "16rem 1rem",
             margin: isMd ? isSm ? "0rem 0rem 2rem 0rem" : "1rem 2rem" : "1rem 2rem",
             color: theme.palette.getContrastText(TerandinaGreen),
           }}>
