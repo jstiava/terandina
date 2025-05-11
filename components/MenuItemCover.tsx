@@ -8,6 +8,7 @@ export default function MenuItemCover({ children, src, onClick }: any) {
     const [action, setAction] = useState<string | null>(null);
     return (
         <ButtonBase className="column compact"
+            disableRipple
             onMouseEnter={() => setAction('hovering')}
             onMouseLeave={() => setAction(null)}
             onClick={onClick}

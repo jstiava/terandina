@@ -33,6 +33,7 @@ import ScrollButton from "@/components/ScrollButton";
 import MenuItemCover from "@/components/MenuItemCover";
 import { ABOUT_US, ABOUT_US_SIDEBAR } from "./Footer";
 import TerandinaWordmark from "@/icons/TerandinaWordmark";
+import NativeBag from "@/icons/NativeBag";
 
 
 export const menuItems = [
@@ -761,15 +762,19 @@ export default function Header({ Cart, color, setColor }: {
                                         invisible={!Cart.cart || Cart.cart.length === 0}
                                         sx={{
                                             '& .MuiBadge-badge': {
-                                                backgroundColor: color,
-                                                color: theme.palette.getContrastText(color)
+                                                backgroundColor: theme.palette.primary.main,
+                                                color: '#fff',
+                                                top: "0.5rem",
+                                                right: "0.5rem"
                                             }
                                         }}>
                                         <Tooltip title="My Cart">
                                             <IconButton onClick={() => Cart.toggleSidebar()}>
-                                                <ShoppingBagOutlined sx={{
+                                                {/* <ShoppingBagOutlined sx={{
                                                     color: theme.palette.getContrastText(color)
-                                                }} />
+                                                }} /> */}
+
+                                                <NativeBag />
                                             </IconButton>
                                         </Tooltip>
                                     </Badge>
