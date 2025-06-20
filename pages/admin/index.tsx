@@ -30,6 +30,7 @@ import ManagePhotosField from "@/components/ManagePhotosField";
 import { zain_sans_font } from "@/styles/theme";
 import { useRouter } from "next/router";
 import MenuItem from "@/components/MenuItem";
+import AdminWrapper from "@/layout/AdminWrapper";
 
 
 const MAX_IMAGES = 5;
@@ -1644,133 +1645,67 @@ export default function AdminPage() {
     }
 
     return (
-        <div id="content"
-            className="column center"
-            style={{
-                padding: isMobile ? "1rem 0" : "1rem"
-            }}>
-            <div className={isSm ? "column left" : "column left"} style={{
-                marginTop: headerHeight,
-                maxWidth: "120rem",
-                padding: isSm ? "0" : "0.5rem",
+        <AdminWrapper>
+            <div className="flex" style={{
                 width: "100%"
             }}>
-
-
-                <div className="flex compact">
-
-                    <MenuItem
-                        key={'products'}
-                        focused
-                        onClick={() => {
-                            router.push('/admin/products')
-                        }}
-                        icon={<CheckroomOutlined  />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                            backgroundColor: "#00000010"
-                        }}
-                    >
-
-                        Products
-                    </MenuItem>
-
-                    <MenuItem
-                        key={'Inventory'}
-                        onClick={() => {
-                            router.push('/admin/inventory')
-                        }}
-                        icon={<Inventory2Outlined  />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                        }}
-                    >
-
-                        Inventory
-                    </MenuItem>
-                    <MenuItem
-                        key={'Categories'}
-                        onClick={() => {
-                            router.push('/admin/categories')
-                        }}
-                        icon={<CategoryOutlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                        }}
-                    >
-
-                        Categories
-                    </MenuItem>
-
-                </div>
-
-                <div className="flex" style={{
-                    width: "100%"
-                }}>
-                    <DataGrid
-                        getRowId={(row) => {
-                            return row.id;
-                        }}
-                        rows={products}
-                        columns={columns}
-                        editMode="row"
-                        getRowHeight={(params) => {
-                            const row = products.find(x => x.id === params.id)
-                            if (!row) return 100;
-                            return Math.max(100, row.prices.length * 45)
-                        }}
-                        checkboxSelection
-                        rowModesModel={rowModesModel}
-                        onRowModesModelChange={handleRowModesModelChange}
-                        onRowEditStop={handleRowEditStop}
-                        processRowUpdate={processRowUpdate}
-                        onRowSelectionModelChange={newRowSelectionModel => {
-                            setRowSelectionModel(newRowSelectionModel);
-                        }}
-                        rowSelectionModel={rowSelectionModel}
-                        slots={{
-                            toolbar: () => (
-                                <EditToolbar
-                                    setProducts={setProducts}
-                                    selected={rowSelectionModel}
-                                    setSelected={setRowSelectionModel}
-                                    handleAdd={handleAdd}
-                                    handleGroup={handleGroup}
-                                    searchValue={searchValue}
-                                    handleSearch={handleSearch}
-                                />
-                            )
-                        }}
-                        sx={{
-                            width: "100%",
-                            height: "calc(100vh - 9.5rem)"
-                        }}
-                        filterModel={filterModel}
-                        onFilterModelChange={setFilterModel}
-                        initialState={{
-                            filter: {
-                                filterModel: {
-                                    items: [
-                                        {
-                                            id: 1,
-                                            field: 'categories',
-                                            value: 'is',
-                                            operator: 'is',
-                                        },
-                                    ],
-                                },
+                <DataGrid
+                    getRowId={(row) => {
+                        return row.id;
+                    }}
+                    rows={products}
+                    columns={columns}
+                    editMode="row"
+                    getRowHeight={(params) => {
+                        const row = products.find(x => x.id === params.id)
+                        if (!row) return 100;
+                        return Math.max(100, row.prices.length * 45)
+                    }}
+                    checkboxSelection
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    onRowSelectionModelChange={newRowSelectionModel => {
+                        setRowSelectionModel(newRowSelectionModel);
+                    }}
+                    rowSelectionModel={rowSelectionModel}
+                    slots={{
+                        toolbar: () => (
+                            <EditToolbar
+                                setProducts={setProducts}
+                                selected={rowSelectionModel}
+                                setSelected={setRowSelectionModel}
+                                handleAdd={handleAdd}
+                                handleGroup={handleGroup}
+                                searchValue={searchValue}
+                                handleSearch={handleSearch}
+                            />
+                        )
+                    }}
+                    sx={{
+                        width: "100%",
+                        height: "calc(100vh - 9.5rem)"
+                    }}
+                    filterModel={filterModel}
+                    onFilterModelChange={setFilterModel}
+                    initialState={{
+                        filter: {
+                            filterModel: {
+                                items: [
+                                    {
+                                        id: 1,
+                                        field: 'categories',
+                                        value: 'is',
+                                        operator: 'is',
+                                    },
+                                ],
                             },
-                        }}
-                    />
-                </div>
+                        },
+                    }}
+                />
             </div>
-        </div>
+        </AdminWrapper>
     )
 }
 

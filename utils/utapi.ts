@@ -29,8 +29,8 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
         medium: null,
         large: null
     }
-    
-    
+
+
     try {
 
         const compressedBufferSmall = await sharp(Buffer.from(buffer))
@@ -39,9 +39,9 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
             .toBuffer();
 
         const compressedBufferMedium = await sharp(Buffer.from(buffer))
-        .resize(500)
-        .webp()
-        .toBuffer(); 
+            .resize(500)
+            .webp()
+            .toBuffer();
 
         const uploaded = await uploadImage([
             new File([compressedBufferSmall], `small-${name}.webp`, { type: "image/webp" }),
@@ -58,7 +58,7 @@ export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffe
             }
         }
         throw Error("Did not work.")
-          
+
     }
     catch (err) {
         console.log(err);
@@ -135,11 +135,11 @@ export async function hashFile(file: File): Promise<string> {
 
 export async function compressAndUploadAsWebp(file: File, quality = 100) {
     try {
-        const buffer = await file.arrayBuffer(); // Convert File to Buffer
+        const buffer = await file.arrayBuffer();
 
         const compressedBuffer = await sharp(Buffer.from(buffer))
-            .resize({ width: 1000 }) // Resize to max 1000px width (optional)
-            .webp({ quality }) // Convert to WebP and set quality to 75%
+            .resize({ width: 1000 })
+            .webp({ quality })
             .toBuffer();
 
         // Convert buffer back to a File object

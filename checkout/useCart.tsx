@@ -12,6 +12,7 @@ export interface UseCart {
     get: (id: string, size: any) => StripeProduct | null;
     swap: (removedItem: StripeProduct, newItem: StripeProduct) => void;
     checkout: () => void;
+    clear: () => void;
 }
 
 export default function useCart() {
@@ -35,6 +36,10 @@ export default function useCart() {
         localStorage.setItem("cart", JSON.stringify(cart))
         
     }, [cart])
+
+    const clear = () => {
+        setCart([]);
+    }
 
     const add = (item: StripeProduct) => {
         setIsSidebarOpen(true);
@@ -130,5 +135,5 @@ export default function useCart() {
         }))
     }
 
-    return { cart, add, remove, get, isSidebarOpen, toggleSidebar, swap, checkout }
+    return { cart, add, remove, get, isSidebarOpen, toggleSidebar, swap, checkout, clear }
 }

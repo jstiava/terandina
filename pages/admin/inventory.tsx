@@ -31,6 +31,7 @@ import { zain_sans_font } from "@/styles/theme";
 import CoverImage from "@/components/CoverImage";
 import { useRouter } from "next/router";
 import MenuItem from "@/components/MenuItem";
+import AdminWrapper from "@/layout/AdminWrapper";
 
 const MAX_IMAGES = 5;
 
@@ -611,137 +612,71 @@ export default function AdminPage() {
     }
 
     return (
-        <div id="content"
-            className="column center"
-            style={{
-                padding: isMobile ? "1rem 0" : "0rem"
+        <AdminWrapper>
+            <div className="flex top" style={{
+                width: "100%",
+                // position: "fixed",
+                // // zIndex: 10,
+                // height: "calc(100vh - 5rem)",
+                backgroundColor: theme.palette.background.paper,
             }}>
-            <div className={isSm ? "column left" : "column left"} style={{
-                marginTop: headerHeight,
-                maxWidth: "120rem",
-                padding: isSm ? "0" : "0.5rem",
-                width: "100%"
-            }}>
-
-                <div className="flex compact">
-
-                    <MenuItem
-                        key={'products'}
-                        onClick={() => {
-                            router.push('/admin/products')
-                        }}
-                        icon={<CheckroomOutlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-
-                        }}
-                    >
-
-                        Products
-                    </MenuItem>
-
-                    <MenuItem
-                        focused
-                        key={'Inventory'}
-                        onClick={() => {
-                            router.push('/admin/inventory')
-                        }}
-                        icon={<Inventory2Outlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                            backgroundColor: "#00000010"
-                        }}
-                    >
-
-                        Inventory
-                    </MenuItem>
-                    <MenuItem
-                        key={'Categories'}
-                        onClick={() => {
-                            router.push('/admin/categories')
-                        }}
-                        icon={<CategoryOutlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                        }}
-                    >
-
-                        Categories
-                    </MenuItem>
-
-                </div>
-
-                <div className="flex top" style={{
-                    width: "100%",
-                    // position: "fixed",
-                    // // zIndex: 10,
-                    // height: "calc(100vh - 5rem)",
-                    backgroundColor: theme.palette.background.paper,
-                }}>
-                    <DataGrid
-                        getRowId={(row) => {
-                            return row.id;
-                        }}
-                        rows={products}
-                        columns={[...columns, ...generateSizeColumns()]}
-                        editMode="row"
-                        getRowHeight={(params) => {
-                            const row = products.find(x => x.id === params.id)
-                            if (!row) return 100;
-                            return 50;
-                        }}
-                        checkboxSelection
-                        rowModesModel={rowModesModel}
-                        onRowModesModelChange={handleRowModesModelChange}
-                        onRowEditStop={handleRowEditStop}
-                        processRowUpdate={processRowUpdate}
-                        onRowSelectionModelChange={newRowSelectionModel => {
-                            setRowSelectionModel(newRowSelectionModel);
-                        }}
-                        rowSelectionModel={rowSelectionModel}
-                        // slots={{
-                        //     toolbar: () => (
-                        //         <EditToolbar
-                        //             setProducts={setProducts}
-                        //             selected={rowSelectionModel}
-                        //             setSelected={setRowSelectionModel}
-                        //             handleAdd={handleAdd}
-                        //             handleGroup={handleGroup}
-                        //         />
-                        //     )
-                        // }}
-                        sx={{
-                            width: "100%",
-                            height: "100%"
-                        }}
-                        // filterModel={filterModel}
-                        // onFilterModelChange={setFilterModel}
-                        initialState={{
-                            filter: {
-                                filterModel: {
-                                    items: [
-                                        {
-                                            id: 1,
-                                            field: 'categories',
-                                            value: 'is',
-                                            operator: 'is',
-                                        },
-                                    ],
-                                },
+                <DataGrid
+                    getRowId={(row) => {
+                        return row.id;
+                    }}
+                    rows={products}
+                    columns={[...columns, ...generateSizeColumns()]}
+                    editMode="row"
+                    getRowHeight={(params) => {
+                        const row = products.find(x => x.id === params.id)
+                        if (!row) return 100;
+                        return 50;
+                    }}
+                    checkboxSelection
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    onRowSelectionModelChange={newRowSelectionModel => {
+                        setRowSelectionModel(newRowSelectionModel);
+                    }}
+                    rowSelectionModel={rowSelectionModel}
+                    // slots={{
+                    //     toolbar: () => (
+                    //         <EditToolbar
+                    //             setProducts={setProducts}
+                    //             selected={rowSelectionModel}
+                    //             setSelected={setRowSelectionModel}
+                    //             handleAdd={handleAdd}
+                    //             handleGroup={handleGroup}
+                    //         />
+                    //     )
+                    // }}
+                    sx={{
+                        width: "100%",
+                        height: "100%"
+                    }}
+                    // filterModel={filterModel}
+                    // onFilterModelChange={setFilterModel}
+                    initialState={{
+                        filter: {
+                            filterModel: {
+                                items: [
+                                    {
+                                        id: 1,
+                                        field: 'categories',
+                                        value: 'is',
+                                        operator: 'is',
+                                    },
+                                ],
                             },
-                        }}
+                        },
+                    }}
 
-                    >
-                    </DataGrid>
-                </div>
+                >
+                </DataGrid>
             </div>
-        </div>
+        </AdminWrapper>
     )
 }
 

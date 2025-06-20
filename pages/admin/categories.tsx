@@ -2,6 +2,7 @@
 import ManagePhotosField from "@/components/ManagePhotosField";
 import ManageSubcategories from "@/components/ManageSubcategories";
 import MenuItem from "@/components/MenuItem";
+import AdminWrapper from "@/layout/AdminWrapper";
 import { headerHeight } from "@/layout/AuthProvider";
 import { Category, StripeAppProps, StripeProduct } from "@/types";
 import { AddOutlined, CancelOutlined, CategoryOutlined, CheckroomOutlined, CloseOutlined, DeleteOutline, EditOutlined, Inventory2Outlined, OpenInNew, RefreshOutlined, SaveOutlined, TurnLeftOutlined } from "@mui/icons-material";
@@ -521,113 +522,46 @@ export default function CategoryAdminPage(props: StripeAppProps) {
     ]
 
     return (
-        <div id="content"
-            className="column center"
-            style={{
-                padding: "1rem"
-            }}>
-            <div className={isSm ? "column left" : "column left"} style={{
-                marginTop: headerHeight,
-                maxWidth: "120rem",
-                padding: "0.5rem",
-                width: "100%"
-            }}>
-                <div className="flex compact">
-
-                    <MenuItem
-                        key={'products'}
-                        onClick={() => {
-                            router.push('/admin/products')
+        <AdminWrapper>
+            <div className="flex">
+                {categories && (
+                    <DataGrid
+                        getRowId={(row) => {
+                            return row._id;
                         }}
-                        icon={<CheckroomOutlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-
+                        getRowHeight={(params) => {
+                            return 100;
                         }}
-                    >
-
-                        Products
-                    </MenuItem>
-
-                    <MenuItem
-                        
-                        key={'Inventory'}
-                        onClick={() => {
-                            router.push('/admin/inventory')
+                        rows={categories}
+                        columns={columns as any}
+                        editMode="row"
+                        checkboxSelection
+                        filterModel={filterModel}
+                        onFilterModelChange={setFilterModel}
+                        rowModesModel={rowModesModel}
+                        onRowModesModelChange={handleRowModesModelChange}
+                        onRowEditStop={handleRowEditStop}
+                        processRowUpdate={processRowUpdate}
+                        onRowSelectionModelChange={newRowSelectionModel => {
+                            setRowSelectionModel(newRowSelectionModel);
                         }}
-                        icon={<Inventory2Outlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                            
+                        rowSelectionModel={rowSelectionModel}
+                        slots={{
+                            toolbar: () => (
+                                <EditToolbar
+                                    setCategories={setCategories}
+                                    selected={rowSelectionModel}
+                                    setSelected={setRowSelectionModel}
+                                />
+                            )
                         }}
-                    >
-
-                        Inventory
-                    </MenuItem>
-                    <MenuItem
-                    focused
-                        key={'Categories'}
-                        onClick={() => {
-                            router.push('/admin/categories')
+                        sx={{
+                            width: "100%",
+                            height: "calc(100vh - 7rem)"
                         }}
-                        icon={<CategoryOutlined />}
-                        reverse
-                        style={{
-                            width: "fit-content",
-                            padding: "0 0 0 1rem",
-                            backgroundColor: "#00000010"
-                        }}
-                    >
-
-                        Categories
-                    </MenuItem>
-
-                </div>
-                <div className="flex">
-                    {categories && (
-                        <DataGrid
-                            getRowId={(row) => {
-                                return row._id;
-                            }}
-                            getRowHeight={(params) => {
-                                return 100;
-                            }}
-                            rows={categories}
-                            columns={columns as any}
-                            editMode="row"
-                            checkboxSelection
-                            filterModel={filterModel}
-                            onFilterModelChange={setFilterModel}
-                            rowModesModel={rowModesModel}
-                            onRowModesModelChange={handleRowModesModelChange}
-                            onRowEditStop={handleRowEditStop}
-                            processRowUpdate={processRowUpdate}
-                            onRowSelectionModelChange={newRowSelectionModel => {
-                                setRowSelectionModel(newRowSelectionModel);
-                            }}
-                            rowSelectionModel={rowSelectionModel}
-                            slots={{
-                                toolbar: () => (
-                                    <EditToolbar
-                                        setCategories={setCategories}
-                                        selected={rowSelectionModel}
-                                        setSelected={setRowSelectionModel}
-                                    />
-                                )
-                            }}
-                            sx={{
-                                width: "100%",
-                                height: "calc(100vh - 7rem)"
-                            }}
-                        />
-                    )}
-                </div>
+                    />
+                )}
             </div>
-
-        </div>
+        </AdminWrapper>
     )
 }
