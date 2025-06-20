@@ -37,7 +37,7 @@ export default async function handleRequest(
                     continue;
                 }
 
-                product.selectedPrice = product.prices.find((x) => x.id === parsed.price_id);
+                product.selectedPrice = product.prices.find((x : any) => x.id === parsed.price_id);
                 product.quantity = parsed.quantity;
                 product.size = parsed.size;
                 charge.products.push(product);
