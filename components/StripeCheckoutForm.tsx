@@ -11,13 +11,29 @@ import {
 } from "@stripe/react-stripe-js";
 import { Layout } from "@stripe/stripe-js";
 import { Button } from "@mui/material";
+import Stripe from "stripe";
 
 export default function CheckoutForm({
   subtotal,
-  emailAddress
-} : {
-  subtotal : string,
-  emailAddress: string | null
+  emailAddress,
+  address
+}: {
+  subtotal: string,
+  emailAddress: string | null,
+  address: {
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    address: {
+      line1: string;
+      line2: string | null;
+      city: string;
+      state: string;
+      postal_code: string;
+      country: string;
+    };
+    phone?: string;
+  }
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -46,6 +62,7 @@ export default function CheckoutForm({
         return_url: `${window.location.origin}/payment-complete`,
         payment_method_data: {
           billing_details: {
+            ...address,
             email: emailAddress,
           }
         }
@@ -76,11 +93,11 @@ export default function CheckoutForm({
         id="payment-element"
         options={paymentElementOptions}
       />
-      <Button variant="contained" size="large" fullWidth onClick={handleSubmit} 
-      disabled={!emailAddress}
-      sx={{
-        borderRadius: "0.25rem"
-      }}>
+      <Button variant="contained" size="large" fullWidth onClick={handleSubmit}
+        disabled={!emailAddress}
+        sx={{
+          borderRadius: "0.25rem"
+        }}>
         Checkout - {subtotal}
       </Button>
       {message && <div id="payment-message">{message}</div>}
