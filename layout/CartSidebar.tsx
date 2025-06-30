@@ -1,7 +1,7 @@
 import { UseCart } from "@/checkout/useCart";
 import ProductInBagCard from "@/components/ProductInBagCard";
 import { CloseOutlined, ShoppingBagOutlined } from "@mui/icons-material";
-import { Button, Collapse, Divider, Drawer, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Card, Collapse, Divider, Drawer, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { TransitionGroup } from 'react-transition-group';
 import EmptyBag from '@/public/EmptyBag.webp'
 
@@ -122,7 +122,11 @@ export default function CartSidebar({
                     padding: "1rem",
                     width: "100%"
                 }}>
-
+                    <Button
+                        onClick={e => {
+                            Cart.clear();
+                        }}
+                    >Empty cart.</Button>
                     <Button
                         variant="contained"
                         disabled={!Cart.cart || Cart.cart.length === 0}

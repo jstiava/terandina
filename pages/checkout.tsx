@@ -13,6 +13,7 @@ import NativeCrossDivider from "@/components/NativeCrossDivider";
 
 
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
+// const STRIPE_PUBLISHABLE_KEY = "pk_test_51RbubdPf2y8hwgTueP49rSJA5wOI4dDCmG3sytOH7Tc8TcmLvnOkRcu3Kr3VxsOYw7VNvAHl8thXiiJgJR9ZPhdU00o6yQdbXK"
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 const isAddressFilled = (address: {
@@ -66,24 +67,11 @@ export default function Checkout(props: StripeAppProps) {
     const theme = useTheme();
     const router = useRouter();
     const [clientSecret, setClientSecret] = useState<string | null>(null);
-    const [confirmed, setConfirmed] = useState(false);
+    const [confirmed, setConfirmed] = useState(true);
     const [subtotal, setSubtotal] = useState(0);
     const [totalDue, setTotalDue] = useState(0);
     const [emailAddress, setEmailAddress] = useState<string | null>(null);
-    const [address, setAddress] = useState<{
-        name: string;
-        firstName?: string;
-        lastName?: string;
-        address: {
-            line1: string;
-            line2: string | null;
-            city: string;
-            state: string;
-            postal_code: string;
-            country: string;
-        };
-        phone?: string;
-    } | null>(null);
+    const [address, setAddress] = useState<any | null>(null);
 
     const [paymentIntentId, setPaymentIntentId] = useState(null);
 
@@ -350,6 +338,7 @@ export default function Checkout(props: StripeAppProps) {
                                                 <StripeCheckoutForm
                                                     subtotal={formatPrice(totalDue, 'usd')}
                                                     emailAddress={emailAddress}
+                                                    address={address}
                                                 />
                                             ) : (
                                                 <div className="flex right">

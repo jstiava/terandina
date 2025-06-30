@@ -1,5 +1,9 @@
-import { StripeAppProps } from "@/types";
-import { Button, TextField, Typography, useTheme } from "@mui/material";
+import CastedProductInBagCard from "@/components/CastedProductInBagCard";
+import { formatPrice } from "@/components/ProductCard";
+import ProductInBagCard from "@/components/ProductInBagCard";
+import { StripeAppProps, StripeProduct } from "@/types";
+import { CheckCircleOutline } from "@mui/icons-material";
+import { Alert, Button, CircularProgress, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useTheme } from "@mui/material";
 import { RouteMatcher } from "next/dist/server/route-matchers/route-matcher";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -11,6 +15,10 @@ export default function PaymentCompletePage(props: StripeAppProps) {
     const theme = useTheme();
     const router = useRouter();
     const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+    const [charge, setCharge] = useState<any | null>(null);
+    const [taxAdded, setTaxAdded] = useState<number | null>(null);
+    const [totalDue, setTotalDue] = useState(0);
+
     const [email, setEmail] = useState('');
 
     useEffect(() => {
@@ -21,48 +29,135 @@ export default function PaymentCompletePage(props: StripeAppProps) {
             return;
         }
 
-        fetch(`/api/create-payment-intent?payment_intent=${payment_intent}`, {
+        // fetch(`/api/create-payment-intent?payment_intent=${payment_intent}`, {
+        fetch(`/api/payment-complete?payment_intent=${payment_intent}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         })
             .then((res) => res.json())
             .then((data) => {
                 console.log(data);
-                setReceiptUrl(data.receipt_url);
+                setCharge(data.charge);
+                setTotalDue(data.charge.amount)
             })
             .catch(err => {
                 console.log(err);
             });
-    }, [router])
+    }, [router]);
+
+
+    if (!charge) {
+
+        return (
+            <div className="flex center middle" style={{
+                height: "100%"
+            }}>
+                <CircularProgress />
+            </div>
+        )
+    }
 
 
     return (
         <div className="column relaxed center top"
             style={{
                 width: "100%",
-                padding: "15vh 0.5rem 0 0.5rem",
+                padding: "20vh 0.5rem 0 0.5rem",
                 height: "calc(100vh - 5rem)",
-                backgroundColor: theme.palette.primary.main,
-                color: theme.palette.primary.contrastText
             }}>
+            <div className="column center top">
 
-            <Typography variant="h1" sx={{
-                fontSize: "8rem",
-                lineHeight: "70%",
-                textAlign: 'center'
-            }}>Success!</Typography>
-            <Typography variant="h2" sx={{
-                textAlign: 'center'
-            }}>We successfully received your order.</Typography>
-            <div className="flex fit">
-                <Button variant="flipped" onClick={() => router.push('/')}>
-                    Continue to Home Page
-                </Button>
-                {receiptUrl && (
-                    <Button variant="contained" onClick={() => window.open(receiptUrl, '_blank')}>
-                        View receipt
-                    </Button>
-                )}
+                <CheckCircleOutline />
+                <div className="column center compact">
+                    <Typography variant="h1" sx={{
+                        fontSize: "1rem",
+                        lineHeight: "70%",
+                        textAlign: 'center'
+                    }}>Thank you for your purchase!</Typography>
+                    <Typography sx={{
+                        textAlign: 'center'
+                    }}>We received your order and will ship to you in 7-14 business days.</Typography>
+                </div>
+            </div>
+            <div className="column left top" style={{
+                backgroundColor: '#fff',
+                borderRadius: '0.25rem',
+                padding: "1.5rem",
+                width: "40rem",
+                maxWidth: '95%',
+                marginTop: "2rem"
+            }}>
+                <Typography variant="h5">Order Summary</Typography>
+
+                {charge.products && charge.products.map((product: StripeProduct) => {
+                    return (
+                        <CastedProductInBagCard
+                            product={product}
+                            key={product.id}
+                        />
+                    )
+                })}
+
+                <TableContainer>
+                    <Table sx={{
+                        width: "100%"
+                    }}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{
+                                    width: "calc(100% - 1rem)"
+                                }}>Product</TableCell>
+                                <TableCell sx={{
+                                    width: "1rem"
+                                }}>Price</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        {/*
+                        <TableBody>
+                            {charge.products.map((product, index) => {
+                                if (!product.selectedPrice || !product.selectedPrice.unit_amount) {
+                                    return <Alert key={index}>
+                                        <Typography>{product.name} could not be processed through cart.</Typography>
+                                    </Alert>
+                                }
+                                return (
+                                    <TableRow key={index}>
+                                        <TableCell sx={{
+                                            width: "calc(100% - 1rem)"
+                                        }}>{product.quantity} &middot; {product.name}{product.size && (
+                                            <>
+                                                <br />
+                                                <span style={{
+                                                    opacity: 0.5
+                                                }}>Size: {product.size}</span>
+                                            </>
+                                        )}</TableCell>
+                                        <TableCell sx={{
+                                            width: "1rem",
+                                            verticalAlign: 'top'
+                                        }}>{formatPrice(product.selectedPrice.unit_amount * product.quantity, product.selectedPrice.currency)}</TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                        {/* <TableRow>
+                            <TableCell>SUBTOTAL</TableCell>
+                            <TableCell>{formatPrice(subtotal, 'usd')}</TableCell>
+                        </TableRow> */}
+                        {/* <TableRow sx={{
+                            opacity: 0.5
+                        }}>
+                            <TableCell>Shipping and Taxes included.</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow> */}
+                        <TableRow>
+                            <TableCell sx={{ fontSize: "1rem" }}>Amount Recieved</TableCell>
+                            <TableCell sx={{ fontSize: "1rem" }}>{formatPrice(totalDue, 'usd')}</TableCell>
+                        </TableRow>
+                    </Table>
+                </TableContainer>
+
+
             </div>
         </div>
     )
