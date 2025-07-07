@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import { Category, StripeAppProps, StripeProduct } from "@/types";
 import fetchAppServer from "@/utils/fetch";
 import Mongo from "@/utils/mongo";
-import { alpha, Button, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, Button, Chip, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -178,7 +178,6 @@ export default function SearchAndFilterPage(props: StripeAppProps & {
                 style={{
                     width: "100%",
                     padding: isSm ? "0.5rem" : "2rem",
-                    marginTop: "6rem",
                     color: '#000000',
 
                 }}>
@@ -192,8 +191,8 @@ export default function SearchAndFilterPage(props: StripeAppProps & {
                         position: "sticky",
                         top: headerHeight,
                         backgroundColor: alpha('#f4f4f4', 0.9),
-                        padding: "1.25rem",
-                        zIndex: 1
+                        padding: isSm ? "0.5rem 0.5rem" : "0.5rem 2rem",
+                        zIndex: 1,
                     }}>
 
                         <TextField
@@ -221,18 +220,50 @@ export default function SearchAndFilterPage(props: StripeAppProps & {
                                     )
                                 }
                             }}
+                            sx={{
+                                width: "calc(100% - 5rem)"
+                            }}
                         />
 
                         {results && (
-                            <div className="flex left fit">
-                                <Typography>{results.length} results</Typography>
+                            <div className="column compact2 left fit">
+                                <Typography variant="caption">{results.length} results</Typography>
                             </div>
                         )}
                     </div>
+                    <div className="column left" style={{
+                        width: "100%",
+                         marginTop: '4rem',
+                         
+                       
+                    }}>
+                        {/* <div className="flex compact wrap" style={{
+                              flexWrap: "wrap",
+                                padding: isSm ? "0rem 0.5rem" : "0rem 2rem",
+                        }}>
+                            {props.categories?.map(cat => {
+
+                                if (cat.type != 'collection') {
+                                    return null;
+                                }
+
+                            return (
+                                <Chip
+                                    key={cat._id}
+                                    label={cat.name}
+                                    sx={{
+                                        marginBottom: "0.5rem"
+                                    }}
+                                />
+                            )
+                        })}
+                        </div> */}
+                    
                     <div className={'flex left top'} style={{
                         flexWrap: 'wrap',
                         color: theme.palette.text.primary,
                         width: "100%",
+                       
                     }}>
                         {(results ? results : props.static.products).map((product, index) => {
                             const row = Math.floor(index / 3);
@@ -257,6 +288,7 @@ export default function SearchAndFilterPage(props: StripeAppProps & {
                                 />
                             )
                         })}
+                    </div>
                     </div>
                     {results && (
                         <div className="column center middle">
