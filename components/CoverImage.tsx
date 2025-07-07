@@ -67,6 +67,7 @@ export default function CoverImage({ className = "", url, height, width, style =
         transition: `opacity 0.5s ease-in-out ${delay}s
      transform 3s ease-in-out 0.5s
     `,
+    
         ...style,
       }}>
       <div

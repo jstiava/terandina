@@ -2,7 +2,7 @@
 
 import CoverImage from "@/components/CoverImage";
 import PriceSelector from "@/components/PriceSelector";
-import ProductCard, { DisplayPrice } from "@/components/ProductCard";
+import ProductCard, { DisplayPrice, formatPrice } from "@/components/ProductCard";
 import { Category, SIZING_OPTIONS, StripeAppProps, SizeChart, StripeProduct } from "@/types";
 import { alpha, Button, Chip, Dialog, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Head from "next/head";
@@ -294,14 +294,18 @@ export default function Home(props: StripeAppProps & {
                 "@type": "Brand",
                 "name": "Terandina Inc."
             },
+            "offers": {
+                "@type": "Offer",
+                "url": `https://terandina.com/item/${props.static.product.id}`,
+                "priceCurrency": "USD",
+                "price": props.static.product.selectedPrice?.unit_amount ? formatPrice(props.static.product.selectedPrice?.unit_amount, 'usd') : '$59.99',
+                "availability": "https://schema.org/InStock",
+                "itemCondition": "https://schema.org/NewCondition"
+            }
         },
         {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "brand": {
-                "@type": "Brand",
-                "name": "Terandina Inc."
-            },
             "itemListElement": [
                 {
                     "@type": "ListItem",
@@ -318,7 +322,7 @@ export default function Home(props: StripeAppProps & {
             ]
         },
         {
-            "@context": "http://schema.org/",
+            "@context": "https://schema.org",
             "@type": "MerchantReturnPolicy",
             "@id": "#return_policy",
             "applicableCountry": "US",
@@ -329,7 +333,7 @@ export default function Home(props: StripeAppProps & {
             "returnFees": "https://schema.org/FreeReturn"
         },
         {
-            "@context": "https://schema.org/",
+            "@context": "https://schema.org",
             "@type": "OfferShippingDetails",
             "@id": "#shipping_policy",
             "shippingRate": {
@@ -356,9 +360,8 @@ export default function Home(props: StripeAppProps & {
                     "unitCode": "DAY"
                 }
             }
-        },
+        }
     ]
-
 
     return (
         <>
@@ -366,6 +369,7 @@ export default function Home(props: StripeAppProps & {
                 <title>{product.name} - Terandina - Handcrafted Native Outerwear and Accessories</title>
                 <meta property="og:title" content={`${product.name} - Terandina - Handcrafted Native Outerwear and Accessories`} />
                 <meta property="og:description" content={product.description || ""} />
+                <meta name="robots" content="max-image-preview:large" />
                 <meta property="og:image" content={product.media && product.media.length > 0 ? product.media[0].medium || '' : ''} />
                 <meta property="og:image:width" content="1200" />
                 <meta property="og:image:height" content="630" />
