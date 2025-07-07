@@ -1,10 +1,13 @@
 import Stripe from "stripe";
 import { UseCart } from "./checkout/useCart";
+import { Dispatch, SetStateAction } from "react";
 
 
 export interface StripeAppProps {
     Cart: UseCart,
-    categories: Category[] | null
+    categories: Category[] | null,
+    search: string | null,
+    setSearch: Dispatch<SetStateAction<any>>
 }
 
 export interface StripePrice extends Stripe.Price {

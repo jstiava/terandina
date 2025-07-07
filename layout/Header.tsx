@@ -1,4 +1,4 @@
-import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link, alpha } from "@mui/material";
+import { Typography, useTheme, Tooltip, IconButton, Button, useMediaQuery, Badge, ButtonBase, TextField, Link, alpha, CircularProgress } from "@mui/material";
 import {
     ArrowBack,
     ArrowForward,
@@ -24,7 +24,7 @@ import TerandinaNoText from '@/public/Terandina_no_text.png'
 import GarmentNoSleeve from '@/public/GarmentNoSleeve.png';
 import GarmentAll from '@/public/GarmentAll.png';
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import anime from "animejs";
 import MenuItem from "@/components/MenuItem";
 import ColorPicker from "@/components/ColorPicker";
@@ -34,6 +34,8 @@ import MenuItemCover from "@/components/MenuItemCover";
 import { ABOUT_US, ABOUT_US_SIDEBAR } from "./Footer";
 import TerandinaWordmark from "@/icons/TerandinaWordmark";
 import NativeBag from "@/icons/NativeBag";
+import NativeSearch from "@/icons/NativeSearch";
+import { equal } from "assert";
 
 
 export const menuItems = [
@@ -60,17 +62,21 @@ export const menuItems = [
 ]
 
 
-export default function Header({ Cart, color, setColor }: {
+export default function Header({ Cart, color, setColor, search, setSearch }: {
     Cart: UseCart,
     color: string,
-    setColor: Dispatch<SetStateAction<string>>
+    setColor: Dispatch<SetStateAction<string>>,
+    search: string | null,
+    setSearch: Dispatch<SetStateAction<string | null>>
 }) {
 
     const theme = useTheme();
     const router = useRouter();
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('placeholder');
     const [email, setEmail] = useState("");
+    const firstTime = useRef(true);
 
     const pleasePush: (...args: Parameters<typeof router.push>) => void = (
         ...args
@@ -100,7 +106,21 @@ export default function Header({ Cart, color, setColor }: {
             easing: "easeInOutQuad",
             delay: (el, i) => (100 * i) + 100,
         });
-    }, [isSm])
+    }, [isSm]);
+
+
+    useEffect(() => {
+
+        console.log(router.asPath);
+        if (router.asPath.startsWith('/search')) {
+            firstTime.current = false;
+        }
+        else {
+            setSearch(null);
+            firstTime.current = true;
+        }
+
+    }, [router])
 
     const handleSwitchTab = (key: string) => {
 
@@ -229,7 +249,7 @@ export default function Header({ Cart, color, setColor }: {
                     position: "fixed",
                     left: 0,
                     top: headerHeight,
-                    height: `calc(100vh - ${headerHeight}) `,
+                    height: `calc(100dvh - ${headerHeight}) `,
                     width: isSm ? "100%" : "25rem",
                     // backgroundImage: 'url(/GarmentAll.png)',
                     backgroundColor: color,
@@ -479,8 +499,8 @@ export default function Header({ Cart, color, setColor }: {
                     </div>
 
                     <div className="column fit" style={{
-                        padding: "2rem 0rem",
                         position: 'absolute',
+                        padding: "2rem 0rem",
                         bottom: 'var(--safe-area-inset-bottom, 0px)',
                         backgroundColor: color,
                         width: '100%'
@@ -749,7 +769,7 @@ export default function Header({ Cart, color, setColor }: {
                             <div className="flex snug fit">
                                 {/* <ColorPicker color={color} setColor={setColor} /> */}
 
-                                <div className="flex compact fit">
+                                <div className="flex compact2 fit">
                                     {/* <IconButton onClick={() => {
                                         return;
                                     }}>
@@ -757,6 +777,56 @@ export default function Header({ Cart, color, setColor }: {
                                             color: theme.palette.getContrastText(color)
                                         }} />
                                     </IconButton> */}
+                                    {!router.pathname.startsWith('/search') && (
+                                        <>
+                                            {isSm ? (
+                                                <IconButton
+                                                    onClick={e => {
+                                                        router.push('/search')
+                                                    }}
+                                                >
+                                                    <NativeSearch />
+                                                </IconButton>
+                                            ) : (
+                                                <TextField
+                                                    variant="standard"
+                                                    placeholder="Search"
+                                                    value={search}
+                                                    onFocus={() => router.prefetch('/search')}
+                                                    onChange={e => {
+                                                        setSearch(e.target.value)
+                                                        const params = new URLSearchParams({ q: e.target.value }).toString();
+                                                        if (firstTime.current) {
+                                                            router.push(`/search`, undefined, { shallow: true })
+                                                            firstTime.current = false;
+                                                        }
+                                                        else {
+                                                            router.replace(`/search?${params}`, undefined, { shallow: true })
+                                                        }
+                                                    }}
+                                                    slotProps={{
+                                                        input: {
+                                                            endAdornment: (
+                                                                <div className="flex snug fit">
+                                                                    {!router.asPath.startsWith('/search') && search && (
+                                                                        <CircularProgress size={16} />
+                                                                    )}
+                                                                    <IconButton
+                                                                        onClick={e => {
+                                                                            console.log("Click")
+                                                                        }}
+                                                                    >
+                                                                        <NativeSearch />
+                                                                    </IconButton>
+                                                                </div>
+                                                            )
+                                                        }
+                                                    }}
+                                                />
+                                            )}
+                                        </>
+                                    )}
+
                                     <Badge
                                         badgeContent={Cart.cart?.length || 0}
                                         invisible={!Cart.cart || Cart.cart.length === 0}

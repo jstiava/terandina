@@ -23,7 +23,7 @@ declare module '@mui/material/Button' {
 }
 
 export const headerHeight = "4rem";
-const isProduction = true;
+const isProduction = false;
 
 const protectedRoutes = ['/admin'];
 
@@ -39,6 +39,8 @@ export default function AuthProvider({
     const router = useRouter();
     const [color, setColor] = useState("#f4f4f4");
     const [categories, setCategories] = useState(null);
+
+    const [search, setSearch] = useState<string | null>(null);
 
     const getCategories = async () => {
 
@@ -138,14 +140,14 @@ export default function AuthProvider({
                 <Head>
                     <meta name="theme-color" content={theme.palette.background.paper} />
                 </Head>
-                <NextNProgress color={theme.palette.primary.main} />
-                <Header Cart={Cart} color={color} setColor={setColor} />
+                <NextNProgress showOnShallow={false} color={theme.palette.primary.main} />
+                <Header Cart={Cart} color={color} setColor={setColor} search={search} setSearch={setSearch} />
                 <CartSidebar Cart={Cart} />
                 <div id="content" className="column snug" style={{
                     minHeight: "100vh",
                     backgroundColor: theme.palette.background.paper
                 }}>
-                    <Component {...pageProps} Cart={Cart} categories={categories} />
+                    <Component {...pageProps} Cart={Cart} categories={categories} search={search} setSearch={setSearch} />
                 </div>
                 <Footer color={color} />
             </ThemeProvider>
