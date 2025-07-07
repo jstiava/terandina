@@ -782,7 +782,7 @@ export default function Header({ Cart, color, setColor, search, setSearch }: {
                                             {isSm ? (
                                                 <IconButton
                                                     onClick={e => {
-                                                        router.push('/search')
+                                                        pleasePush('/search')
                                                     }}
                                                 >
                                                     <NativeSearch />
@@ -797,7 +797,7 @@ export default function Header({ Cart, color, setColor, search, setSearch }: {
                                                         setSearch(e.target.value)
                                                         const params = new URLSearchParams({ q: e.target.value }).toString();
                                                         if (firstTime.current) {
-                                                            router.push(`/search`, undefined, { shallow: true })
+                                                           pleasePush(`/search`, undefined, { shallow: true })
                                                             firstTime.current = false;
                                                         }
                                                         else {

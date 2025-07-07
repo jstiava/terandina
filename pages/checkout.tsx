@@ -10,6 +10,7 @@ import StripeCompletePage from "@/components/StripeCompletePage";
 import { formatPrice } from "@/components/ProductCard";
 import { useRouter } from "next/router";
 import NativeCrossDivider from "@/components/NativeCrossDivider";
+import CastedProductInBagCard from "@/components/CastedProductInBagCard";
 
 
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51QoxC5BNjcHRVZ2aQUGaPzUW5mIja4EGElNvfdaX02k7b19XQxkfXZRIKQui5yvysoAGmVkzQiguD1Sa2ecFfPN1003naOOVuP"
@@ -173,6 +174,41 @@ export default function Checkout(props: StripeAppProps) {
                                 <div className="column" style={{
                                     width: "100%"
                                 }}>
+                                    <div className="column">
+                                        <div className="column" style={{
+                                            padding: "0.5rem"
+                                        }}>
+                                            {props.Cart.cart.map((product, index) => {
+                                                    if (!product.selectedPrice || !product.selectedPrice.unit_amount) {
+                                                        return <Alert key={index}>
+                                                            <Typography>{product.name} could not be processed through cart.</Typography>
+                                                        </Alert>
+                                                    }
+                                                    return (
+                                                        // <TableRow key={index}>
+                                                        //     <TableCell sx={{
+                                                        //         width: "calc(100% - 1rem)"
+                                                        //     }}>{product.quantity} &middot; {product.name}{product.size && (
+                                                        //         <>
+                                                        //             <br />
+                                                        //             <span style={{
+                                                        //                 opacity: 0.5
+                                                        //             }}>Size: {product.size}</span>
+                                                        //         </>
+                                                        //     )}</TableCell>
+                                                        //     <TableCell sx={{
+                                                        //         width: "1rem",
+                                                        //         verticalAlign: 'top'
+                                                        //     }}>{formatPrice(product.selectedPrice.unit_amount * product.quantity, product.selectedPrice.currency)}</TableCell>
+                                                        // </TableRow>
+                                                        <CastedProductInBagCard
+                                                            product={product}
+                                                            key={product.id}
+                                                        />
+                                                    )
+                                                })}
+                                        </div>
+                                    </div>
                                     <TableContainer>
                                         <Table sx={{
                                             width: "100%"
@@ -187,33 +223,6 @@ export default function Checkout(props: StripeAppProps) {
                                                     }}>Price</TableCell>
                                                 </TableRow>
                                             </TableHead>
-                                            <TableBody>
-                                                {props.Cart.cart.map((product, index) => {
-                                                    if (!product.selectedPrice || !product.selectedPrice.unit_amount) {
-                                                        return <Alert key={index}>
-                                                            <Typography>{product.name} could not be processed through cart.</Typography>
-                                                        </Alert>
-                                                    }
-                                                    return (
-                                                        <TableRow key={index}>
-                                                            <TableCell sx={{
-                                                                width: "calc(100% - 1rem)"
-                                                            }}>{product.quantity} &middot; {product.name}{product.size && (
-                                                                <>
-                                                                    <br />
-                                                                    <span style={{
-                                                                        opacity: 0.5
-                                                                    }}>Size: {product.size}</span>
-                                                                </>
-                                                            )}</TableCell>
-                                                            <TableCell sx={{
-                                                                width: "1rem",
-                                                                verticalAlign: 'top'
-                                                            }}>{formatPrice(product.selectedPrice.unit_amount * product.quantity, product.selectedPrice.currency)}</TableCell>
-                                                        </TableRow>
-                                                    )
-                                                })}
-                                            </TableBody>
                                             <TableRow>
                                                 <TableCell>SUBTOTAL</TableCell>
                                                 <TableCell>{formatPrice(subtotal, 'usd')}</TableCell>
@@ -279,7 +288,7 @@ export default function Checkout(props: StripeAppProps) {
                                     <Typography>{address.address.line2}</Typography>
                                     <Typography>{address.address.city}, {address.address.state} {address.address.postal_code}</Typography>
                                     <Link
-                                    href=""
+                                        href=""
                                         onClick={(e) => {
                                             e.preventDefault();
                                             setTaxAdded(null);

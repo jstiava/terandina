@@ -2,7 +2,7 @@ import CastedProductInBagCard from "@/components/CastedProductInBagCard";
 import { formatPrice } from "@/components/ProductCard";
 import ProductInBagCard from "@/components/ProductInBagCard";
 import { StripeAppProps, StripeProduct } from "@/types";
-import { CheckCircleOutline } from "@mui/icons-material";
+import { CheckCircleOutline, ChevronLeftOutlined, ChevronRightOutlined } from "@mui/icons-material";
 import { Alert, Button, CircularProgress, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useTheme } from "@mui/material";
 import { RouteMatcher } from "next/dist/server/route-matchers/route-matcher";
 import { useRouter } from "next/router";
@@ -77,6 +77,10 @@ export default function PaymentCompletePage(props: StripeAppProps) {
                     <Typography sx={{
                         textAlign: 'center'
                     }}>We received your order and will ship to you in 7-14 business days.</Typography>
+
+                    <Typography sx={{
+                        textAlign: 'center'
+                    }}>Check your email for updates.</Typography>
                 </div>
             </div>
             <div className="column left top" style={{
@@ -151,14 +155,24 @@ export default function PaymentCompletePage(props: StripeAppProps) {
                             <TableCell></TableCell>
                         </TableRow> */}
                         <TableRow>
-                            <TableCell sx={{ fontSize: "1rem" }}>Amount Recieved</TableCell>
+                            <TableCell sx={{ fontSize: "1rem" }}>Amount Recieved w/ taxes and shipping fees.</TableCell>
                             <TableCell sx={{ fontSize: "1rem" }}>{formatPrice(totalDue, 'usd')}</TableCell>
                         </TableRow>
                     </Table>
                 </TableContainer>
 
 
+
             </div>
+                <div className="flex right" style={{
+                    padding: "0 1.5rem",
+                width: "40rem",
+                maxWidth: '95%',
+                }}>
+                    <Button onClick={e => {
+                        router.push('/')
+                    }} endIcon={<ChevronRightOutlined />} variant="text">Back to Home Page</Button>
+                </div>
         </div>
     )
 }

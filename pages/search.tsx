@@ -221,7 +221,7 @@ export default function SearchAndFilterPage(props: StripeAppProps & {
                                 }
                             }}
                             sx={{
-                                width: "calc(100% - 5rem)"
+                                width: results ? "calc(100% - 5rem)" : "100%"
                             }}
                         />
 

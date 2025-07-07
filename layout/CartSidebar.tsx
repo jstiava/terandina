@@ -1,6 +1,6 @@
 import { UseCart } from "@/checkout/useCart";
 import ProductInBagCard from "@/components/ProductInBagCard";
-import { CloseOutlined, ShoppingBagOutlined } from "@mui/icons-material";
+import { CloseOutlined, EnhancedEncryption, LockOutlined, ShoppingBagOutlined } from "@mui/icons-material";
 import { Button, Card, Collapse, Divider, Drawer, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { TransitionGroup } from 'react-transition-group';
 import EmptyBag from '@/public/EmptyBag.webp'
@@ -115,25 +115,34 @@ export default function CartSidebar({
                                 })}
                     </div>
                 )}
-                <div className="column" style={{
+                <div className="column compact center" style={{
                     position: 'absolute',
                     bottom: 'var(--safe-area-inset-bottom, 0px)',
                     height: 'fit-content',
                     padding: "1rem",
                     width: "100%"
                 }}>
-                    <Button
+                    {/* <Button
                         onClick={e => {
                             Cart.clear();
                         }}
-                    >Empty cart.</Button>
+                    >Empty cart.</Button> */}
                     <Button
+                    fullWidth
                         variant="contained"
                         disabled={!Cart.cart || Cart.cart.length === 0}
                         onClick={() => {
                             router.push('/checkout');
                             Cart.toggleSidebar();
                         }}>Continue to Checkout</Button>
+                        <div className="flex middle fit compact">
+                            <LockOutlined sx={{
+                                fontSize: "0.75rem"
+                            }}/>
+                            <Typography variant="caption" sx={{
+                                padding: 0
+                            }}>Secured by Stripe</Typography>
+                        </div>
                 </div>
             </div>
         </Drawer>

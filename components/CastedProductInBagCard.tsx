@@ -81,7 +81,7 @@ export default function CastedProductInBagCard({
 
 
     return (
-        <ButtonBase className="flex between top"
+        <ButtonBase className="flex left top"
             disableRipple
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
@@ -113,7 +113,8 @@ export default function CastedProductInBagCard({
                     </div>
                     {product.selectedPrice && product.quantity && (
                         <DisplayPrice product={product} style={{
-                            fontSize: '1rem'
+                            fontSize: '1rem',
+                            paddingLeft: "1rem"
                         }} />
                     )}
                 </div>
