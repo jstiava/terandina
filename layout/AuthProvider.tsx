@@ -139,6 +139,7 @@ export default function AuthProvider({
             <ThemeProvider theme={theme}>
                 <Head>
                     <meta name="theme-color" content={theme.palette.background.paper} />
+                    <meta name="google-site-verification" content="7kRIdFHKrm5pX0IKhnF9CmDomAUUZkqLr_bxW22k7z8" />
                 </Head>
                 <NextNProgress showOnShallow={false} color={theme.palette.primary.main} />
                 <Header Cart={Cart} color={color} setColor={setColor} search={search} setSearch={setSearch} />
