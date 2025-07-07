@@ -67,7 +67,7 @@ export default function Checkout(props: StripeAppProps) {
     const theme = useTheme();
     const router = useRouter();
     const [clientSecret, setClientSecret] = useState<string | null>(null);
-    const [confirmed, setConfirmed] = useState(true);
+    const [confirmed, setConfirmed] = useState(false);
     const [subtotal, setSubtotal] = useState(0);
     const [totalDue, setTotalDue] = useState(0);
     const [emailAddress, setEmailAddress] = useState<string | null>(null);
