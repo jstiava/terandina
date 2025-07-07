@@ -1,32 +1,29 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: 'https://terandina.com',   // ← your domain
+  siteUrl: 'https://terandina.com',
   generateRobotsTxt: true,
   exclude: ['/admin', '/checkout'],
   changefreq: 'daily',
   priority: 0.7,
 
-  // Example: fine‑tune product URLs
   transform: async (config, path) => {
-    // Give every /item/* page a higher priority
-    if (path.startsWith('/item/')) {
-      return {
-        loc: path,
-        changefreq: 'weekly',
-        priority: 1.0,
-        lastmod: new Date().toISOString(),
-        alternateRefs: [],
-      };
-    }
-
-    // fallback to default transform (if defined)
-    return config.transform ? config.transform(config, path) : {
+    const base = {
       loc: path,
       changefreq: config.changefreq || 'daily',
       priority: config.priority || 0.7,
       lastmod: new Date().toISOString(),
-      alternateRefs: []
+      alternateRefs: [],
     };
+
+    if (path.startsWith('/item/')) {
+      return {
+        ...base,
+        changefreq: 'weekly',
+        priority: 1.0,
+      };
+    }
+
+    return base;
   },
 };
 
