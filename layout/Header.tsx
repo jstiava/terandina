@@ -785,7 +785,7 @@ export default function Header({ Cart, color, setColor, search, setSearch }: {
                                                         pleasePush('/search')
                                                     }}
                                                 >
-                                                    <NativeSearch />
+                                                    <SearchOutlined />
                                                 </IconButton>
                                             ) : (
                                                 <TextField
@@ -816,7 +816,7 @@ export default function Header({ Cart, color, setColor, search, setSearch }: {
                                                                             console.log("Click")
                                                                         }}
                                                                     >
-                                                                        <NativeSearch />
+                                                                       <SearchOutlined />
                                                                     </IconButton>
                                                                 </div>
                                                             )

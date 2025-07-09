@@ -9,12 +9,12 @@ import { GetStaticPaths } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getAllProducts } from "./api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "./api/categories";
 import CategorySection from "@/components/CategorySection";
 import { CloseOutlined, FilterOutlined, SortOutlined } from "@mui/icons-material";
 import anime from "animejs";
+import { getAllProducts } from "./api/products";
 
 
 export interface CategoryStaticProps {

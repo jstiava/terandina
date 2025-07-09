@@ -315,7 +315,6 @@ async function handlePatchRequest(
     return res.status(400).json({ message: "Failure" })
   }
 
-  return res.status(400).json({ message: "Not implemented" })
 }
 
 

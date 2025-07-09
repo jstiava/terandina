@@ -1,11 +1,11 @@
 import { getListOfUploadedThings, uploadAllVersionsByBuffer, uploadImage } from '@/utils/utapi';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import sharp from 'sharp';
-import { getAllProducts, handleUpdateProduct } from './products';
 import { TerandinaImage } from '@/types';
 import Stripe from 'stripe';
 import { getAllProductsFromStripe } from './revalidate';
 import Mongo from '@/utils/mongo';
+import { getAllProducts } from './products';
 
 const UPLOAD_THING_PREFIX = 'https://65bog6nsnm.ufs.sh/f/';
 
@@ -71,6 +71,5 @@ export default async function handleRequest(
         notInMongo
     })
 
-    throw Error("Not valid")
 
 }

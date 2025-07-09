@@ -9,12 +9,12 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getAllProducts } from "./api/products";
 import { getAllCategories } from "./api/categories";
 import { ObjectId } from "mongodb";
 import Fuse from 'fuse.js';
 import NativeSearch from "@/icons/NativeSearch";
 import { headerHeight } from "@/layout/AuthProvider";
+import { getAllProducts } from "./api/products";
 
 
 export const getStaticProps = (async (context: any) => {

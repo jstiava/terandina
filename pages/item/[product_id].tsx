@@ -13,7 +13,6 @@ import { Navigation, Pagination } from 'swiper/modules';
 import CategoryVariantSelector from "@/components/CategoryVariantSelector";
 import ScrollButton from "@/components/ScrollButton";
 import Mongo from "@/utils/mongo";
-import { getAllProducts } from "../api/products";
 import { ObjectId, WithId } from "mongodb";
 import { getAllCategories } from "../api/categories";
 import { FlightTakeoff, FlightTakeoffOutlined, KeyboardArrowDown, KeyboardArrowUp, LocalShipping, LocalShippingOutlined, RecyclingOutlined, SpaOutlined } from "@mui/icons-material";
@@ -21,6 +20,7 @@ import SIZE_GUIDES from "@/SIZE_GUIDES";
 import NativeCross from "@/icons/NativeCross";
 import NativeCrossDivider from "@/components/NativeCrossDivider";
 import NativeMade from "@/icons/NativeMade";
+import { getAllProducts } from "../api/products";
 
 interface StaticProps {
     notFound?: boolean;
