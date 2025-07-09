@@ -78,7 +78,9 @@ export interface StripeProduct extends Stripe.Product {
      */
     inventory?: number,
     limit?: number,
-    icons?: string[]
+    icons?: string[],
+
+    color?: string
 }
 
 export interface VariantProductStub {

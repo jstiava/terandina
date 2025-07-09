@@ -36,6 +36,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     <g:price>8.95 USD</g:price>
                 </g:shipping>
                 <g:brand>Terandina</g:brand>
+                <g:gender>unisex</g:gender>
+                <g:age_group>adult</g:age_group>
+                <g:color>${product.color}</g:color>
             </item>
             `
         )

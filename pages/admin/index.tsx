@@ -617,6 +617,66 @@ export default function AdminPage() {
                 )
             }
         },
+         {
+            field: "color",
+            headerName: "Color (for Google Shopping)",
+            width: 300,
+            editable: true,
+            renderEditCell: (params) => {
+                return (
+                    <div className="flex top" style={{
+                        width: "100%",
+                        height: "100%"
+                    }}>
+                        <TextField
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                overflowY: "scroll",
+                                '& .MuiInputBase-root': {
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    width: "100%",
+                                    height: "fit-content",
+                                    padding: "0.5rem 1rem",
+                                    minHeight: "100%"
+                                },
+                                '& textarea': {
+                                    whiteSpace: 'pre-wrap',
+                                    fontSize: "1rem",
+                                    lineHeight: "100%",
+                                    minHeight: "100%"
+                                }
+                            }}
+                            onChange={e => {
+                                if (e.target.value === null) {
+                                    return;
+                                }
+                                params.api.setEditCellValue({
+                                    id: params.id,
+                                    field: params.field,
+                                    value: e.target.value
+                                })
+                            }}
+                            value={params.value}
+                        />
+                    </div>
+                )
+            },
+            renderCell: (params: GridRenderCellParams<StripeProduct, string>) => {
+                return (
+                    <Typography sx={{
+                        width: "100%",
+                        overflowWrap: 'break-word',
+                        whiteSpace: 'pre-wrap',
+                        lineHeight: "115%",
+                        height: "100%",
+                        overflowY: "scroll",
+                        padding: "0.5rem 1rem"
+                    }}>{params.value}</Typography>
+                )
+            }
+        },
         {
             field: "categories",
             headerName: "Categories",
@@ -1445,6 +1505,7 @@ export default function AdminPage() {
                 )
             }
         },
+       
         {
             field: "actions",
             type: "actions",
