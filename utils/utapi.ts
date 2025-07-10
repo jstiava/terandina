@@ -22,6 +22,57 @@ const auth = async (req: any, res: any) => {
 };
 
 
+const contentTypeToExtension: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif',
+  'image/bmp': '.bmp',
+  'image/tiff': '.tiff',
+};
+
+export async function appendExtensionByContentType(imageUrls: (string | null)[]): Promise<string[]> {
+  const result: string[] = [];
+
+  for (const url of imageUrls) {
+
+    console.log(url);
+
+    if (!url) {
+        continue;
+    }
+
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+
+      if (!response.ok) {
+        console.warn(`Failed to fetch headers for ${url}: ${response.status}`);
+        // result.push(url); // leave unchanged on failure
+        continue;
+      }
+
+      const key = url.split('/').pop();
+      const contentType = response.headers.get('content-type')?.split(';')[0].trim();
+      const extension = contentTypeToExtension[contentType || ''];
+
+      if (!extension) {
+        console.warn(`Unsupported or missing Content-Type for ${url}: ${contentType}`);
+        // result.push(url); // leave unchanged if unknown
+        continue;
+      }
+
+      // Only append if it doesn't already end with the correct extension
+      result.push(`https://terandina.com/api/images/${key}${extension}`);
+
+    } catch (err) {
+      console.error(`Error processing ${url}:`, err);
+    //   result.push(url); // leave unchanged on error
+    }
+  }
+
+  return result;
+}
+
 export const uploadAllVersionsByBuffer = async (name: string, buffer: ArrayBuffer) => {
 
     const mediaValue: TerandinaImage = {
