@@ -297,8 +297,8 @@ export default function Home(props: StripeAppProps & {
             "offers": {
                 "@type": "Offer",
                 "url": `https://terandina.com/item/${props.static.product.id}`,
+                "price": props.static.product.selectedPrice?.unit_amount,
                 "priceCurrency": "USD",
-                "price": props.static.product.selectedPrice?.unit_amount ? formatPrice(props.static.product.selectedPrice?.unit_amount, 'usd').slice(1) : '$59.99',
                 "availability": "https://schema.org/InStock",
                 "itemCondition": "https://schema.org/NewCondition"
             }
