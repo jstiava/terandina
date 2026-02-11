@@ -21,7 +21,7 @@ async function handlePostRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const userAuth = verifySession(req);
+  const userAuth = await verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   try {
@@ -203,7 +203,7 @@ async function handleDeleteRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const userAuth = verifySession(req);
+  const userAuth = await verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   const cat_id = req.query.id;
@@ -259,7 +259,7 @@ async function handlePatchRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const userAuth = verifySession(req);
+  const userAuth = await verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   const data: Category = req.body;

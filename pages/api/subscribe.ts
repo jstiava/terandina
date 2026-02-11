@@ -2,7 +2,6 @@ import SafeString from '@/middleware/security';
 import Mongo from '@/utils/mongo';
 import bcrypt from 'bcrypt';
 import cookie from 'cookie';
-import jwt, { Secret } from 'jsonwebtoken';
 import type { NextApiRequest, NextApiResponse } from 'next';
 // import { v4 as uuidv4 } from "uuid";
 import validator from 'validator';

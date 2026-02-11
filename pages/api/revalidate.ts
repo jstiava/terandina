@@ -84,7 +84,7 @@ export default async function handleRequest(
         res.status(405).end('Method Not Allowed');
     }
 
-    const userAuth = verifySession(req);
+    const userAuth = await verifySession(req);
     if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
     const mongo = await Mongo.getInstance();

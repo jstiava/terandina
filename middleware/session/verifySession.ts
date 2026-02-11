@@ -1,9 +1,9 @@
 import cookie from 'cookie';
-import jwt, { Secret } from 'jsonwebtoken';
+import { jwtVerify } from "jose"
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function verifySession(req: NextApiRequest): any | null {
+export default async function verifySession(req: NextApiRequest): Promise<any | null> {
   try {
     // Verify the token is valid
     const cookies = req.headers.cookie;
@@ -22,14 +22,13 @@ export default function verifySession(req: NextApiRequest): any | null {
       throw Error('An error occured while getting the session.');
     }
 
-    // Verify token
-    const userAuth = jwt.verify(
-      sessionToken,
-      process.env.JWT_SECRET as Secret,
-    ) as {
-      uuid: string,
-      username: string
-    };
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+
+    const { payload } = await jwtVerify(sessionToken, secret)
+
+    const userAuth = payload
+
+
     if (!userAuth || !userAuth.username || !userAuth.uuid) {
       console.error('Token not valid.');
       throw Error('An error occurred while validating the token.');

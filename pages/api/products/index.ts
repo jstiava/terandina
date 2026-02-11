@@ -16,7 +16,7 @@ async function handlePostRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const userAuth = verifySession(req);
+  const userAuth = await verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   try {
@@ -166,7 +166,7 @@ async function handleDeleteRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const userAuth = verifySession(req);
+  const userAuth = await verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   const products = req.body.products as string[];
@@ -289,7 +289,7 @@ async function handlePatchRequest(
   res: NextApiResponse<any>,
 ) {
 
-  const userAuth = verifySession(req);
+  const userAuth = await verifySession(req);
   if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
   const product_id = req.query.id;

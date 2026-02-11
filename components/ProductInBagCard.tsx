@@ -6,7 +6,6 @@ import CoverImage from "./CoverImage";
 import { AddOutlined, Delete, DeleteOutlined, MinimizeOutlined, Preview, RemoveOutlined } from "@mui/icons-material";
 import { DisplayPrice } from "./ProductCard";
 import PriceSelector from "./PriceSelector";
-import { setConfig } from "next/config";
 import { UseCart } from "@/checkout/useCart";
 import Cart from "@/pages/cart";
 

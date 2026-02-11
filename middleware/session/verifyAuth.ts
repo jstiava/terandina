@@ -1,10 +1,7 @@
-import cookie from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcrypt';
-import jwt, { Secret } from 'jsonwebtoken';
+import { jwtVerify } from "jose"
 
-export default function verifyToken(req: NextApiRequest): any {
+export default async function verifyToken(req: NextApiRequest): Promise<any> {
   // Verify the token is valid
   const authorizationHeader = req.headers.session;
   if (!authorizationHeader) {
@@ -13,7 +10,13 @@ export default function verifyToken(req: NextApiRequest): any {
   const token = String(authorizationHeader);
 
   // Verify token
-  const userAuth = jwt.verify(token, process.env.JWT_SECRET as Secret) as any;
+
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+  const { payload } = await jwtVerify(token, secret);
+
+  const userAuth = payload;
+
   if (!userAuth) {
     throw Error('An error occurred while validating the token.');
   }

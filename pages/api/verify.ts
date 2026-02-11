@@ -17,7 +17,7 @@ export default async function handleRequest(
 
     let profile: any | null = null;
 
-    const userAuth = verifySession(req);
+    const userAuth = await verifySession(req);
     if (!userAuth) return res.status(401).json({ message: 'Usage' });
 
 
