@@ -54,10 +54,6 @@ export const menuItems = [
     {
         name: "Jewelry",
         value: "jewelry"
-    },
-    {
-        name: "Accessories",
-        value: "accessories"
     }
 ]
 
